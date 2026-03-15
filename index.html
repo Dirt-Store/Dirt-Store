@@ -3,395 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirt Store | Advanced Archive</title>
+    <title>Dirt Store | Omni Management</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg: #f8f9fa;
-            --text: #212529;
-            --primary: #2e8b57;
-            --card: #ffffff;
-            --border: #dee2e6;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --glow-color: rgba(46, 139, 87, 0.6);
+            --bg: #f8f9fa; --text: #212529; --primary: #2e8b57;
+            --card: #ffffff; --border: #dee2e6; --glow-val: 10px;
         }
 
         body.dark-mode {
-            --bg: #121212;
-            --text: #e9ecef;
-            --card: #1e1e1e;
-            --border: #333333;
-            --shadow: 0 4px 12px rgba(0,0,0,0.5);
-            --glow-color: rgba(46, 139, 87, 0.9);
+            --bg: #121212; --text: #e9ecef; --card: #1e1e1e; --border: #333;
         }
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            transition: all 0.3s ease;
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
+        header { 
+            background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000;
         }
 
-        header {
-            background: var(--card);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow);
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .logo-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        .host-name { 
+            font-size: 22px; font-weight: bold; color: var(--primary); 
+            text-shadow: 0 0 var(--glow-val) var(--primary); 
         }
 
-        .menu-btn, .theme-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text);
-            cursor: pointer;
-            padding: 5px;
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid var(--border); transition: 0.2s; text-align: center; padding-bottom: 10px; }
+        .card img { width: 100%; height: 160px; object-fit: cover; }
+        
+        .sidebar { 
+            position: fixed; top: 0; right: -320px; width: 280px; height: 100%; 
+            background: var(--card); z-index: 2000; padding: 20px; transition: 0.3s; box-shadow: -5px 0 15px rgba(0,0,0,0.2);
         }
-
-        .host-name {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--primary);
-            text-align: center;
-            text-shadow: 0 0 10px var(--glow-color);
-            letter-spacing: 1px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 10px; }
-        }
-
-        .card {
-            background: var(--card);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s;
-        }
-
-        .card:hover { transform: translateY(-5px); }
-
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-
-        @media (max-width: 600px) { .card img { height: 130px; } }
-
-        .card-body { padding: 12px; text-align: center; flex-grow: 1; }
-
-        .btn-action {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-
-        .btn-download { background: var(--primary); color: white; }
-        .btn-delete { background: #dc3545; color: white; font-size: 12px; margin-top: 10px; }
-
-        /* Sidebar & Modals */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 260px;
-            height: 100%;
-            background: var(--card);
-            z-index: 2000;
-            padding: 20px;
-            transition: 0.3s;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-        }
-
         .sidebar.active { right: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1500; }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1500;
+        .btn { width: 100%; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin: 5px 0; }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); box-sizing: border-box; }
+
+        .modal { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: var(--card); padding: 20px; border-radius: 20px; width: 90%; max-width: 450px; 
+            z-index: 3000; display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.4); max-height: 80vh; overflow-y: auto;
         }
-
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card);
-            padding: 25px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 400px;
-            z-index: 3000;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            color: var(--text);
-            box-sizing: border-box;
-        }
-
-        .floating-add {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            font-size: 30px;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 1000;
-        }
-
         .hidden { display: none !important; }
     </style>
 </head>
-<body onload="initApp()">
+<body onload="init()">
 
-    <div id="loginSection" style="display: flex; height: 100vh; align-items: center; justify-content: center; padding: 20px;">
-        <div style="background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; border: 1px solid var(--border);">
-            <h2 style="color: var(--primary);">Dirt Store Login</h2>
-            <input type="text" id="uField" placeholder="Username">
-            <input type="password" id="pField" placeholder="Password">
-            <button class="btn-action btn-download" onclick="doLogin()">Login</button>
+    <header>
+        <button class="btn" style="width:auto; font-size:24px; background:none; color:var(--text);" onclick="toggleSidebar()">☰</button>
+        <div class="brand">
+            <img id="storeLogo" class="logo-img" src="https://via.placeholder.com/40" alt="logo">
+            <div id="storeTitle" class="host-name">Dirt Store</div>
+        </div>
+        <button id="themeToggle" style="background:none; border:none; font-size:24px; cursor:pointer;" onclick="toggleMode()">☀️</button>
+    </header>
+
+    <div id="overlay" class="overlay" onclick="closeAll()"></div>
+
+    <div id="sidebar" class="sidebar">
+        <h3 id="userLabel">Welcome</h3>
+        <hr>
+        <div id="ownerArea" class="hidden">
+            <p style="color:var(--primary); font-weight:bold;">Owner Tools:</p>
+            <button class="btn btn-main" onclick="openStoreManager()">Manage Store</button>
+            <button class="btn btn-main" onclick="openAdminManager()">Manage Admins</button>
+        </div>
+        <button class="btn btn-danger" style="margin-top:20px;" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <div class="grid" id="productGrid"></div>
+        <button id="addBtn" class="btn-main" style="position:fixed; bottom:20px; left:20px; width:60px; height:60px; border-radius:50%; font-size:30px; z-index:1000;" onclick="showAddModal()">+</button>
+    </div>
+
+    <div id="loginPage" style="display:flex; height:90vh; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:var(--card); padding:30px; border-radius:20px; width:100%; max-width:350px; text-align:center; border:1px solid var(--border);">
+            <h2 style="color:var(--primary);">Login</h2>
+            <input type="text" id="uIn" placeholder="Username">
+            <input type="password" id="pIn" placeholder="Password">
+            <button class="btn btn-main" onclick="login()">Login</button>
         </div>
     </div>
 
-    <div id="mainSection" class="hidden">
-        <header>
-            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-            <div class="host-name">Dirt Store</div>
-            <button class="theme-btn" id="themeIcon" onclick="cycleTheme()">☀️</button>
-        </header>
-
-        <div id="overlay" class="overlay" onclick="closeAll()"></div>
-
-        <div id="sidebar" class="sidebar">
-            <h3 id="welcomeMsg">Welcome</h3>
-            <hr style="border:0; border-top:1px solid var(--border);">
-            <div id="ownerTools" class="hidden">
-                <p style="font-size: 14px; color: var(--primary);">Owner Tools:</p>
-                <button class="btn-action" style="background: #6c757d; color:white;" onclick="showAdminModal()">Add Admin</button>
-            </div>
-            <button class="btn-action" style="margin-top: 20px; background: #dc3545; color:white;" onclick="doLogout()">Logout</button>
-        </div>
-
-        <div class="grid" id="mainGrid"></div>
-        <button id="addFloat" class="floating-add hidden" onclick="showAddModal()">+</button>
-    </div>
-
-    <div id="itemModal" class="modal">
-        <h3>Add New Product</h3>
-        <input type="text" id="itemName" placeholder="Product Name">
-        <input type="number" id="itemPrice" placeholder="Price">
-        <p style="font-size: 12px; margin: 5px 0;">Product Image:</p>
-        <input type="file" id="itemImg" accept="image/*">
-        <p style="font-size: 12px; margin: 5px 0;">Downloadable File (Script/Pack):</p>
-        <input type="file" id="itemFile">
-        <button class="btn-action btn-download" id="saveBtn" onclick="uploadProduct()">Save to Archive</button>
-        <button class="btn-action" style="background:#888; color:white;" onclick="closeAll()">Cancel</button>
+    <div id="storeModal" class="modal">
+        <h3>Manage Store</h3>
+        <input type="text" id="setStoreName" placeholder="Store Name">
+        <p>Store Logo:</p>
+        <input type="file" id="setStoreLogo" accept="image/*">
+        <p>Theme Color:</p>
+        <input type="color" id="setStoreColor" style="height:50px;">
+        <p>Glow Power (px):</p>
+        <input type="number" id="setStoreGlow" placeholder="Glow (e.g. 15)">
+        <button class="btn btn-main" onclick="updateStoreSettings()">Apply & Save</button>
+        <button class="btn" onclick="closeAll()">Cancel</button>
     </div>
 
     <div id="adminModal" class="modal">
-        <h3>Add New Admin</h3>
-        <input type="text" id="adminName" placeholder="Admin Username">
-        <button class="btn-action btn-download" onclick="addAdminToDB()">Confirm</button>
-        <button class="btn-action" style="background:#888; color:white;" onclick="closeAll()">Cancel</button>
+        <h3>Manage Admins</h3>
+        <div id="adminList" style="margin-bottom:15px;"></div>
+        <hr>
+        <h4>Add New Admin</h4>
+        <input type="text" id="newAdminName" placeholder="Admin Username">
+        <label><input type="checkbox" id="canAdd" checked> Can Add Items</label>
+        <label><input type="checkbox" id="canDel"> Can Delete Items</label>
+        <button class="btn btn-main" onclick="addNewAdmin()">Add Admin</button>
+        <button class="btn" onclick="closeAll()">Close</button>
+    </div>
+
+    <div id="addModal" class="modal">
+        <h3>Add Product</h3>
+        <input type="text" id="pName" placeholder="Product Name">
+        <input type="number" id="pPrice" placeholder="Price">
+        <p>Product Image:</p>
+        <input type="file" id="pImg" accept="image/*">
+        <p>Downloadable File:</p>
+        <input type="file" id="pFile">
+        <button id="uploadBtn" class="btn btn-main" onclick="uploadProduct()">Upload</button>
+        <button class="btn" onclick="closeAll()">Cancel</button>
     </div>
 
     <script>
         const S_URL = "https://kdtujvpsscyovmzyvghw.supabase.co";
         const S_KEY = "Sb_publishable__3K83DFvrxoNadCdBSbfig_ZpRi0DjV";
-        const _db = supabase.createClient(S_URL, S_KEY);
+        const _s = supabase.createClient(S_URL, S_KEY);
 
         let user = null;
-        let adminsList = [];
+        let adminPerms = [];
 
-        async function initApp() {
-            checkTheme();
+        async function init() {
+            loadTheme();
+            await fetchStoreSettings();
             const session = localStorage.getItem('dirt_session');
             if (session) {
                 user = JSON.parse(session);
-                await syncAdmins();
+                await fetchAdmins();
                 renderUI();
             }
-            loadItems();
+            loadProducts();
         }
 
-        async function syncAdmins() {
-            const { data } = await _db.from('admins').select('username');
-            adminsList = data ? data.map(a => a.username) : [];
+        async function fetchStoreSettings() {
+            const { data } = await _s.from('store_settings').select('*').single();
+            if (data) {
+                document.documentElement.style.setProperty('--primary', data.primary_color);
+                document.documentElement.style.setProperty('--glow-val', data.glow_power + 'px');
+                document.getElementById('storeTitle').innerText = data.name;
+                if (data.logo) document.getElementById('storeLogo').src = data.logo;
+            }
         }
 
-        function doLogin() {
-            const u = document.getElementById('uField').value.toLowerCase();
-            const p = document.getElementById('pField').value;
+        async function fetchAdmins() {
+            const { data } = await _s.from('admins').select('*');
+            adminPerms = data || [];
+        }
 
-            if (u === 'morad' && p === 'morad-123') {
-                user = { name: 'Morad', role: 'owner' };
-            } else if (u && p && adminsList.includes(u)) {
-                user = { name: u, role: 'admin' };
-            } else if (u && p) {
-                user = { name: u, role: 'user' };
-            } else return;
+        function login() {
+            const u = document.getElementById('uIn').value.toLowerCase();
+            const p = document.getElementById('pIn').value;
+            const adm = adminPerms.find(a => a.username === u);
+
+            if (u === 'morad' && p === 'morad-123') user = { name: 'Morad', role: 'owner' };
+            else if (adm && p) user = { name: u, role: 'admin', perms: adm };
+            else if (u && p) user = { name: u, role: 'user' };
+            else return;
 
             localStorage.setItem('dirt_session', JSON.stringify(user));
             renderUI();
         }
 
         function renderUI() {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('mainSection').classList.remove('hidden');
-            document.getElementById('welcomeMsg').innerText = "Hello, " + user.name;
-            
-            if (user.role === 'owner' || user.role === 'admin') {
-                document.getElementById('addFloat').classList.remove('hidden');
-            }
-            if (user.role === 'owner') {
-                document.getElementById('ownerTools').classList.remove('hidden');
-            }
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userLabel').innerText = "Hello, " + user.name;
+            if (user.role === 'owner') document.getElementById('ownerArea').classList.remove('hidden');
+            if (user.role === 'owner' || (user.role === 'admin' && user.perms.can_add)) {
+                document.getElementById('addBtn').classList.remove('hidden');
+            } else { document.getElementById('addBtn').classList.add('hidden'); }
         }
 
-        async function loadItems() {
-            const { data } = await _db.from('products').select('*').order('id', { ascending: false });
-            if (!data) return;
-
-            const grid = document.getElementById('mainGrid');
+        async function loadProducts() {
+            const { data } = await _s.from('products').select('*').order('id', { ascending: false });
+            const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
-            data.forEach(item => {
-                const canDelete = user && (user.role === 'owner' || user.role === 'admin');
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <img src="${item.img || 'https://via.placeholder.com/200'}">
-                    <div class="card-body">
-                        <h4 style="margin:5px 0;">${item.name}</h4>
-                        <p style="color:var(--primary); font-weight:bold; margin:5px 0;">$${item.price}</p>
-                        <button class="btn-action btn-download" onclick="downloadLogic('${item.file_data}', '${item.name}')">Download</button>
-                        ${canDelete ? `<button class="btn-action btn-delete" onclick="deleteItem(${item.id})">Delete Item</button>` : ''}
-                    </div>
-                `;
-                grid.appendChild(card);
+            data?.forEach(p => {
+                const canDel = user && (user.role === 'owner' || (user.role === 'admin' && user.perms.can_delete));
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${p.img || 'https://via.placeholder.com/200'}">
+                        <h3>${p.name}</h3>
+                        <p style="color:var(--primary); font-weight:bold;">$${p.price}</p>
+                        <button class="btn btn-main" style="width:80%" onclick="downloadFile('${p.file_data}', '${p.name}')">Download</button>
+                        ${canDel ? `<button class="btn btn-danger" style="width:80%; font-size:12px;" onclick="deleteProduct(${p.id})">Delete</button>` : ''}
+                    </div>`;
             });
         }
 
-        function downloadLogic(base64, name) {
-            if (!base64 || base64 === 'null') return alert("No file attached to this item.");
-            const link = document.createElement('a');
-            link.href = base64;
-            link.download = "DirtStore_" + name;
-            link.click();
+        // --- Store Management ---
+        async function updateStoreSettings() {
+            const name = document.getElementById('setStoreName').value;
+            const color = document.getElementById('setStoreColor').value;
+            const glow = document.getElementById('setStoreGlow').value;
+            const logoFile = document.getElementById('setStoreLogo').files[0];
+
+            let updateObj = { name, primary_color: color, glow_power: glow };
+            if (logoFile) updateObj.logo = await toB64(logoFile);
+
+            await _s.from('store_settings').update(updateObj).eq('id', 1);
+            location.reload();
         }
 
+        // --- Admin Management ---
+        function openAdminManager() {
+            const list = document.getElementById('adminList');
+            list.innerHTML = adminPerms.map(a => `
+                <div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid var(--border);">
+                    <span>${a.username} (${a.can_add ? 'Add' : ''} ${a.can_delete ? 'Del' : ''})</span>
+                    <button onclick="removeAdmin(${a.id})" style="color:red; background:none; border:none; cursor:pointer;">Remove</button>
+                </div>`).join('');
+            document.getElementById('adminModal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        async function addNewAdmin() {
+            const username = document.getElementById('newAdminName').value.toLowerCase();
+            const can_add = document.getElementById('canAdd').checked;
+            const can_delete = document.getElementById('canDel').checked;
+            await _s.from('admins').insert([{ username, can_add, can_delete }]);
+            location.reload();
+        }
+
+        async function removeAdmin(id) {
+            await _s.from('admins').delete().eq('id', id);
+            location.reload();
+        }
+
+        // --- Product Logic ---
         async function uploadProduct() {
-            const name = document.getElementById('itemName').value;
-            const price = document.getElementById('itemPrice').value;
-            const imgFile = document.getElementById('itemImg').files[0];
-            const saleFile = document.getElementById('itemFile').files[0];
-            const btn = document.getElementById('saveBtn');
+            const btn = document.getElementById('uploadBtn');
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const imgFile = document.getElementById('pImg').files[0];
+            const saleFile = document.getElementById('pFile').files[0];
 
-            if (!name || !imgFile) return alert("Name and Image are required!");
-            btn.innerText = "Processing...";
-            btn.disabled = true;
+            if(!name || !imgFile) return alert("Fill Name/Image");
+            btn.innerText = "Uploading..."; btn.disabled = true;
 
-            const imgBase64 = await toBase64(imgFile);
-            const fileBase64 = saleFile ? await toBase64(saleFile) : null;
+            const img = await toB64(imgFile);
+            const file_data = saleFile ? await toB64(saleFile) : null;
+            await _s.from('products').insert([{ name, price, img, file_data }]);
+            location.reload();
+        }
 
-            const { error } = await _db.from('products').insert([{ 
-                name, price, img: imgBase64, file_data: fileBase64 
-            }]);
-
-            if (!error) {
-                closeAll();
-                loadItems();
+        async function deleteProduct(id) {
+            if(confirm("Delete this?")) {
+                await _s.from('products').delete().eq('id', id);
+                loadProducts();
             }
-            btn.innerText = "Save to Archive";
-            btn.disabled = false;
         }
 
-        async function deleteItem(id) {
-            if (!confirm("Are you sure?")) return;
-            await _db.from('products').delete().eq('id', id);
-            loadItems();
+        function downloadFile(b64, name) {
+            if(!b64 || b64 === 'null') return alert("No file!");
+            const a = document.createElement('a'); a.href = b64; a.download = name; a.click();
         }
 
-        async function addAdminToDB() {
-            const name = document.getElementById('adminName').value.toLowerCase();
-            if (!name) return;
-            await _db.from('admins').insert([{ username: name }]);
-            alert("Admin Added!");
-            closeAll();
-            syncAdmins();
-        }
-
-        const toBase64 = file => new Promise((res, rej) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => res(reader.result);
-            reader.onerror = e => rej(e);
+        // --- Helpers ---
+        const toB64 = file => new Promise((res, rej) => {
+            const r = new FileReader(); r.readAsDataURL(file);
+            r.onload = () => res(r.result); r.onerror = e => rej(e);
         });
 
-        function cycleTheme() {
-            const isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('dirt_theme', isDark ? 'dark' : 'light');
-            document.getElementById('themeIcon').innerText = isDark ? '🌙' : '☀️';
+        function toggleSidebar() { 
+            const s = document.getElementById('sidebar');
+            s.classList.toggle('active');
+            document.getElementById('overlay').style.display = s.classList.contains('active') ? 'block' : 'none';
         }
 
-        function checkTheme() {
+        function toggleMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('dirt_theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeToggle').innerText = isDark ? '🌙' : '☀️';
+        }
+
+        function loadTheme() {
             if (localStorage.getItem('dirt_theme') === 'dark') {
                 document.body.classList.add('dark-mode');
-                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeToggle').innerText = '🌙';
             }
         }
 
-        function toggleSidebar() { 
-            document.getElementById('sidebar').classList.toggle('active'); 
-            document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none';
-        }
-
-        function showAddModal() { document.getElementById('itemModal').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
-        function showAdminModal() { document.getElementById('adminModal').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
         function closeAll() {
             document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
             document.getElementById('sidebar').classList.remove('active');
             document.getElementById('overlay').style.display = 'none';
         }
-        function doLogout() { localStorage.removeItem('dirt_session'); location.reload(); }
+
+        function openStoreManager() { document.getElementById('storeModal').style.display='block'; document.getElementById('overlay').style.display='block'; }
+        function showAddModal() { document.getElementById('addModal').style.display='block'; document.getElementById('overlay').style.display='block'; }
+        function logout() { localStorage.removeItem('dirt_session'); location.reload(); }
     </script>
 </body>
 </html>
