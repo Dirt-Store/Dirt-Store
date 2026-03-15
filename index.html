@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +8,23 @@
     <style>
         :root { --bg: #f8f9fa; --text: #212529; --primary: #2e8b57; --card: #ffffff; --border: #dee2e6; }
         body.dark-mode { --bg: #121212; --text: #e9ecef; --card: #1e1e1e; --border: #333; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
         
-        /* Auth Styles */
+        /* Auth Screen */
         .auth-container { display: flex; height: 100vh; align-items: center; justify-content: center; padding: 20px; }
         .auth-box { background: var(--card); padding: 35px; border-radius: 25px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .auth-box h1 { color: var(--primary); margin-bottom: 25px; }
         
-        /* Main UI Styles */
-        header { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; }
-        .host-name { font-size: 26px; font-weight: bold; color: var(--primary); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: var(--card); border-radius: 18px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; text-align: center; }
+        /* Main UI */
+        header { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); sticky; top: 0; z-index: 1000; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: var(--card); border-radius: 18px; overflow: hidden; border: 1px solid var(--border); text-align: center; padding-bottom: 15px; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .card img { width: 100%; height: 180px; object-fit: cover; }
         
-        /* Global UI Elements */
-        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin: 8px 0; font-size: 15px; }
+        /* Elements */
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin: 8px 0; }
         .btn-main { background: var(--primary); color: white; }
-        .btn-link { background: none; color: var(--primary); text-decoration: underline; font-size: 14px; }
+        .btn-link { background: none; color: var(--primary); text-decoration: underline; cursor: pointer; border: none; font-size: 14px; }
         input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); box-sizing: border-box; }
         .hidden { display: none !important; }
         .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 25px; border-radius: 24px; width: 90%; max-width: 450px; z-index: 3000; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
@@ -36,42 +35,34 @@
 
     <div id="authPage" class="auth-container">
         <div class="auth-box">
-            <h1 id="authTitle">Create Account</h1>
-            <input type="text" id="uIn" placeholder="Username">
-            <input type="password" id="pIn" placeholder="Password">
-            
+            <h1 id="authTitle" style="color:var(--primary)">إنشاء حساب</h1>
+            <input type="text" id="uIn" placeholder="اسم المستخدم">
+            <input type="password" id="pIn" placeholder="كلمة المرور">
             <button id="authBtn" class="btn btn-main" onclick="handleAuth()">Register</button>
-            
-            <button id="switchBtn" class="btn btn-link" onclick="toggleAuthMode()">Already have an account? Login</button>
+            <button id="switchBtn" class="btn btn-link" onclick="toggleAuthMode()">لديك حساب بالفعل؟ دخول</button>
         </div>
     </div>
 
     <div id="mainUI" class="hidden">
         <header>
-            <div class="host-name">Dirt Store</div>
-            <div style="display:flex; gap:10px;">
-                <button style="background:none; border:none; font-size:20px; cursor:pointer;" onclick="toggleTheme()">🌙</button>
-                <button class="btn btn-main" style="width:auto; padding:5px 15px;" onclick="logout()">Logout</button>
-            </div>
+            <div style="font-size:24px; font-weight:bold; color:var(--primary);">Dirt Store</div>
+            <button class="btn-main" style="width:auto; padding:5px 15px;" onclick="logout()">خروج</button>
         </header>
-
         <div id="overlay" class="overlay" onclick="closeAll()"></div>
-
         <div class="grid" id="productGrid"></div>
-        
         <button id="addFloat" class="btn-main" style="position:fixed; bottom:25px; left:25px; width:60px; height:60px; border-radius:50%; font-size:30px; border:none; box-shadow: 0 5px 15px rgba(0,0,0,0.3);" onclick="openModal('addModal')">+</button>
     </div>
 
     <div id="addModal" class="modal">
-        <h3>Add New Item</h3>
-        <input type="text" id="pName" placeholder="Item Name (name)">
-        <input type="number" id="pPrice" placeholder="Price (price)">
-        <p style="font-size:12px; margin:5px 0;">Image (img):</p>
+        <h3>إضافة سلعة (Item)</h3>
+        <input type="text" id="pName" placeholder="اسم السلعة">
+        <input type="number" id="pPrice" placeholder="السعر">
+        <p style="font-size:12px; margin:5px 0;">صورة السلعة:</p>
         <input type="file" id="pImg" accept="image/*">
-        <p style="font-size:12px; margin:5px 0;">File (file_data):</p>
+        <p style="font-size:12px; margin:5px 0;">الملف (اختياري):</p>
         <input type="file" id="pFile">
-        <button id="upBtn" class="btn btn-main" onclick="pushItem()">Confirm Upload</button>
-        <button class="btn" onclick="closeAll()">Cancel</button>
+        <button id="upBtn" class="btn btn-main" onclick="pushItem()">تأكيد الرفع</button>
+        <button class="btn" onclick="closeAll()">إغلاق</button>
     </div>
 
     <script>
@@ -80,44 +71,34 @@
         const _db = supabase.createClient(DB_URL, DB_KEY);
 
         let isLoginMode = false;
-        let currentUser = null;
 
         async function boot() {
             const saved = localStorage.getItem('dirt_session');
-            if(saved) { currentUser = JSON.parse(saved); showMain(); }
+            if(saved) showMain();
             loadItems();
         }
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
-            document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Create Account";
+            document.getElementById('authTitle').innerText = isLoginMode ? "تسجيل دخول" : "إنشاء حساب";
             document.getElementById('authBtn').innerText = isLoginMode ? "Login" : "Register";
-            document.getElementById('switchBtn').innerText = isLoginMode ? "New here? Register" : "Already have an account? Login";
+            document.getElementById('switchBtn').innerText = isLoginMode ? "محتاج حساب؟ سجل الآن" : "لديك حساب بالفعل؟ دخول";
         }
 
         async function handleAuth() {
-            const u = document.getElementById('uIn').value.toLowerCase();
-            const p = document.getElementById('pIn').value;
-            if(!u || !p) return alert("Please fill all fields");
+            const u = document.getElementById('uIn').value.toLowerCase().trim();
+            const p = document.getElementById('pIn').value.trim();
+            if(!u || !p) return alert("عبي البيانات يا وحش!");
 
             if(isLoginMode) {
-                // تسجيل دخول: نبحث في جدول admins (أو يمكنك عمل جدول users منفصل)
-                const { data, error } = await _db.from('admins').select('*').eq('username', u).single();
-                if(data && p) { // هنا التبسيط للدخول، يفضل إضافة Password في الـ DB مستقبلاً
-                    currentUser = { name: u };
-                    saveAndShow();
-                } else { alert("User not found or error"); }
+                const { data, error } = await _db.from('admins').select('*').eq('username', u).eq('password', p).single();
+                if(data) { localStorage.setItem('dirt_session', u); showMain(); }
+                else alert("البيانات غلط، تأكد من اليوزر والباسورد");
             } else {
-                // تسجيل جديد: نضيف المستخدم لجدول admins
-                const { error } = await _db.from('admins').insert([{ username: u, can_add: true, can_del: true }]);
-                if(error) alert("Username might be taken");
-                else { alert("Registered! Now Login"); toggleAuthMode(); }
+                const { error } = await _db.from('admins').insert([{ username: u, password: p }]);
+                if(error) alert("الاسم هذا مستخدم أو فيه مشكلة في الجدول");
+                else { alert("تم التسجيل! الحين سجل دخول"); toggleAuthMode(); }
             }
-        }
-
-        function saveAndShow() {
-            localStorage.setItem('dirt_session', JSON.stringify(currentUser));
-            showMain();
         }
 
         function showMain() {
@@ -129,52 +110,39 @@
             const btn = document.getElementById('upBtn');
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
-            const imgF = document.getElementById('pImg').files[0];
-            const fileF = document.getElementById('pFile').files[0];
+            const imgFile = document.getElementById('pImg').files[0];
+            const saleFile = document.getElementById('pFile').files[0];
 
-            if(!name || !imgF) return alert("Name and Image are required!");
-            btn.disabled = true; btn.innerText = "Uploading...";
+            if(!name || !imgFile) return alert("الاسم والصورة أساسيات!");
+            btn.disabled = true; btn.innerText = "...";
 
             try {
-                const img = await toB64(imgF);
-                const file_data = fileF ? await toB64(fileF) : null;
-                
-                // الإرسال للأعمدة الظاهرة في صورتك: name, price, img, file_data
-                const { error } = await _db.from('products').insert([{ 
-                    name: name, 
-                    price: parseInt(price) || 0, 
-                    img: img, 
-                    file_data: file_data 
-                }]);
-
+                const img = await toB64(imgFile);
+                const file_data = saleFile ? await toB64(saleFile) : null;
+                const { error } = await _db.from('products').insert([{ name, price, img, file_data }]);
                 if(error) throw error;
-                alert("Added Successfully!");
-                closeAll();
-                loadItems();
-            } catch (e) { alert("Error: Check your Supabase columns name/price/img/file_data"); }
-            btn.disabled = false; btn.innerText = "Confirm Upload";
+                alert("تمت الإضافة بنجاح!"); closeAll(); loadItems();
+            } catch (e) { alert("تأكد من تشغيل كود الـ SQL المحدث في Supabase"); }
+            btn.disabled = false; btn.innerText = "تأكيد الرفع";
         }
 
         async function loadItems() {
             const { data } = await _db.from('products').select('*').order('id', { ascending: false });
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = data?.map(p => `
+            document.getElementById('productGrid').innerHTML = data?.map(p => `
                 <div class="card">
                     <img src="${p.img}">
-                    <div style="padding:15px;">
-                        <h4 style="margin:0;">${p.name}</h4>
-                        <p style="color:var(--primary); font-weight:bold;">$${p.price}</p>
-                        <button class="btn btn-main" onclick="dl('${p.file_data}', '${p.name}')">Download</button>
+                    <div style="padding:10px;">
+                        <h4 style="margin:5px 0;">${p.name}</h4>
+                        <p style="color:var(--primary); font-weight:bold; margin:5px 0;">$${p.price}</p>
+                        <button class="btn btn-main" style="padding:5px;" onclick="dl('${p.file_data}', '${p.name}')">تحميل الملف</button>
                     </div>
-                </div>
-            `).join('') || 'No items found.';
+                </div>`).join('') || 'لا توجد منتجات حالياً.';
         }
 
         const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
-        function dl(b, n) { if(!b) return; const a = document.createElement('a'); a.href = b; a.download = n; a.click(); }
+        function dl(b, n) { if(!b || b === "null") return alert("لا يوجد ملف لهذا المنتج"); const a = document.createElement('a'); a.href = b; a.download = n; a.click(); }
         function openModal(id) { document.getElementById(id).style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('overlay').style.display = 'none'; }
-        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
         function logout() { localStorage.removeItem('dirt_session'); location.reload(); }
     </script>
 </body>
