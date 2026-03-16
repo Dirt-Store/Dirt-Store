@@ -34,7 +34,6 @@
             transition: var(--transition);
         }
 
-        /* Ambient Glow Effect */
         body::after {
             content: '';
             position: fixed;
@@ -44,7 +43,6 @@
             pointer-events: none; z-index: -1;
         }
 
-        /* Navbar */
         .navbar {
             backdrop-filter: blur(20px);
             background: rgba(0,0,0,0.4);
@@ -64,7 +62,6 @@
         }
         .theme-toggle:hover { transform: scale(1.2) rotate(15deg); }
 
-        /* Sidebar Navigation */
         .sidebar {
             position: fixed; left: -300px; top: 0; width: 280px; height: 100vh;
             background: rgba(10, 10, 10, 0.98);
@@ -95,7 +92,6 @@
             box-shadow: 0 10px 20px var(--primary-glow);
         }
 
-        /* Main Container & Sections */
         .container { 
             padding: 50px 20px; 
             max-width: 1200px; 
@@ -103,9 +99,7 @@
             min-height: 80vh;
         }
         
-        .section-view {
-            animation: pageIn 0.6s ease-out forwards;
-        }
+        .section-view { animation: pageIn 0.6s ease-out forwards; }
 
         @keyframes pageIn {
             from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
@@ -123,7 +117,6 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
 
-        /* UI Elements */
         input {
             width: 100%; padding: 16px 25px; margin: 15px 0;
             border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
@@ -155,7 +148,6 @@
 
         .btn-danger { background: var(--danger); }
 
-        /* Store Design */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -194,6 +186,18 @@
             box-shadow: 0 0 20px #2eb857;
             display: inline-block;
             animation: pulseGlow 2.5s infinite;
+        }
+
+        .download-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
         }
 
         @keyframes pulseGlow {
@@ -238,7 +242,12 @@
         
         <div id="secStore" class="section-view">
             <h1 style="text-align:center; font-size: 3rem; margin-bottom: 10px;">Marketplace</h1>
-            <p style="text-align:center; opacity:0.6;">get a best schem and skripts enjoy!</p>
+            <p style="text-align:center; opacity:0.6; margin-bottom: 30px;">Get the best schem and skripts. Enjoy!</p>
+            
+            <div style="max-width: 600px; margin: 0 auto;">
+                <input type="text" id="searchInput" placeholder="🔍 Search by name (kill, skript, spawn...)" style="border: 2px solid var(--primary);">
+            </div>
+
             <div class="grid" id="productGrid"></div>
         </div>
 
@@ -282,7 +291,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -305,7 +314,6 @@
 
         let currentUser = null;
 
-        // Navigation Engine
         const showSection = (id) => {
             document.querySelectorAll('.section-view').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
@@ -318,7 +326,6 @@
         document.getElementById('navUpload').onclick = () => showSection('secUpload');
         document.getElementById('navManage').onclick = () => showSection('secManage');
 
-        // Theme Toggle Logic
         const themeBtn = document.getElementById('toggleTheme');
         themeBtn.onclick = () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -328,7 +335,6 @@
             setTimeout(() => themeBtn.style.transform = "rotate(0deg)", 500);
         };
 
-        // Auth Logic
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             document.getElementById('navUpload').classList.toggle('hidden', !user);
@@ -348,7 +354,6 @@
 
         document.getElementById('btnLogOut').onclick = () => signOut(auth);
 
-        // Manage Admins
         function fetchAdmins() {
             onSnapshot(collection(db, "admins"), (snap) => {
                 const container = document.getElementById('adminListContainer');
@@ -379,7 +384,6 @@
             } catch (e) { alert(e.message); }
         };
 
-        // Upload Logic
         document.getElementById('btnStartUpload').onclick = async () => {
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
@@ -404,7 +408,7 @@
                 const finalFile = (await supabase.storage.from('dirt-assets').getPublicUrl(filePath)).data.publicUrl;
 
                 await addDoc(collection(db, "products"), {
-                    name, price: Number(price), img: finalImg, file: finalFile, filePath, createdAt: new Date()
+                    name, price: Number(price), img: finalImg, file: finalFile, filePath, downloads: 0, createdAt: new Date()
                 });
 
                 alert("Product Published!");
@@ -413,24 +417,47 @@
             } catch (e) { alert(e.message); }
         };
 
-        // Render Marketplace
+        // دالة تتبع التحميل
+        window.handleDownload = async (id, fileUrl) => {
+            try {
+                const docRef = doc(db, "products", id);
+                await updateDoc(docRef, { downloads: increment(1) });
+                window.open(fileUrl, '_blank');
+            } catch (e) { window.open(fileUrl, '_blank'); }
+        };
+
+        // نظام العرض مع البحث والعداد
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snap) => {
             const grid = document.getElementById('productGrid');
-            grid.innerHTML = "";
-            snap.forEach(d => {
-                const p = d.data();
-                const priceBadge = p.price == 0 ? '<span class="free-badge">FREE</span>' : `<span style="font-weight:900; font-size:1.4rem; color:var(--primary)">$${p.price}</span>`;
-                grid.innerHTML += `
-                    <div class="item-card">
-                        <img src="${p.img}" alt="Item">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                            <h3 style="margin:0; font-size:1.5rem;">${p.name}</h3>
-                            ${priceBadge}
-                        </div>
-                        <button class="btn" onclick="window.open('${p.file}')">Get It</button>
-                        ${currentUser ? `<button class="btn btn-danger" onclick="window.deleteItem('${d.id}', '${p.filePath}')">Delete</button>` : ''}
-                    </div>`;
-            });
+            const searchInput = document.getElementById('searchInput');
+
+            const render = (filter = "") => {
+                grid.innerHTML = "";
+                snap.forEach(d => {
+                    const p = d.data();
+                    if (p.name.toLowerCase().includes(filter.toLowerCase())) {
+                        const priceBadge = p.price == 0 ? '<span class="free-badge">FREE</span>' : `<span style="font-weight:900; font-size:1.4rem; color:var(--primary)">$${p.price}</span>`;
+                        grid.innerHTML += `
+                            <div class="item-card">
+                                <img src="${p.img}" alt="Item">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                    <h3 style="margin:0; font-size:1.5rem;">${p.name}</h3>
+                                    ${priceBadge}
+                                </div>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <button class="btn" style="flex:1;" onclick="window.handleDownload('${d.id}', '${p.file}')">Get It</button>
+                                    <div class="download-counter">
+                                        👁️ <span>${p.downloads || 0}</span>
+                                    </div>
+                                </div>
+                                ${currentUser ? `<button class="btn btn-danger" onclick="window.deleteItem('${d.id}', '${p.filePath}')">Delete</button>` : ''}
+                            </div>`;
+                    }
+                });
+            };
+
+            searchInput.oninput = (e) => render(e.target.value);
+            render();
         });
 
         window.deleteItem = async (id, path) => {
