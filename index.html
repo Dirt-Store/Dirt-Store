@@ -39,177 +39,96 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .menu-btn {
-            font-size: 24px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: var(--text);
-        }
-
-        .theme-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .menu-btn { font-size: 24px; cursor: pointer; background: none; border: none; color: var(--text); }
+        .theme-btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
         .sidebar {
             position: fixed;
-            left: -250px;
+            left: -260px;
             top: 0;
             width: 250px;
             height: 100vh;
             background: var(--card);
             transition: left 0.3s ease;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
             z-index: 1000;
             padding-top: 60px;
             border-right: 1px solid var(--border);
         }
 
-        [data-sidebar="open"] {
-            left: 0;
-        }
+        .sidebar.open { left: 0; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: var(--text); }
+        .sidebar-item { padding: 15px 20px; display: block; color: var(--text); text-decoration: none; font-size: 18px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .sidebar-item:hover { background: var(--nav-bg); }
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: var(--text);
-        }
-
-        .sidebar-item {
-            padding: 15px 20px;
-            display: block;
-            color: var(--text);
-            text-decoration: none;
-            font-size: 18px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-        }
-
-        .sidebar-item:hover {
-            background: var(--nav-bg);
-        }
-
-        .container {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .container { padding: 20px; text-align: center; }
+        .hidden { display: none !important; }
 
         .panel {
             background: var(--card);
             padding: 25px;
-            border-radius: 10px;
+            border-radius: 12px;
             max-width: 400px;
             margin: 20px auto;
             border: 1px solid var(--border);
         }
 
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            color: var(--text);
-            box-sizing: border-box;
-        }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); box-sizing: border-box; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px; cursor: pointer; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .btn-danger { background: var(--danger); }
 
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .item-card {
-            background: var(--card);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-        }
-
-        .item-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; }
+        .item-card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); position: relative; }
+        .item-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+        
+        #uploadStatus { font-weight: bold; color: var(--primary); margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="navbar">
-        <button class="menu-btn" id="openMenuBtn">☰</button>
-        <h2>Dirt Store</h2>
-        <button class="theme-btn" id="themeToggleBtn">Dark / Light</button>
+        <button class="menu-btn" id="openMenu">☰</button>
+        <h2 style="margin:0;">Dirt Store</h2>
+        <button class="theme-btn" id="toggleTheme">Theme</button>
     </div>
 
-    <div class="sidebar" id="sidebarMenu">
-        <button class="close-btn" id="closeMenuBtn">X</button>
-        <div class="sidebar-item" id="navStore">Store Home</div>
-        <div class="sidebar-item" id="navAdmin">Admin Upload</div>
-        <div class="sidebar-item" id="navLogin">Login</div>
-        <div class="sidebar-item hidden" id="navLogout">Logout</div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" id="closeMenu">×</button>
+        <div class="sidebar-item" id="btnGoStore">Store Home</div>
+        <div class="sidebar-item hidden" id="btnGoAdmin">Admin Upload</div>
+        <div class="sidebar-item" id="btnGoLogin">Login</div>
+        <div class="sidebar-item hidden" id="btnLogOut">Logout</div>
     </div>
 
     <div class="container">
         
-        <div id="loginSection" class="panel hidden">
+        <div id="secLogin" class="panel hidden">
             <h3>Admin Login</h3>
-            <input type="email" id="adminEmail" placeholder="Email">
-            <input type="password" id="adminPass" placeholder="Password">
-            <button class="btn" id="loginBtn">Login</button>
-            <p id="loginStatus"></p>
+            <input type="email" id="logEmail" placeholder="Admin Email">
+            <input type="password" id="logPass" placeholder="Password">
+            <button class="btn" id="btnLoginAction">Sign In</button>
         </div>
 
-        <div id="uploadSection" class="panel hidden">
-            <h3>Add New Product</h3>
+        <div id="secUpload" class="panel hidden">
+            <h3>Upload New Product</h3>
             <input type="text" id="pName" placeholder="Product Name">
-            <input type="number" id="pPrice" placeholder="Price">
-            <p style="text-align:left;">Image:</p>
+            <input type="number" id="pPrice" placeholder="Price (USD)">
+            <p style="text-align:left; font-size:13px; margin:10px 0 0 5px;">Product Image:</p>
             <input type="file" id="pImg" accept="image/*">
-            <p style="text-align:left;">File:</p>
+            <p style="text-align:left; font-size:13px; margin:10px 0 0 5px;">Product File (.schem / .zip):</p>
             <input type="file" id="pFile">
-            <button class="btn" id="upBtn">Upload Product</button>
-            <p id="uploadStatus"></p>
+            <button class="btn" id="btnStartUpload">Upload to Server</button>
+            <div id="uploadStatus"></div>
         </div>
 
-        <div id="storeSection">
-            <h2>Available Products</h2>
+        <div id="secStore">
+            <h2 id="storeTitle">Store Gallery</h2>
             <div class="grid" id="productGrid"></div>
         </div>
 
@@ -235,191 +154,125 @@
         const storage = getStorage(app);
         const auth = getAuth(app);
 
-        let currentUser = null;
+        let userAccount = null;
 
-        const bodyEl = document.body;
-        const themeBtn = document.querySelector('[id="themeToggleBtn"]');
-        const sidebar = document.querySelector('[id="sidebarMenu"]');
-        const openMenuBtn = document.querySelector('[id="openMenuBtn"]');
-        const closeMenuBtn = document.querySelector('[id="closeMenuBtn"]');
-        
-        const loginSection = document.querySelector('[id="loginSection"]');
-        const uploadSection = document.querySelector('[id="uploadSection"]');
-        const storeSection = document.querySelector('[id="storeSection"]');
-        
-        const navStore = document.querySelector('[id="navStore"]');
-        const navAdmin = document.querySelector('[id="navAdmin"]');
-        const navLogin = document.querySelector('[id="navLogin"]');
-        const navLogout = document.querySelector('[id="navLogout"]');
+        // القائمة الجانبية والثيم
+        const sidebar = document.getElementById('sidebar');
+        document.getElementById('openMenu').onclick = () => sidebar.classList.add('open');
+        document.getElementById('closeMenu').onclick = () => sidebar.classList.remove('open');
+        document.getElementById('toggleTheme').onclick = () => {
+            const theme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('dirt_theme', theme);
+        };
+        if(localStorage.getItem('dirt_theme') === 'light') document.body.setAttribute('data-theme', 'light');
 
-        let currentTheme = localStorage.getItem('theme') || 'dark';
-        if (currentTheme === 'light') {
-            bodyEl.setAttribute('data-theme', 'light');
-        }
-
-        themeBtn.onclick = () => {
-            if (bodyEl.getAttribute('data-theme') === 'light') {
-                bodyEl.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                bodyEl.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
+        // التنقل بين الصفحات
+        const showSec = (id) => {
+            ['secLogin', 'secUpload', 'secStore'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            sidebar.classList.remove('open');
         };
 
-        openMenuBtn.onclick = () => sidebar.setAttribute('data-sidebar', 'open');
-        closeMenuBtn.onclick = () => sidebar.removeAttribute('data-sidebar');
+        document.getElementById('btnGoStore').onclick = () => showSec('secStore');
+        document.getElementById('btnGoAdmin').onclick = () => showSec('secUpload');
+        document.getElementById('btnGoLogin').onclick = () => showSec('secLogin');
+        document.getElementById('btnLogOut').onclick = () => signOut(auth);
 
-        const hideAllSections = () => {
-            loginSection.classList.add('hidden');
-            uploadSection.classList.add('hidden');
-            storeSection.classList.add('hidden');
-            sidebar.removeAttribute('data-sidebar');
-        };
-
-        navStore.onclick = () => { hideAllSections(); storeSection.classList.remove('hidden'); };
-        navAdmin.onclick = () => {
-            hideAllSections();
-            if (currentUser) {
-                uploadSection.classList.remove('hidden');
-            } else {
-                loginSection.classList.remove('hidden');
-            }
-        };
-        navLogin.onclick = () => { hideAllSections(); loginSection.classList.remove('hidden'); };
-        navLogout.onclick = () => { signOut(auth); hideAllSections(); storeSection.classList.remove('hidden'); };
-
+        // مراقبة حالة تسجيل الدخول
         onAuthStateChanged(auth, (user) => {
+            const adminNav = document.getElementById('btnGoAdmin');
+            const loginNav = document.getElementById('btnGoLogin');
+            const logoutNav = document.getElementById('btnLogOut');
+
             if (user) {
-                currentUser = user;
-                navLogin.classList.add('hidden');
-                navLogout.classList.remove('hidden');
-                if (!loginSection.classList.contains('hidden')) {
-                    loginSection.classList.add('hidden');
-                    uploadSection.classList.remove('hidden');
-                }
+                userAccount = user;
+                adminNav.classList.remove('hidden');
+                logoutNav.classList.remove('hidden');
+                loginNav.classList.add('hidden');
             } else {
-                currentUser = null;
-                navLogin.classList.remove('hidden');
-                navLogout.classList.add('hidden');
-                uploadSection.classList.add('hidden');
+                userAccount = null;
+                adminNav.classList.add('hidden');
+                logoutNav.classList.add('hidden');
+                loginNav.classList.remove('hidden');
+                showSec('secStore');
             }
         });
 
-        document.querySelector('[id="loginBtn"]').onclick = async () => {
-            const email = document.querySelector('[id="adminEmail"]').value;
-            const pass = document.querySelector('[id="adminPass"]').value;
-            const stat = document.querySelector('[id="loginStatus"]');
-            
+        // تسجيل الدخول
+        document.getElementById('btnLoginAction').onclick = async () => {
+            const email = document.getElementById('logEmail').value;
+            const pass = document.getElementById('logPass').value;
             try {
-                stat.innerText = "Logging in...";
                 await signInWithEmailAndPassword(auth, email, pass);
-                stat.innerText = "Success!";
-                document.querySelector('[id="adminEmail"]').value = "";
-                document.querySelector('[id="adminPass"]').value = "";
-            } catch (err) {
-                stat.innerText = "Error: " + err.message;
-            }
+                alert("Welcome Back, Owner!");
+                showSec('secUpload');
+            } catch (err) { alert("Error: " + err.message); }
         };
 
-        window.startUploadProcess = async () => {
-            if (!currentUser) return alert("Must be logged in to upload!");
+        // الرفع للسيرفر
+        document.getElementById('btnStartUpload').onclick = async () => {
+            if(!userAccount) return;
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const imgFile = document.getElementById('pImg').files[0];
+            const dataFile = document.getElementById('pFile').files[0];
+            const status = document.getElementById('uploadStatus');
 
-            const nameInput = document.querySelector('[id="pName"]');
-            const priceInput = document.querySelector('[id="pPrice"]');
-            const imgInput = document.querySelector('[id="pImg"]');
-            const fileInput = document.querySelector('[id="pFile"]');
-            const upBtn = document.querySelector('[id="upBtn"]');
-            const status = document.querySelector('[id="uploadStatus"]');
+            if(!name || !imgFile || !dataFile) return alert("Fill all data first!");
 
-            const name = nameInput.value;
-            const price = priceInput.value;
-            const imgFile = imgInput.files[0];
-            const dataFile = fileInput.files[0];
-
-            if (!name || !imgFile || !dataFile) return alert("Fill all fields");
-
-            upBtn.disabled = true;
-            status.innerText = "Processing...";
+            document.getElementById('btnStartUpload').disabled = true;
 
             try {
-                const imgPath = "images/" + Date.now() + "_" + imgFile.name;
+                const imgPath = `images/${Date.now()}_${imgFile.name}`;
                 const imgRef = ref(storage, imgPath);
                 await uploadBytesResumable(imgRef, imgFile);
                 const imgUrl = await getDownloadURL(imgRef);
 
-                const filePath = "files/" + Date.now() + "_" + dataFile.name;
+                const filePath = `files/${Date.now()}_${dataFile.name}`;
                 const fileRef = ref(storage, filePath);
-                const fileTask = uploadBytesResumable(fileRef, dataFile);
+                const uploadTask = uploadBytesResumable(fileRef, dataFile);
 
-                fileTask.on('state_changed',
-                    (snap) => {
-                        const prog = (snap.bytesTransferred / snap.totalBytes) * 100;
-                        status.innerText = "Uploading: " + Math.round(prog) + "%";
-                    },
-                    (error) => { throw error; },
+                uploadTask.on('state_changed', 
+                    (snap) => { status.innerText = `Uploading: ${Math.round((snap.bytesTransferred / snap.totalBytes) * 100)}%`; },
+                    (err) => { throw err; },
                     async () => {
-                        const fileUrl = await getDownloadURL(fileTask.snapshot.ref);
-
+                        const fileUrl = await getDownloadURL(uploadTask.snapshot.ref);
                         await addDoc(collection(db, "products"), {
-                            name: name,
-                            price: price || 0,
-                            img: imgUrl,
-                            imgPath: imgPath,
-                            file: fileUrl,
-                            filePath: filePath,
-                            createdAt: new Date()
+                            name, price, img: imgUrl, imgPath, file: fileUrl, filePath, createdAt: new Date()
                         });
-
-                        status.innerText = "Finished!";
-                        nameInput.value = "";
-                        priceInput.value = "";
-                        imgInput.value = "";
-                        fileInput.value = "";
-                        upBtn.disabled = false;
+                        alert("Product Published!");
+                        location.reload();
                     }
                 );
-            } catch (err) {
-                status.innerText = "Error: " + err.message;
-                upBtn.disabled = false;
-            }
+            } catch (err) { alert(err.message); document.getElementById('btnStartUpload').disabled = false; }
         };
 
-        document.querySelector('[id="upBtn"]').onclick = window.startUploadProcess;
-
-        window.deleteProduct = async (docId, imgPath, filePath) => {
-            if (!currentUser) return alert("Only admins can delete.");
-            if (!confirm("Delete product permanently?")) return;
-            
+        // حذف المنتج
+        window.confirmDelete = async (id, iPath, fPath) => {
+            if(!userAccount || !confirm("Delete this item permanently?")) return;
             try {
-                await deleteDoc(doc(db, "products", docId));
-                if (imgPath) await deleteObject(ref(storage, imgPath));
-                if (filePath) await deleteObject(ref(storage, filePath));
-            } catch (err) {
-                alert("Error: " + err.message);
-            }
+                await deleteDoc(doc(db, "products", id));
+                await deleteObject(ref(storage, iPath));
+                await deleteObject(ref(storage, fPath));
+            } catch (err) { console.log(err); }
         };
 
-        const productsQuery = query(collection(db, "products"), orderBy("createdAt", "desc"));
-        onSnapshot(productsQuery, (snapshot) => {
-            const grid = document.querySelector('[id="productGrid"]');
+        // عرض المنتجات
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snap) => {
+            const grid = document.getElementById('productGrid');
             grid.innerHTML = "";
-            snapshot.forEach((docSnap) => {
-                const item = docSnap.data();
-                const docId = docSnap.id;
-                
-                let adminBtns = "";
-                if (currentUser) {
-                    adminBtns = `<button class="btn btn-danger" onclick="window.deleteProduct('${docId}', '${item.imgPath}', '${item.filePath}')">Delete</button>`;
-                }
-                
+            snap.forEach((d) => {
+                const item = d.data();
+                const id = d.id;
                 grid.innerHTML += `
                     <div class="item-card">
-                        <img src="${item.img}" alt="Item">
+                        <img src="${item.img}">
                         <h3>${item.name}</h3>
-                        <p>Price: ${item.price} USD</p>
+                        <p>Price: ${item.price}$</p>
                         <button class="btn" onclick="window.open('${item.file}')">Download</button>
-                        ${adminBtns}
+                        ${userAccount ? `<button class="btn btn-danger" onclick="window.confirmDelete('${id}', '${item.imgPath}', '${item.filePath}')">Delete Item</button>` : ''}
                     </div>
                 `;
             });
