@@ -10,22 +10,21 @@
             --primary-glow: rgba(46, 184, 87, 0.4);
             --danger: #ff4d4d;
             --bg-dark: #0f0f0f;
-            --card-glass: rgba(255, 255, 255, 0.05);
+            --card-glass: rgba(255, 255, 255, 0.06);
             --text: #f4f4f4;
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="light"] {
             --bg-dark: #f0f2f5;
             --card-glass: rgba(0, 0, 0, 0.05);
             --text: #1a1a1a;
-            --border: rgba(0,0,0,0.1);
         }
 
         body {
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('background.png');
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('background.png');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -35,21 +34,21 @@
             transition: var(--transition);
         }
 
-        /* توهج الخلفية */
-        body::before {
+        /* Ambient Glow Effect */
+        body::after {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, var(--primary-glow) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: -1;
+            background: radial-gradient(circle at 5% 5%, var(--primary-glow) 0%, transparent 40%),
+                        radial-gradient(circle at 95% 95%, var(--primary-glow) 0%, transparent 40%);
+            pointer-events: none; z-index: -1;
         }
 
         /* Navbar */
         .navbar {
-            backdrop-filter: blur(15px);
-            background: rgba(0,0,0,0.3);
-            padding: 15px 30px;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.4);
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -58,220 +57,232 @@
         }
 
         .theme-toggle {
-            font-size: 24px;
+            font-size: 26px;
             cursor: pointer;
             transition: var(--transition);
             user-select: none;
         }
-        .theme-toggle:hover { transform: rotate(30deg) scale(1.2); }
+        .theme-toggle:hover { transform: scale(1.2) rotate(15deg); }
 
-        /* Sidebar */
+        /* Sidebar Navigation */
         .sidebar {
-            position: fixed; left: -280px; top: 0; width: 260px; height: 100vh;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(20px);
+            position: fixed; left: -300px; top: 0; width: 280px; height: 100vh;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(25px);
             transition: var(--transition);
             z-index: 2000;
-            padding-top: 80px;
-            border-right: 1px solid var(--primary);
+            padding-top: 100px;
+            border-right: 2px solid var(--primary);
         }
-        .sidebar.open { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+        .sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
 
         .sidebar-item {
-            padding: 15px 25px;
-            margin: 8px 15px;
-            border-radius: 50px;
+            padding: 18px 30px;
+            margin: 10px 20px;
+            border-radius: 100px;
             color: var(--text);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
             transition: var(--transition);
             cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         .sidebar-item:hover {
             background: var(--primary);
             color: white;
-            transform: translateX(10px);
-            box-shadow: 0 5px 15px var(--primary-glow);
+            transform: translateX(15px);
+            box-shadow: 0 10px 20px var(--primary-glow);
         }
 
-        /* Containers & Panels */
-        .container { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        /* Main Container & Sections */
+        .container { 
+            padding: 50px 20px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            min-height: 80vh;
+        }
         
+        .section-view {
+            animation: pageIn 0.6s ease-out forwards;
+        }
+
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
         .panel {
             background: var(--card-glass);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 24px;
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 35px;
             border: 1px solid rgba(255,255,255,0.1);
-            max-width: 450px;
-            margin: 20px auto;
-            animation: slideUp 0.6s ease-out;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 500px;
+            margin: 40px auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Inputs & Buttons */
-        input, select {
-            width: 100%; padding: 14px 20px; margin: 12px 0;
-            border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2); color: white;
+        /* UI Elements */
+        input {
+            width: 100%; padding: 16px 25px; margin: 15px 0;
+            border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3); color: white;
             outline: none; transition: var(--transition);
+            box-sizing: border-box;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
 
         .btn {
             background: var(--primary);
             color: white; border: none;
-            padding: 14px 28px;
-            border-radius: 50px;
+            padding: 16px 30px;
+            border-radius: 100px;
             cursor: pointer;
             width: 100%;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             transition: var(--transition);
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px var(--primary-glow);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px var(--primary-glow);
         }
-        .btn:active { transform: scale(0.98); }
+        .btn:active { transform: scale(0.95); }
 
         .btn-danger { background: var(--danger); }
-        .btn-danger:hover { box-shadow: 0 8px 25px rgba(255, 77, 77, 0.4); }
 
-        /* Store Grid */
+        /* Store Design */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 35px;
             margin-top: 40px;
         }
 
         .item-card {
             background: var(--card-glass);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 20px;
+            backdrop-filter: blur(12px);
+            border-radius: 35px;
+            padding: 25px;
             border: 1px solid rgba(255,255,255,0.1);
             transition: var(--transition);
             position: relative;
-            overflow: hidden;
         }
         .item-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-15px) scale(1.02);
             border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
 
         .item-card img {
-            width: 100%; height: 200px;
-            object-fit: cover; border-radius: 18px;
-            margin-bottom: 15px;
+            width: 100%; height: 220px;
+            object-fit: cover; border-radius: 25px;
+            margin-bottom: 20px;
         }
 
-        /* Badge Free */
         .free-badge {
             background: #2eb857;
             color: white;
-            padding: 5px 15px;
-            border-radius: 50px;
+            padding: 6px 18px;
+            border-radius: 100px;
             font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 0 15px #2eb857;
+            font-weight: 900;
+            box-shadow: 0 0 20px #2eb857;
             display: inline-block;
-            animation: pulseGlow 2s infinite;
+            animation: pulseGlow 2.5s infinite;
         }
 
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 5px #2eb857; }
-            50% { box-shadow: 0 0 20px #2eb857; }
-            100% { box-shadow: 0 0 5px #2eb857; }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px #2eb857; }
+            50% { transform: scale(1.1); box-shadow: 0 0 25px #2eb857; }
         }
 
-        /* Admin Management List */
         .admin-list-item {
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.2); padding: 10px 15px;
-            margin: 5px 0; border-radius: 12px;
+            background: rgba(0,0,0,0.4); padding: 15px 20px;
+            margin: 10px 0; border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        #uploadStatus { color: var(--primary); margin-top: 15px; font-size: 14px; }
+        .hidden { display: none !important; }
 
         @media (max-width: 768px) {
-            .navbar { padding: 15px; }
-            .grid { grid-template-columns: 1fr; }
+            .navbar { padding: 15px 20px; }
+            .panel { padding: 25px; margin: 10px; }
         }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <button class="theme-toggle" style="background:none; border:none; color:inherit;" id="openMenu">☰</button>
-            <h2 style="margin:0; font-weight: 800; letter-spacing: -1px;">DIRT STORE <span style="color:var(--primary)">PRO</span></h2>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="theme-toggle" id="openMenu">☰</div>
+            <h2 style="margin:0; font-weight: 900; letter-spacing: -1.5px; font-size: 26px;">DIRT <span style="color:var(--primary)">MC</span></h2>
         </div>
         <div class="theme-toggle" id="toggleTheme">☀</div>
     </nav>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-item" id="btnGoStore">🏠 Store Home</div>
-        <div class="sidebar-item hidden" id="btnGoAdmin">📦 Admin Upload</div>
-        <div class="sidebar-item hidden" id="btnGoManage">👥 Manage Admins</div>
-        <div class="sidebar-item" id="btnGoLogin">🔑 Login</div>
-        <div class="sidebar-item hidden" id="btnLogOut" style="color:var(--danger)">🚪 Logout</div>
+        <div class="sidebar-item" id="navStore">🏠 Store Home</div>
+        <div class="sidebar-item hidden" id="navUpload">📦 Publish Item</div>
+        <div class="sidebar-item hidden" id="navManage">👥 Admin Panel</div>
+        <div class="sidebar-item" id="navLogin">🔐 Staff Login</div>
+        <div class="sidebar-item hidden" id="btnLogOut" style="color:var(--danger)">🚪 Sign Out</div>
     </div>
 
     <div class="container">
         
-        <div id="secLogin" class="panel hidden">
-            <h3 style="margin-top:0">Welcome Back</h3>
-            <p style="color:gray; font-size: 14px;">Please login to access admin tools</p>
-            <input type="email" id="logEmail" placeholder="Email Address">
-            <input type="password" id="logPass" placeholder="Password">
-            <button class="btn" id="btnLoginAction">Sign In Now</button>
-        </div>
-
-        <div id="secManage" class="panel hidden">
-            <h3>Manage Crew</h3>
-            <div id="adminListContainer" style="margin-bottom: 20px;">
-                </div>
-            <hr style="opacity: 0.1">
-            <h4>Add New Admin</h4>
-            <input type="email" id="newAdminEmail" placeholder="Admin Email">
-            <input type="password" id="newAdminPass" placeholder="Password">
-            <button class="btn" id="btnAddAdminAction">Authorize Admin</button>
-        </div>
-
-        <div id="secUpload" class="panel hidden">
-            <h3>Create Product</h3>
-            <input type="text" id="pName" placeholder="Product Name">
-            <input type="number" id="pPrice" placeholder="Price (0 for Free)">
-            <p style="text-align:left; font-size:12px; margin:5px; opacity:0.6;">Cover Image:</p>
-            <input type="file" id="pImgFile" accept="image/*">
-            <input type="text" id="pImgURL" placeholder="Or Image URL">
-            <p style="text-align:left; font-size:12px; margin:5px; opacity:0.6;">Minecraft File (.zip/.schem):</p>
-            <input type="file" id="pFile">
-            <button class="btn" id="btnStartUpload">Publish Item</button>
-            <div id="uploadStatus"></div>
-        </div>
-
-        <div id="secStore">
+        <div id="secStore" class="section-view">
+            <h1 style="text-align:center; font-size: 3rem; margin-bottom: 10px;">Marketplace</h1>
+            <p style="text-align:center; opacity:0.6;">Premium content for DirtMc Players</p>
             <div class="grid" id="productGrid"></div>
+        </div>
+
+        <div id="secLogin" class="section-view hidden">
+            <div class="panel">
+                <h2 style="margin-top:0; text-align:center;">Staff Authentication</h2>
+                <input type="email" id="logEmail" placeholder="Email Address">
+                <input type="password" id="logPass" placeholder="Password">
+                <button class="btn" id="btnLoginAction">Secure Login</button>
+            </div>
+        </div>
+
+        <div id="secManage" class="section-view hidden">
+            <div class="panel" style="max-width: 600px;">
+                <h2 style="text-align:center;">Admin Management</h2>
+                <div id="adminListContainer"></div>
+                <hr style="opacity: 0.1; margin: 30px 0;">
+                <h3 style="text-align:center;">Hire New Staff</h3>
+                <input type="email" id="newAdminEmail" placeholder="New Staff Email">
+                <input type="password" id="newAdminPass" placeholder="Temporary Password">
+                <button class="btn" id="btnAddAdminAction">Confirm Appointment</button>
+            </div>
+        </div>
+
+        <div id="secUpload" class="section-view hidden">
+            <div class="panel">
+                <h2 style="text-align:center;">Publish New Content</h2>
+                <input type="text" id="pName" placeholder="Product Title">
+                <input type="number" id="pPrice" placeholder="Price (USD) - 0 for Free">
+                <p style="margin:10px 0 5px 15px; font-size:12px; opacity:0.5;">Product Cover:</p>
+                <input type="file" id="pImgFile" accept="image/*">
+                <input type="text" id="pImgURL" placeholder="Or Image Direct Link">
+                <p style="margin:10px 0 5px 15px; font-size:12px; opacity:0.5;">Minecraft File (.zip/.schem):</p>
+                <input type="file" id="pFile">
+                <button class="btn" id="btnStartUpload">Upload to Supabase</button>
+                <div id="uploadStatus" style="text-align:center; margin-top:15px; color:var(--primary);"></div>
+            </div>
         </div>
 
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -290,97 +301,86 @@
         const auth = getAuth(app);
         const secondaryAuth = getAuth(secondaryApp);
 
-        const supabaseUrl = 'https://nimidighcuwhsiuyuftg.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbWlkaWdoY3V3aHNpdXl1ZnRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTQxMDgsImV4cCI6MjA4OTE3MDEwOH0.MKgIaWwhj5dDLq5fo9VKWRdg9geeaID9E05BxSqmB40';
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = createClient('https://nimidighcuwhsiuyuftg.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbWlkaWdoY3V3aHNpdXl1ZnRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTQxMDgsImV4cCI6MjA4OTE3MDEwOH0.MKgIaWwhj5dDLq5fo9VKWRdg9geeaID9E05BxSqmB40');
 
-        let userAccount = null;
+        let currentUser = null;
 
-        // UI Helpers
-        const sidebar = document.getElementById('sidebar');
-        const showSec = (id) => {
-            ['secLogin', 'secUpload', 'secStore', 'secManage'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        // Navigation Engine
+        const showSection = (id) => {
+            document.querySelectorAll('.section-view').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            sidebar.classList.remove('open');
+            document.getElementById('sidebar').classList.remove('open');
             window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
-        document.getElementById('openMenu').onclick = () => sidebar.classList.toggle('open');
-        document.getElementById('btnGoStore').onclick = () => showSec('secStore');
-        document.getElementById('btnGoAdmin').onclick = () => showSec('secUpload');
-        document.getElementById('btnGoManage').onclick = () => showSec('secManage');
-        document.getElementById('btnGoLogin').onclick = () => showSec('secLogin');
-        document.getElementById('btnLogOut').onclick = () => signOut(auth);
+        document.getElementById('navStore').onclick = () => showSection('secStore');
+        document.getElementById('navLogin').onclick = () => showSection('secLogin');
+        document.getElementById('navUpload').onclick = () => showSection('secUpload');
+        document.getElementById('navManage').onclick = () => showSection('secManage');
 
-        // Auth Observer
-        onAuthStateChanged(auth, (user) => {
-            userAccount = user;
-            document.getElementById('btnGoAdmin').classList.toggle('hidden', !user);
-            document.getElementById('btnGoManage').classList.toggle('hidden', !user);
-            document.getElementById('btnLogOut').classList.toggle('hidden', !user);
-            document.getElementById('btnGoLogin').classList.toggle('hidden', !!user);
-            if(user) fetchAdminList();
-            if(!user) showSec('secStore');
-        });
-
-        // Theme Toggle
+        // Theme Toggle Logic
         const themeBtn = document.getElementById('toggleTheme');
         themeBtn.onclick = () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const next = isDark ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
             themeBtn.innerText = isDark ? '🌜' : '☀';
             themeBtn.style.transform = "rotate(360deg)";
-            setTimeout(() => themeBtn.style.transform = "rotate(0deg)", 400);
+            setTimeout(() => themeBtn.style.transform = "rotate(0deg)", 500);
         };
 
-        // Manage Admin List
-        async function fetchAdminList() {
-            const container = document.getElementById('adminListContainer');
+        // Auth Logic
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            document.getElementById('navUpload').classList.toggle('hidden', !user);
+            document.getElementById('navManage').classList.toggle('hidden', !user);
+            document.getElementById('btnLogOut').classList.toggle('hidden', !user);
+            document.getElementById('navLogin').classList.toggle('hidden', !!user);
+            if(user) fetchAdmins();
+            if(!user) showSection('secStore');
+        });
+
+        document.getElementById('btnLoginAction').onclick = async () => {
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('logEmail').value, document.getElementById('logPass').value);
+                showSection('secStore');
+            } catch (e) { alert("Invalid Credentials"); }
+        };
+
+        document.getElementById('btnLogOut').onclick = () => signOut(auth);
+
+        // Manage Admins
+        function fetchAdmins() {
             onSnapshot(collection(db, "admins"), (snap) => {
+                const container = document.getElementById('adminListContainer');
                 container.innerHTML = "";
                 snap.forEach(d => {
-                    const ad = d.data();
                     container.innerHTML += `
                         <div class="admin-list-item">
-                            <span>${ad.email}</span>
-                            <button onclick="window.removeAdmin('${d.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer;">✖</button>
+                            <span><b>${d.data().email}</b></span>
+                            <button class="btn btn-danger" style="width:auto; padding:8px 15px; margin:0;" onclick="window.deleteAdmin('${d.id}')">Fire</button>
                         </div>`;
                 });
             });
         }
 
-        window.removeAdmin = async (id) => {
-            if(confirm("Remove this admin's access?")) {
-                await deleteDoc(doc(db, "admins", id));
-                alert("Admin record removed. Note: To fully revoke access, disable their account in Firebase Console.");
-            }
+        window.deleteAdmin = async (id) => {
+            if(confirm("Revoke admin access?")) await deleteDoc(doc(db, "admins", id));
         };
 
         document.getElementById('btnAddAdminAction').onclick = async () => {
             const email = document.getElementById('newAdminEmail').value;
             const pass = document.getElementById('newAdminPass').value;
-            if(!email || !pass) return;
             try {
                 const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-                await setDoc(doc(db, "admins", cred.user.uid), { email: email });
-                alert("Admin Authorized!");
+                await setDoc(doc(db, "admins", cred.user.uid), { email });
+                alert("New Admin Appointed!");
                 document.getElementById('newAdminEmail').value = "";
                 document.getElementById('newAdminPass').value = "";
-            } catch (err) { alert(err.message); }
+            } catch (e) { alert(e.message); }
         };
 
-        // Login
-        document.getElementById('btnLoginAction').onclick = async () => {
-            try {
-                await signInWithEmailAndPassword(auth, document.getElementById('logEmail').value, document.getElementById('logPass').value);
-                showSec('secStore');
-            } catch (err) { alert("Access Denied."); }
-        };
-
-        // Upload
+        // Upload Logic
         document.getElementById('btnStartUpload').onclick = async () => {
-            const btn = document.getElementById('btnStartUpload');
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
             const imgFile = document.getElementById('pImgFile').files[0];
@@ -388,17 +388,15 @@
             const dataFile = document.getElementById('pFile').files[0];
             const status = document.getElementById('uploadStatus');
 
-            if(!name || price === "" || (!imgFile && !imgURL) || !dataFile) return alert("Fill all fields!");
+            if(!name || price==="" || (!imgFile && !imgURL) || !dataFile) return alert("Fill all data first!");
 
-            btn.disabled = true;
-            status.innerText = "Connecting to Supabase...";
-
+            status.innerText = "Processing Assets...";
             try {
                 let finalImg = imgURL;
                 if(imgFile) {
-                    const imgPath = `images/${Date.now()}_${imgFile.name}`;
-                    await supabase.storage.from('dirt-assets').upload(imgPath, imgFile);
-                    finalImg = (await supabase.storage.from('dirt-assets').getPublicUrl(imgPath)).data.publicUrl;
+                    const path = `images/${Date.now()}_${imgFile.name}`;
+                    await supabase.storage.from('dirt-assets').upload(path, imgFile);
+                    finalImg = (await supabase.storage.from('dirt-assets').getPublicUrl(path)).data.publicUrl;
                 }
 
                 const filePath = `files/${Date.now()}_${dataFile.name}`;
@@ -409,38 +407,40 @@
                     name, price: Number(price), img: finalImg, file: finalFile, filePath, createdAt: new Date()
                 });
 
-                alert("Product Live on Store!");
+                alert("Product Published!");
+                showSection('secStore');
                 location.reload();
-            } catch (e) { alert(e.message); btn.disabled = false; }
+            } catch (e) { alert(e.message); }
         };
 
-        // Render Store
+        // Render Marketplace
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snap) => {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = "";
             snap.forEach(d => {
                 const p = d.data();
-                const priceDisplay = p.price == 0 ? '<span class="free-badge">FREE</span>' : `<span style="font-weight:bold; font-size:1.2rem;">$${p.price}</span>`;
+                const priceBadge = p.price == 0 ? '<span class="free-badge">FREE</span>' : `<span style="font-weight:900; font-size:1.4rem; color:var(--primary)">$${p.price}</span>`;
                 grid.innerHTML += `
                     <div class="item-card">
-                        <img src="${p.img}" alt="Product">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <h3 style="margin:0">${p.name}</h3>
-                            ${priceDisplay}
+                        <img src="${p.img}" alt="Item">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <h3 style="margin:0; font-size:1.5rem;">${p.name}</h3>
+                            ${priceBadge}
                         </div>
-                        <button class="btn" onclick="window.open('${p.file}')">Get File</button>
-                        ${userAccount ? `<button class="btn btn-danger" onclick="window.confirmDelete('${d.id}', '${p.filePath}')">Delete</button>` : ''}
+                        <button class="btn" onclick="window.open('${p.file}')">Get Schematic</button>
+                        ${currentUser ? `<button class="btn btn-danger" onclick="window.deleteItem('${d.id}', '${p.filePath}')">Delete</button>` : ''}
                     </div>`;
             });
         });
 
-        window.confirmDelete = async (id, path) => {
-            if(confirm("Delete this product?")) {
+        window.deleteItem = async (id, path) => {
+            if(confirm("Delete permanently?")) {
                 await deleteDoc(doc(db, "products", id));
                 if(path) await supabase.storage.from('dirt-assets').remove([path]);
             }
         };
 
+        document.getElementById('openMenu').onclick = () => document.getElementById('sidebar').classList.add('open');
     </script>
 </body>
 </html>
