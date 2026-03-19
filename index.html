@@ -52,8 +52,16 @@
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .theme-toggle { font-size: 26px; cursor: pointer; transition: var(--transition); user-select: none; }
-        .theme-toggle:hover { transform: scale(1.2) rotate(15deg); }
+        /* Discord Icon in Header */
+        .discord-header-btn {
+            height: 35px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .discord-header-btn:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 5px #7289da);
+        }
 
         /* Sidebar Styling & RTL Support */
         .sidebar {
@@ -127,7 +135,7 @@
         
         .loading-logo { font-size: 3rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 20px; }
         .loading-logo .dirt { color: white; }
-        .loading-logo .store { color: var(--primary); }
+        .loading-logo .store { color: white; } /* Store now white as requested */
         
         .loading-bar-container { width: 250px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
         .loading-bar { height: 100%; background: var(--primary); width: 0%; animation: loadAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
@@ -212,9 +220,9 @@
     <nav class="navbar">
         <div style="display: flex; align-items: center; gap: 20px;">
             <div class="theme-toggle" id="openMenu">☰</div>
-            <h2 style="margin:0; font-weight: 900; letter-spacing: -1.5px; font-size: 26px;">Dirt <span style="color:var(--primary)">Store</span></h2>
+            <h2 style="margin:0; font-weight: 900; letter-spacing: -1.5px; font-size: 26px;">Dirt Store</h2>
         </div>
-        <div class="theme-toggle" id="toggleTheme">☀</div>
+        <img src="dis.png" alt="Discord" class="discord-header-btn" id="headerDiscordBtn">
     </nav>
 
     <div class="sidebar" id="sidebar">
@@ -222,7 +230,7 @@
         <div class="sidebar-item" id="navStore"><span data-i18n="nav_store">- Store Home</span></div>
         <div class="sidebar-item hidden" id="navUpload"><span data-i18n="nav_upload">- Publish Item</span></div>
         <div class="sidebar-item hidden" id="navManage"><span data-i18n="nav_manage">- Admin Panel</span></div>
-        <div class="sidebar-item" id="navLogin"><span data-i18n="nav_login">- Staff Login</span></div>
+        <div class="sidebar-item hidden" id="navDisManager">- <span data-i18n="nav_dis">- Dis Manager</span></div> <div class="sidebar-item" id="navLogin"><span data-i18n="nav_login">- Staff Login</span></div>
         
         <div class="sidebar-item" id="navLangToggle">
             <span>🌐 <span data-i18n="nav_lang">Language</span></span>
@@ -272,6 +280,16 @@
                 <input type="email" id="newAdminEmail" placeholder="New Staff Email">
                 <input type="password" id="newAdminPass" placeholder="Temporary Password">
                 <button class="btn" id="btnAddAdminAction" data-i18n="hire_btn">Confirm Appointment</button>
+            </div>
+        </div>
+
+        <div id="secDisManager" class="section-view hidden">
+            <div class="panel">
+                <h2 data-i18n="dis_title" style="text-align:center;">Discord Link Manager</h2>
+                <p style="text-align:center; opacity:0.6; font-size:14px; margin-bottom:20px;">Enter the invite link that opens when users click the Discord icon.</p>
+                <input type="url" id="disLinkInput" placeholder="https://discord.gg/yourinvite">
+                <button class="btn" id="btnSaveDisLink" data-i18n="save_btn">Save Link</button>
+                <div id="disStatus" style="text-align:center; margin-top:15px; color:var(--primary);"></div>
             </div>
         </div>
 
@@ -343,23 +361,26 @@
         let currentUser = null;
         let currentLang = 'en';
         let currentFormNeedsPhoto = true;
+        let activeDiscordLink = "https://discord.gg/dirtmc"; // Default
 
         // 🌐 Dictionary
         const i18n = {
             en: {
                 nav_store: "Store Home", nav_upload: "Publish Item", nav_manage: "Admin Panel",
-                nav_login: "Staff Login", nav_lang: "Language", nav_logout: "Sign Out",
-                market_title: "Marketplace", market_desc: "Get the best schem and skripts. Enjoy!", search_ph: "Search items...",
+                nav_dis: "Dis Manager", nav_login: "Staff Login", nav_lang: "Language", nav_logout: "Sign Out",
+                market_title: "Marketplace", market_desc: "Get the best schem and skripts. Enjoy!", search_ph: "Search...",
                 login_title: "Staff Authentication", login_btn: "Secure Login",
                 admin_title: "Admin Management", hire_title: "Hire New Staff", hire_btn: "Confirm Appointment",
+                dis_title: "Discord Link Manager", save_btn: "Save Link",
                 upload_title: "Products List", get_it: "Download", delete: "Delete", free: "FREE", total_visitors: "Total Visitors:"
             },
             ar: {
                 nav_store: "الرئيسية", nav_upload: "نشر وإدارة السلع", nav_manage: "لوحة المشرفين",
-                nav_login: "دخول الإدارة", nav_lang: "اللغة", nav_logout: "تسجيل الخروج",
-                market_title: "المتجر", market_desc: "احصل على أفضل السكربتات والمابات!", search_ph: "ابحث عن سلعة...",
-                login_title: "دخول الإدارة", login_btn: "دخول آمن",
-                admin_title: "إدارة المشرفين", hire_title: "إضافة مشرف", hire_btn: "تأكيد الإضافة",
+                nav_dis: "ادارة الديسكورد", nav_login: "تسجيل الدخول", nav_lang: "اللغة", nav_logout: "تسجيل الخروج",
+                market_title: "المتجر", market_desc: "احصل على أفضل السكربتات والمابات، استمتع!", search_ph: "ابحث عن سلعة...",
+                login_title: "تسجيل دخول الإدارة", login_btn: "دخول آمن",
+                admin_title: "إدارة المشرفين", hire_title: "تعيين مشرف جديد", hire_btn: "تأكيد التعيين",
+                dis_title: "ادارة رابط الديسكورد", save_btn: "حفظ الرابط",
                 upload_title: "قائمة المنتجات", get_it: "تحميل", delete: "حذف", free: "مجاناً", total_visitors: "إجمالي الزوار:"
             }
         };
@@ -376,6 +397,22 @@
             });
         };
         handleGlobalVisitor();
+
+        // 🔗 Fetch Discord Link Realtime
+        const handleDiscordLinkFetch = () => {
+            const disDoc = doc(db, "config", "discord");
+            onSnapshot(disDoc, (snap) => {
+                if(snap.exists()) {
+                    activeDiscordLink = snap.data().link;
+                    document.getElementById('disLinkInput').value = activeDiscordLink;
+                }
+            });
+        };
+        handleDiscordLinkFetch();
+
+        document.getElementById('headerDiscordBtn').onclick = () => {
+            window.open(activeDiscordLink, '_blank');
+        };
 
         // 🌐 Cinematic Language System
         window.applyLanguage = (lang) => {
@@ -395,9 +432,7 @@
         };
 
         window.triggerCinematicLang = (lang, btnElement) => {
-            // Animate Button into Cart
             btnElement.style.animation = "dropToCart 0.8s forwards";
-            
             setTimeout(() => {
                 document.getElementById('langModal').classList.add('hidden');
                 showLoadingScreen(() => { applyLanguage(lang); });
@@ -413,20 +448,12 @@
         const showLoadingScreen = (callback) => {
             const loader = document.getElementById('loadingScreen');
             loader.classList.remove('hidden');
-            
-            // Re-trigger CSS animation
             const bar = loader.querySelector('.loading-bar');
             bar.style.animation = 'none';
-            bar.offsetHeight; /* trigger reflow */
+            bar.offsetHeight;
             bar.style.animation = 'loadAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-
-            setTimeout(() => {
-                if(callback) callback();
-            }, 500); // Change language mid-loading
-
-            setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 1600);
+            setTimeout(() => { if(callback) callback(); }, 500);
+            setTimeout(() => { loader.classList.add('hidden'); }, 1600);
         };
 
         const savedLang = localStorage.getItem('dirt_lang');
@@ -436,12 +463,11 @@
             applyLanguage(savedLang);
         }
 
-        // Sidebar Actions
+        // UI Helpers
         document.getElementById('openMenu').onclick = () => document.getElementById('sidebar').classList.add('open');
         document.getElementById('closeSidebar').onclick = () => document.getElementById('sidebar').classList.remove('open');
         document.getElementById('navLangToggle').onclick = () => document.getElementById('sidebarLangSubmenu').classList.toggle('active');
 
-        // Navigation
         const showSection = (id) => {
             document.querySelectorAll('.section-view').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
@@ -453,23 +479,21 @@
         document.getElementById('navLogin').onclick = () => showSection('secLogin');
         document.getElementById('navUpload').onclick = () => { showSection('secUpload'); window.togglePublishForm(false); };
         document.getElementById('navManage').onclick = () => showSection('secManage');
+        document.getElementById('navDisManager').onclick = () => showSection('secDisManager'); // New
 
-        // Theme
+        // Theme (Disabled text coloring, just dark/light bg)
         const themeBtn = document.getElementById('toggleTheme');
         themeBtn.onclick = () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
             themeBtn.innerText = isDark ? '🌜' : '☀';
-            themeBtn.style.transform = "rotate(360deg)";
-            setTimeout(() => themeBtn.style.transform = "rotate(0deg)", 500);
         };
 
         // Auth
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            document.getElementById('navUpload').classList.toggle('hidden', !user);
-            document.getElementById('navManage').classList.toggle('hidden', !user);
-            document.getElementById('btnLogOut').classList.toggle('hidden', !user);
+            const adminItems = ['navUpload', 'navManage', 'navDisManager', 'btnLogOut'];
+            adminItems.forEach(id => document.getElementById(id).classList.toggle('hidden', !user));
             document.getElementById('navLogin').classList.toggle('hidden', !!user);
             if(user) fetchAdmins();
             if(!user) showSection('secStore');
@@ -480,26 +504,34 @@
         };
         document.getElementById('btnLogOut').onclick = () => signOut(auth);
 
-        // Publish Flow Functions
+        // Admin - Dis Manager (New)
+        document.getElementById('btnSaveDisLink').onclick = async () => {
+            const status = document.getElementById('disStatus');
+            const newLink = document.getElementById('disLinkInput').value;
+            if(!newLink || !newLink.startsWith('http')) return alert("Enter valid URL");
+            status.innerText = "Saving...";
+            try {
+                await setDoc(doc(db, "config", "discord"), { link: newLink });
+                status.innerText = "Link Saved Successfully!";
+                setTimeout(()=> status.innerText = "", 2000);
+            } catch(e) { alert("Error saving: " + e.message); status.innerText = ""; }
+        };
+
+        // Admin - Publish Flow
         window.togglePublishForm = (showForm) => {
             document.getElementById('publishTableMode').classList.toggle('hidden', showForm);
             document.getElementById('publishFormMode').classList.toggle('hidden', !showForm);
-            document.getElementById('actualForm').classList.add('hidden'); // Reset choice
+            document.getElementById('actualForm').classList.add('hidden');
         };
 
         window.setFormType = (needsPhoto) => {
             currentFormNeedsPhoto = needsPhoto;
             document.getElementById('actualForm').classList.remove('hidden');
             document.getElementById('photoFields').classList.toggle('hidden', !needsPhoto);
-            
-            document.getElementById('btnTypePhoto').style.background = needsPhoto ? 'var(--primary)' : 'transparent';
-            document.getElementById('btnTypePhoto').style.color = needsPhoto ? 'white' : 'var(--primary)';
-            
-            document.getElementById('btnTypeNoPhoto').style.background = !needsPhoto ? 'var(--primary)' : 'transparent';
-            document.getElementById('btnTypeNoPhoto').style.color = !needsPhoto ? 'white' : 'var(--primary)';
+            document.getElementById('btnTypePhoto').className = needsPhoto ? 'btn' : 'btn btn-secondary';
+            document.getElementById('btnTypeNoPhoto').className = !needsPhoto ? 'btn' : 'btn btn-secondary';
         };
 
-        // Upload
         document.getElementById('btnStartUpload').onclick = async () => {
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
@@ -529,8 +561,7 @@
 
                 alert("Product Published!");
                 window.togglePublishForm(false);
-                document.getElementById('pName').value = '';
-                document.getElementById('pFile').value = '';
+                document.getElementById('pName').value = ''; document.getElementById('pFile').value = '';
                 status.innerText = "";
             } catch (e) { alert(e.message); status.innerText = ""; }
         };
@@ -540,7 +571,6 @@
             try {
                 const downloadKey = 'dirt_dl_' + id;
                 if (!localStorage.getItem(downloadKey)) {
-                    // First time downloading this specific item
                     const docRef = doc(db, "products", id);
                     await updateDoc(docRef, { downloads: increment(1) });
                     localStorage.setItem(downloadKey, 'true');
@@ -549,7 +579,7 @@
             } catch (e) { window.open(fileUrl, '_blank'); }
         };
 
-        // Realtime Data & Rendering
+        // Render Data
         let cachedSnap = null;
         window.renderStoreData = (filter = "") => {
             if (!cachedSnap) return;
@@ -559,27 +589,14 @@
             
             cachedSnap.forEach(d => {
                 const p = d.data();
-                
-                // Admin List Render
                 if(currentUser) {
-                    adminList.innerHTML += `
-                        <div class="admin-list-item" style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <h4 style="margin:0;">${p.name}</h4>
-                                <small style="opacity:0.6;">${p.hasPhoto === false ? 'No Photo' : 'Has Photo'} | Downloads: ${p.downloads || 0}</small>
-                            </div>
-                            <button class="btn btn-danger" style="width:auto; padding:5px 15px; margin:0;" onclick="window.deleteItem('${d.id}', '${p.filePath}')">🗑️</button>
-                        </div>
-                    `;
+                    adminList.innerHTML += `<div class="admin-list-item"><span><b>${p.name}</b></span><button class="btn btn-danger" style="width:auto; padding:5px 15px; margin:0;" onclick="window.deleteItem('${d.id}', '${p.filePath}')">🗑️</button></div>`;
                 }
 
-                // Store Grid Render
                 if (p.name.toLowerCase().includes(filter.toLowerCase())) {
                     const priceText = p.price == 0 ? i18n[currentLang].free : `$${p.price}`;
-                    const priceBadge = p.price == 0 ? `<span class="free-badge">${priceText}</span>` : `<span style="font-weight:900; font-size:1.4rem; color:var(--primary)">${priceText}</span>`;
-                    
                     const visualContent = p.hasPhoto === false || !p.img 
-                        ? `<div class="no-photo-card"><h2 style="margin:0; color:var(--primary)">${p.name}</h2><p style="opacity:0.6; font-size:12px;">Script / Config File</p></div>`
+                        ? `<div class="no-photo-card"><h2 style="margin:0; color:var(--primary)">${p.name}</h2></div>`
                         : `<img src="${p.img}" alt="Item">`;
 
                     grid.innerHTML += `
@@ -587,16 +604,12 @@
                             ${visualContent}
                             <div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                                    <h3 style="margin:0; font-size:1.3rem;">${p.name}</h3>
-                                    ${priceBadge}
+                                    <h3 style="margin:0;">${p.name}</h3>
+                                    <span style="font-weight:900; font-size:1.4rem; color:var(--primary)">${priceText}</span>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:10px;">
-                                    <button class="btn" style="flex:1; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="window.handleDownload('${d.id}', '${p.file}')">
-                                        ⬇️ ${i18n[currentLang].get_it}
-                                    </button>
-                                    <div class="stats-badge" style="margin-top:0;">
-                                        ⬇️ <span>${p.downloads || 0}</span>
-                                    </div>
+                                    <button class="btn" style="flex:1;" onclick="window.handleDownload('${d.id}', '${p.file}')">⬇️ ${i18n[currentLang].get_it}</button>
+                                    <div class="stats-badge" style="margin-top:0;">⬇️ <span>${p.downloads || 0}</span></div>
                                 </div>
                             </div>
                         </div>`;
@@ -604,11 +617,7 @@
             });
         };
 
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snap) => {
-            cachedSnap = snap;
-            window.renderStoreData(document.getElementById('searchInput').value);
-        });
-
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snap) => { cachedSnap = snap; window.renderStoreData(document.getElementById('searchInput').value); });
         document.getElementById('searchInput').oninput = (e) => window.renderStoreData(e.target.value);
 
         window.deleteItem = async (id, path) => {
@@ -618,7 +627,6 @@
             }
         };
 
-        // Fetch Admins
         function fetchAdmins() {
             onSnapshot(collection(db, "admins"), (snap) => {
                 const container = document.getElementById('adminListContainer');
@@ -629,18 +637,10 @@
             });
         }
         window.deleteAdmin = async (id) => { if(confirm("Revoke admin access?")) await deleteDoc(doc(db, "admins", id)); };
-
-        // Add Admin
         document.getElementById('btnAddAdminAction').onclick = async () => {
-            const email = document.getElementById('newAdminEmail').value;
-            const pass = document.getElementById('newAdminPass').value;
-            try {
-                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-                await setDoc(doc(db, "admins", cred.user.uid), { email });
-                alert("New Admin Appointed!");
-            } catch (e) { alert(e.message); }
+            try { await createUserWithEmailAndPassword(secondaryAuth, document.getElementById('newAdminEmail').value, document.getElementById('newAdminPass').value); alert("New Admin Appointed!"); } catch (e) { alert(e.message); }
         };
-
     </script>
 </body>
 </html>
+تعديل على ها السكربت خاصيه publish it مدري publish item خليه الاداره يقدرو يسو publish item بس الموظفين لا بس publish it للاداره وبس الموظفين يقدر يسوو اي شي فلموقع غير publish it وال dis manager حط في publish item خاصيه publish code للسكربتات اقدر احط كلام ونسخه للي بيشتروه اذا كان بفلوس للكل يعني اذا كان السكربت بفلوس وحطه الاداره يجي خيار get code وبعدها يطلع لالي يشتريه الكود حقه بس الموظفين لا مايشوف الكود وال get code بس الاداره يشوفوه واذا مجاني للكل get code وخلاص وخاصيه publish schematic اقدر احط كلام وصوره اذا يبو الاداره و schematic المابات بس Schematic مايشوفوه الموظفين بس الاداره يقدر يحذفو او يعدلو Schematic وال schematic للي يشتريه تطلع get schematic ويتحمل Schematic بس Schematic للاداره يشوف الملف وال get schematic بس الموظفين لا واخر خيار publish file اقدر اضيف كلام وصوره وملف للمابات schematic و schematic مايشوف الموظفين بس الاداره ل Schematics و Schematics يحملوه بس الاداره يحذفو ويعدلو وخلي publis schematically للاداره بس واpublish file للموظفين بس و publish code الاداره يضيف الكود والموظفين لا بس الموظفين يقدرو يحذفو او يعدلو publish Schematic والموظفين بسSchematics يشوفوها والمابات schematic بس الموظفين Schematic يحذفو او يعدلو Schematics وال schematic للموظفين Schematic يعدلو ويحذفو والSchematics للموظفين Schematic يعدلو ويحذفو والschematic للكل get Schematic ويتحمل Schematic बस Schematic للموظفين Schematic يعدلو ويحذفو والSchematics والمابات schematic بس للكل get schematic ويتحمل schematic وبس وخاصيه publish code بس الاداره يقدرو والموظفين بس يحذفو ويعدلوpublish Schematic والمابات schematic والموظفين بس Schematics يعدلو ويحذفو و Schematic يحملوه والمابات schematic بس للكل get Schematic ويتحمل schematic وضبط شكل publish schematic والمابات schematic وخلي الموظفين Schematic يعدلو ويحذفو و Schematic يحملوه بس الاداره والموظفين يعدلو ويحذفو بس Schematic يحملوه و Schematic يعدلو والمابات schematic بس يحملوه Schematic وال schematic يعدلو ويحذفو publish Schematic والمابات schematic بس يعدلو والموظفين يعدلو ويحذفو schematic بس يحملوه schematic ويعدلو schematic بس يحملوه schematic ويعدلو والمابات schematic بس يحملوه schematic ويعدلو والمابات schematic وبس وضبط شكل puplish item بشكل خانات بشكل جدول وبنصAdd New schematic و publish code وpublish file و publish Schemtic ب4 ازرار اسكونيه فشاشا  و Schematic يحملوه schematic ويعدلو schematic وبس وضبط شكل publish Schematic والمابات schematic وخلي Schematic يحملوه schematic ويعدلو schematic وبس وضبط شكل publish code والموظفين Schematic يعدلو ويحذفو publish Schematic والمابات schematic बस للكل get code بس للاداره والموظفين Schematic يعدلو والمابات schematic بس يحملوه schematic ويعدلو والمابات schematic بس للكل get Schematic وبس وضبط شكل publish schematic والمابات schematic وخلي الموظفين يعدلو ويحذفو والموظفين والمابات schematic بس يحملوه schematic ويعدلو والمابات schematic بس للكل get schematic والمابات schematic बस ويضبط شكل publish code وبس وضبط شكل puplish item ب 4 خانات جدول publish schematic والمابات schematic و puplish code وpublish file وباقي الخانات الجدول الي قلته Add new 4 خانات جدول وبس
