@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirt Store</title>
+    <title>Dirt Store | Premium Marketplace</title>
     <style>
         :root {
             --primary: #2eb857;
-            --primary-glow: rgba(46, 184, 87, 0.4);
+            --primary-light: #4ade80;
+            --primary-glow: rgba(46, 184, 87, 0.15);
             --danger: #ff4d4d;
             --bg-dark: #0f0f0f;
-            --card-glass: rgba(255, 255, 255, 0.06);
+            --card-glass: rgba(255, 255, 255, 0.04);
             --text: #f4f4f4;
-            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        [data-theme="light"] {
-            --bg-dark: #f0f2f5;
-            --card-glass: rgba(0, 0, 0, 0.05);
-            --text: #1a1a1a;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
-            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('background.png');
+            background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('background.png');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -34,317 +29,185 @@
             transition: var(--transition);
         }
 
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 5% 5%, var(--primary-glow) 0%, transparent 40%),
-                        radial-gradient(circle at 95% 95%, var(--primary-glow) 0%, transparent 40%);
-            pointer-events: none; z-index: -1;
-        }
+        /* --- Animations --- */
+        @keyframes pageIn { from { opacity: 0; transform: translateY(15px); filter: blur(8px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        @keyframes loadAnim { 0% { width: 0%; } 100% { width: 100%; } }
 
+        /* --- Layout & Navbar --- */
         .navbar {
             backdrop-filter: blur(20px);
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             padding: 15px 40px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        /* Discord Icon in Header */
         .discord-header-btn {
-            height: 35px;
-            cursor: pointer;
-            transition: var(--transition);
+            height: 32px; cursor: pointer; transition: var(--transition);
+            filter: drop-shadow(0 0 2px rgba(114, 137, 218, 0.3));
         }
-        .discord-header-btn:hover {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 5px #7289da);
-        }
+        .discord-header-btn:hover { transform: translateY(-2px); filter: drop-shadow(0 4px 12px #7289da); }
 
-        /* Sidebar Styling & RTL Support */
-        .sidebar {
-            position: fixed; left: -300px; top: 0; width: 280px; height: 100vh;
-            background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(25px);
-            transition: var(--transition); z-index: 2000; padding-top: 80px;
-            border-right: 2px solid var(--primary); overflow-y: auto;
-        }
-        .sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
-
-        .close-sidebar {
-            position: absolute; top: 20px; right: 20px;
-            font-size: 24px; cursor: pointer; color: var(--danger); transition: var(--transition);
-        }
-        .close-sidebar:hover { transform: scale(1.2) rotate(90deg); }
-
-        [dir="rtl"] .sidebar { left: auto; right: -300px; border-right: none; border-left: 2px solid var(--primary); }
-        [dir="rtl"] .sidebar.open { right: 0; left: auto; box-shadow: -20px 0 50px rgba(0,0,0,0.8); }
-        [dir="rtl"] .close-sidebar { right: auto; left: 20px; }
-
-        .sidebar-item {
-            padding: 18px 30px; margin: 10px 20px; border-radius: 100px;
-            color: var(--text); transition: var(--transition); cursor: pointer;
-            font-weight: 600; display: flex; align-items: center; gap: 15px;
-        }
-        .sidebar-item:hover { background: var(--primary); color: white; transform: translateX(15px); box-shadow: 0 10px 20px var(--primary-glow); }
-        [dir="rtl"] .sidebar-item:hover { transform: translateX(-15px); }
-
-        .lang-submenu {
-            margin: 0 40px; border-left: 2px solid var(--primary); padding-left: 15px;
-            display: none; flex-direction: column; gap: 10px;
-        }
-        .lang-submenu.active { display: flex; }
-        [dir="rtl"] .lang-submenu { border-left: none; border-right: 2px solid var(--primary); padding-left: 0; padding-right: 15px; }
-        .lang-submenu span { cursor: pointer; font-size: 14px; opacity: 0.8; transition: var(--transition); }
-        .lang-submenu span:hover { opacity: 1; color: var(--primary); }
-
-        /* Cinematic Language Modal */
-        .lang-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #222222;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; transition: opacity 0.5s ease;
-        }
-        .lang-modal.hidden { opacity: 0; pointer-events: none; }
-        
-        .lang-box { display: flex; gap: 20px; margin-bottom: 50px; z-index: 2; position: relative; }
-        .lang-pill {
-            background: var(--card-glass); border: 2px solid var(--primary);
-            border-radius: 50px; padding: 15px 40px; font-size: 20px; font-weight: 800; color: white;
-            cursor: pointer; transition: var(--transition); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .lang-pill:hover { background: var(--primary); transform: translateY(-5px); }
-        
-        .cart-container { font-size: 80px; color: var(--primary); position: relative; z-index: 1; }
-
-        @keyframes dropToCart {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            50% { transform: translateY(60px) scale(0.5); opacity: 0.8; }
-            100% { transform: translateY(100px) scale(0); opacity: 0; }
-        }
-
-        /* Cinematic Loading Screen */
-        .loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0f0f0f; z-index: 10001;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.5s ease;
-        }
-        .loading-screen.hidden { opacity: 0; pointer-events: none; }
-        
-        .loading-logo { font-size: 3rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 20px; }
-        .loading-logo .dirt { color: white; }
-        .loading-logo .store { color: white; }
-        
-        .loading-bar-container { width: 250px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .loading-bar { height: 100%; background: var(--primary); width: 0%; animation: loadAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        
-        @keyframes loadAnim { 0% { width: 0%; } 100% { width: 100%; } }
-
-        .container { padding: 50px 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }
-        .section-view { animation: pageIn 0.6s ease-out forwards; }
-        @keyframes pageIn { from { opacity: 0; transform: translateY(20px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
-
-        .panel {
-            background: var(--card-glass); backdrop-filter: blur(15px);
-            padding: 40px; border-radius: 35px; border: 1px solid rgba(255,255,255,0.1);
-            max-width: 600px; margin: 40px auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-        }
-
-        input, textarea {
-            width: 100%; padding: 16px 25px; margin: 15px 0; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.3); color: white; outline: none; transition: var(--transition); box-sizing: border-box;
-            font-family: inherit;
-        }
-        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
-
+        /* --- Buttons (Premium Glow) --- */
         .btn {
-            background: var(--primary); color: white; border: none; padding: 16px 30px; border-radius: 100px;
-            cursor: pointer; width: 100%; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
-            transition: var(--transition); box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, var(--primary), #249145);
+            color: white; border: none; padding: 14px 28px; border-radius: 14px;
+            cursor: pointer; width: 100%; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255,255,255,0.1);
         }
-        .btn:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--primary-glow); }
-        .btn:active { transform: scale(0.95); }
-        .btn-danger { background: var(--danger); }
-        .btn-secondary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--primary-glow); }
+        .btn:active { transform: scale(0.98); }
+        .btn-secondary { background: rgba(255,255,255,0.03); border: 1px solid var(--primary); color: var(--primary); }
         .btn-secondary:hover { background: var(--primary); color: white; }
+        .btn-danger { background: var(--danger); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; margin-top: 40px; }
-        
-        /* 4 Buttons Grid */
-        .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+        /* --- Price Tag & Cards --- */
+        .price-tag {
+            background: rgba(46, 184, 87, 0.1);
+            padding: 6px 14px; border-radius: 10px; border: 1px solid rgba(46, 184, 87, 0.25);
+            color: var(--primary-light); font-weight: 900; font-size: 1.1rem;
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
 
         .item-card {
-            background: var(--card-glass); backdrop-filter: blur(12px); border-radius: 35px; padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1); transition: var(--transition); position: relative;
+            background: var(--card-glass); backdrop-filter: blur(15px); border-radius: 28px;
+            padding: 22px; border: 1px solid rgba(255,255,255,0.06); transition: var(--transition);
             display: flex; flex-direction: column; justify-content: space-between;
         }
-        .item-card:hover { transform: translateY(-15px) scale(1.02); border-color: var(--primary); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        .item-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 25px; margin-bottom: 20px; }
+        .item-card:hover { transform: translateY(-10px); border-color: rgba(46, 184, 87, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .item-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: fixed; left: -300px; top: 0; width: 280px; height: 100vh;
+            background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(30px);
+            transition: var(--transition); z-index: 2000; padding-top: 80px;
+            border-right: 1px solid var(--primary);
+        }
+        .sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+        [dir="rtl"] .sidebar { left: auto; right: -300px; border-right: none; border-left: 1px solid var(--primary); }
+        [dir="rtl"] .sidebar.open { right: 0; left: auto; }
+
+        .sidebar-item {
+            padding: 16px 25px; margin: 8px 15px; border-radius: 12px;
+            color: var(--text); transition: var(--transition); cursor: pointer;
+            font-weight: 500; display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-item:hover { background: var(--primary); color: white; transform: translateX(8px); }
+
+        /* --- UI Components --- */
+        .container { padding: 40px 20px; max-width: 1200px; margin: 0 auto; min-height: 85vh; }
+        .section-view { animation: pageIn 0.6s ease-out forwards; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
         
-        .no-photo-card { text-align: center; padding: 50px 20px; background: rgba(0,0,0,0.3); border-radius: 25px; margin-bottom: 20px; border: 1px dashed var(--primary); }
-
-        .stats-badge {
-            display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4);
-            padding: 10px 15px; border-radius: 50px; font-size: 14px; font-weight: 600; margin-top: 10px;
+        .panel { background: var(--card-glass); padding: 35px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); max-width: 650px; margin: 20px auto; }
+        
+        input, textarea {
+            width: 100%; padding: 14px 20px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3); color: white; outline: none; transition: 0.3s; box-sizing: border-box;
         }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
 
-        .admin-list-item {
-            display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4);
-            padding: 15px 20px; margin: 10px 0; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
-        }
+        .code-display { background: #111; padding: 15px; border-radius: 12px; font-family: monospace; font-size: 13px; color: #888; margin-bottom: 15px; direction: ltr; text-align: left; }
+        .stats-badge { background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 50px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 10001; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .loading-bar-container { width: 220px; height: 3px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 20px; }
+        .loading-bar { height: 100%; background: var(--primary); width: 0%; animation: loadAnim 1.5s forwards; }
 
         .hidden { display: none !important; }
-        .flex-row { display: flex; gap: 10px; align-items: center; }
-        
-        /* Code Block Display for Users */
-        .code-display {
-            background: #1e1e1e; padding: 15px; border-radius: 15px; border: 1px solid var(--primary);
-            font-family: monospace; white-space: pre-wrap; word-wrap: break-word; color: #d4d4d4;
-            max-height: 200px; overflow-y: auto; text-align: left; direction: ltr; margin-bottom: 15px;
-        }
+        .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
     </style>
 </head>
 <body dir="ltr">
 
-    <div id="langModal" class="lang-modal hidden">
-        <div class="lang-box" id="langButtonsBox">
-            <button class="lang-pill" onclick="triggerCinematicLang('en', this)">🇺🇸 English</button>
-            <button class="lang-pill" onclick="triggerCinematicLang('ar', this)">🇸🇦 العربية</button>
-        </div>
-        <div class="cart-container" id="cinematicCart">🛒</div>
-    </div>
-
     <div id="loadingScreen" class="loading-screen hidden">
-        <div class="loading-logo"><span class="dirt">Dirt</span> <span class="store">Store</span></div>
+        <h2 style="letter-spacing: 3px; font-weight: 900;">DIRT STORE</h2>
         <div class="loading-bar-container"><div class="loading-bar"></div></div>
     </div>
 
     <nav class="navbar">
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div class="theme-toggle" id="openMenu" style="cursor:pointer; font-size: 24px;">☰</div>
-            <h2 style="margin:0; font-weight: 900; letter-spacing: -1.5px; font-size: 26px;">Dirt Store</h2>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="openMenu" style="cursor:pointer; font-size: 22px;">☰</div>
+            <h2 style="margin:0; font-weight: 800; letter-spacing: -1px;">Dirt Store</h2>
         </div>
-        <img src="dis.png" alt="Discord" class="discord-header-btn" id="headerDiscordBtn">
+        <img src="dis.png" alt="Discord" class="discord-header-btn" onclick="window.open('https://discord.gg/NBXEbp67C', '_blank')">
     </nav>
 
     <div class="sidebar" id="sidebar">
-        <div class="close-sidebar" id="closeSidebar">✖</div>
-        <div class="sidebar-item" id="navStore"><span data-i18n="nav_store">- Store Home</span></div>
-        <div class="sidebar-item hidden" id="navUpload"><span data-i18n="nav_upload">- Publish Item</span></div>
-        <div class="sidebar-item hidden" id="navManage"><span data-i18n="nav_manage">- Admin Panel</span></div>
-        <div class="sidebar-item hidden" id="navDisManager">- <span data-i18n="nav_dis">- Dis Manager</span></div>
-        <div class="sidebar-item" id="navLogin"><span data-i18n="nav_login">- Staff Login</span></div>
-        
-        <div class="sidebar-item" id="navLangToggle">
-            <span>🌐 <span data-i18n="nav_lang">Language</span></span>
-        </div>
-        <div class="lang-submenu" id="sidebarLangSubmenu">
-            <span onclick="triggerLoadingAndSwitch('en')">English</span>
-            <span onclick="triggerLoadingAndSwitch('ar')">العربية</span>
-        </div>
-        
-        <div class="sidebar-item hidden" id="btnLogOut" style="color:var(--danger)"><span data-i18n="nav_logout">- Sign Out</span></div>
+        <div style="padding: 20px; text-align: right;"><span id="closeSidebar" style="cursor:pointer; font-size: 24px;">✖</span></div>
+        <div class="sidebar-item" id="navStore"><span data-i18n="nav_store">Store Home</span></div>
+        <div class="sidebar-item hidden" id="navUpload"><span data-i18n="nav_upload">Publish Item</span></div>
+        <div class="sidebar-item hidden" id="navManage"><span data-i18n="nav_manage">Admin Panel</span></div>
+        <div class="sidebar-item" id="navLogin"><span data-i18n="nav_login">Staff Login</span></div>
+        <div class="sidebar-item" onclick="toggleLang()">🌐 <span data-i18n="nav_lang">Language</span></div>
+        <div class="sidebar-item hidden" id="btnLogOut" style="color:var(--danger); margin-top: 20px;">Sign Out</div>
     </div>
 
     <div class="container">
+        
         <div id="secStore" class="section-view">
-            <h1 data-i18n="market_title" style="text-align:center; font-size: 3rem; margin-bottom: 5px;">Marketplace</h1>
-            
-            <div style="display:flex; justify-content:center; margin-bottom: 15px;">
-                <div class="stats-badge" style="background:var(--primary-glow); border:1px solid var(--primary);">
-                    👁️ <span data-i18n="total_visitors">Total Visitors:</span> <span id="globalVisitorCount">...</span>
-                </div>
+            <h1 data-i18n="market_title" style="text-align:center; font-size: 3rem; margin-bottom: 10px;">Marketplace</h1>
+            <div style="display:flex; justify-content:center; gap: 15px; margin-bottom: 40px;">
+                <div class="stats-badge">👁️ <span data-i18n="total_visitors">Total Visitors:</span> <span id="globalVisitorCount">...</span></div>
             </div>
-
-            <p data-i18n="market_desc" style="text-align:center; opacity:0.6; margin-bottom: 30px;">Get the best schem and skripts. Enjoy!</p>
-            
-            <div style="max-width: 600px; margin: 0 auto;">
-                <input type="text" id="searchInput" data-i18n="search_ph" placeholder="Search..." style="border: 2px solid var(--primary);">
+            <div style="max-width: 500px; margin: 0 auto 50px;">
+                <input type="text" id="searchInput" data-i18n="search_ph" placeholder="Search for items...">
             </div>
-
             <div class="grid" id="productGrid"></div>
         </div>
 
         <div id="secLogin" class="section-view hidden">
-            <div class="panel">
-                <h2 data-i18n="login_title" style="margin-top:0; text-align:center;">Staff Authentication</h2>
-                <input type="email" id="logEmail" placeholder="Email Address">
+            <div class="panel" style="max-width: 400px;">
+                <h2 style="text-align:center;" data-i18n="login_title">Staff Login</h2>
+                <input type="email" id="logEmail" placeholder="Email">
                 <input type="password" id="logPass" placeholder="Password">
-                <button class="btn" id="btnLoginAction" data-i18n="login_btn">Secure Login</button>
+                <button class="btn" id="btnLoginAction">Login</button>
             </div>
         </div>
 
         <div id="secManage" class="section-view hidden">
-            <div class="panel" style="max-width: 600px;">
-                <h2 data-i18n="admin_title" style="text-align:center;">Admin Management</h2>
-                <div id="adminListContainer"></div>
-                <hr style="opacity: 0.1; margin: 30px 0;">
-                <h3 data-i18n="hire_title" style="text-align:center;">Hire New Staff</h3>
-                <input type="email" id="newAdminEmail" placeholder="New Staff Email">
-                <input type="password" id="newAdminPass" placeholder="Temporary Password">
-                <button class="btn" id="btnAddAdminAction" data-i18n="hire_btn">Confirm Appointment</button>
-            </div>
-        </div>
-
-        <div id="secDisManager" class="section-view hidden">
             <div class="panel">
-                <h2 data-i18n="dis_title" style="text-align:center;">Discord Link Manager</h2>
-                <p style="text-align:center; opacity:0.6; font-size:14px; margin-bottom:20px;">Enter the invite link that opens when users click the Discord icon.</p>
-                <input type="url" id="disLinkInput" placeholder="https://discord.gg/yourinvite">
-                <button class="btn" id="btnSaveDisLink" data-i18n="save_btn">Save Link</button>
-                <div id="disStatus" style="text-align:center; margin-top:15px; color:var(--primary);"></div>
+                <h2 style="text-align:center;">Admin Management</h2>
+                <div id="adminListContainer"></div>
+                <hr style="opacity:0.1; margin: 30px 0;">
+                <h3>Hire New Staff</h3>
+                <input type="email" id="newAdminEmail" placeholder="New Staff Email">
+                <input type="password" id="newAdminPass" placeholder="Password">
+                <button class="btn" id="btnAddAdminAction">Appoint Admin</button>
             </div>
         </div>
 
         <div id="secUpload" class="section-view hidden">
-            <div class="panel" style="max-width: 800px;">
-                
+            <div class="panel">
                 <div id="publishTableMode">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <h2 data-i18n="upload_title" style="margin:0;">Products List</h2>
-                        <button class="btn" style="width:auto; margin:0;" onclick="togglePublishForm(true)">+ Add New</button>
+                        <h2 style="margin:0;">Products Control</h2>
+                        <button class="btn" style="width:auto;" onclick="togglePublishForm(true)">+ New Product</button>
                     </div>
                     <div id="adminProductsList"></div>
                 </div>
 
                 <div id="publishFormMode" class="hidden">
                     <button class="btn btn-secondary" style="width:auto; margin-bottom:20px;" onclick="togglePublishForm(false)">⬅ Back</button>
-                    <h2 style="text-align:center; margin-bottom: 5px;">Create New Product</h2>
-                    <p style="text-align:center; opacity:0.6; font-size:14px; margin-bottom:20px;">Choose what you want to publish</p>
-                    
+                    <h2 style="text-align:center;">Create Product</h2>
                     <div class="type-grid">
-                        <button class="btn btn-secondary" id="btnTypeCode" onclick="setPublishType('code')">📝 Publish Code</button>
-                        <button class="btn btn-secondary" id="btnTypeSchem" onclick="setPublishType('schematic')">🏗️ Publish Schematic</button>
-                        <button class="btn btn-secondary" id="btnTypeFile" onclick="setPublishType('file')">📁 Publish File</button>
-                        <button class="btn btn-secondary" id="btnTypePhoto" onclick="setPublishType('photo')">🖼️ Publish Item/Map</button>
+                        <button class="btn btn-secondary" onclick="setPublishType('code')">📝 Code</button>
+                        <button class="btn btn-secondary" onclick="setPublishType('schematic')">🏗️ Schem</button>
+                        <button class="btn btn-secondary" onclick="setPublishType('file')">📁 File</button>
+                        <button class="btn btn-secondary" onclick="setPublishType('photo')">🖼️ Photo</button>
                     </div>
-
                     <div id="actualForm" class="hidden">
-                        <input type="text" id="pName" placeholder="Product Title">
-                        <input type="number" id="pPrice" placeholder="Price (USD) - 0 for Free">
-                        
-                        <div id="fieldImage" class="hidden">
-                            <p style="margin:10px 0 5px 15px; font-size:12px; opacity:0.5;">Cover Image (Optional):</p>
-                            <input type="text" id="pImgURL" placeholder="Image Direct Link (e.g. https://...)">
-                        </div>
-
-                        <div id="fieldCode" class="hidden">
-                            <p style="margin:10px 0 5px 15px; font-size:12px; opacity:0.5;">Paste Skript/Code here:</p>
-                            <textarea id="pTextCode" rows="6" placeholder="Write your code here..."></textarea>
-                        </div>
-
-                        <div id="fieldFile" class="hidden">
-                            <p style="margin:10px 0 5px 15px; font-size:12px; opacity:0.5;">Upload File (.zip, .schem, etc):</p>
-                            <input type="file" id="pFile">
-                        </div>
-
-                        <button class="btn" id="btnStartUpload" style="margin-top:20px;">Publish to Store</button>
-                        <div id="uploadStatus" style="text-align:center; margin-top:15px; color:var(--primary);"></div>
+                        <input type="text" id="pName" placeholder="Product Name">
+                        <input type="number" id="pPrice" placeholder="Price (0 = Free)">
+                        <input type="text" id="pImgURL" id="fieldImage" placeholder="Image URL (Direct link)">
+                        <textarea id="pTextCode" class="hidden" rows="5" placeholder="Paste code here..."></textarea>
+                        <div id="fieldFile" class="hidden"><input type="file" id="pFile"></div>
+                        <button class="btn" id="btnStartUpload" style="margin-top:20px;">Publish Now</button>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -352,7 +215,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, setDoc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -366,303 +229,184 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const secondaryAuth = getAuth(secondaryApp);
         const supabase = createClient('https://nimidighcuwhsiuyuftg.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbWlkaWdoY3V3aHNpdXl1ZnRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTQxMDgsImV4cCI6MjA4OTE3MDEwOH0.MKgIaWwhj5dDLq5fo9VKWRdg9geeaID9E05BxSqmB40');
 
-        let currentUser = null;
-        let currentLang = 'en';
-        let currentPublishType = 'photo'; 
-        let activeDiscordLink = "https://discord.gg/dirtmc";
+        let currentLang = localStorage.getItem('dirt_lang') || 'en';
+        let currentPublishType = 'photo';
+        let products = [];
 
-        // 🌐 Dictionary
         const i18n = {
-            en: {
-                nav_store: "Store Home", nav_upload: "Publish Item", nav_manage: "Admin Panel",
-                nav_dis: "Dis Manager", nav_login: "Staff Login", nav_lang: "Language", nav_logout: "Sign Out",
-                market_title: "Marketplace", market_desc: "Get the best schem and skripts. Enjoy!", search_ph: "Search...",
-                login_title: "Staff Authentication", login_btn: "Secure Login",
-                admin_title: "Admin Management", hire_title: "Hire New Staff", hire_btn: "Confirm Appointment",
-                dis_title: "Discord Link Manager", save_btn: "Save Link",
-                upload_title: "Products List", get_it: "Download", get_code: "Copy Code", get_schem: "Get Schematic", delete: "Delete", free: "FREE", total_visitors: "Total Visitors:"
-            },
-            ar: {
-                nav_store: "الرئيسية", nav_upload: "نشر وإدارة السلع", nav_manage: "لوحة المشرفين",
-                nav_dis: "إدارة الديسكورد", nav_login: "تسجيل الدخول", nav_lang: "اللغة", nav_logout: "تسجيل الخروج",
-                market_title: "المتجر", market_desc: "احصل على أفضل السكربتات والمابات، استمتع!", search_ph: "ابحث عن سلعة...",
-                login_title: "تسجيل دخول الإدارة", login_btn: "دخول آمن",
-                admin_title: "إدارة المشرفين", hire_title: "تعيين مشرف جديد", hire_btn: "تأكيد التعيين",
-                dis_title: "إدارة رابط الديسكورد", save_btn: "حفظ الرابط",
-                upload_title: "قائمة المنتجات", get_it: "تحميل", get_code: "نسخ الكود", get_schem: "تحميل السكماتك", delete: "حذف", free: "مجاناً", total_visitors: "إجمالي الزوار:"
-            }
+            en: { nav_store: "Store Home", nav_upload: "Publish Item", nav_manage: "Admin Panel", nav_login: "Staff Login", nav_lang: "Language", market_title: "Marketplace", search_ph: "Search for items...", free: "FREE" },
+            ar: { nav_store: "الرئيسية", nav_upload: "نشر سلعة", nav_manage: "لوحة التحكم", nav_login: "دخول الموظفين", nav_lang: "اللغة", market_title: "المتجر", search_ph: "ابحث عن السلع...", free: "مجاناً" }
         };
 
-        // 👁️ Visitor Counter
-        const handleGlobalVisitor = async () => {
-            const visitorDoc = doc(db, "stats", "visitors");
-            if (!localStorage.getItem('dirt_visited')) {
-                await setDoc(visitorDoc, { count: increment(1) }, { merge: true });
-                localStorage.setItem('dirt_visited', 'true');
-            }
-            onSnapshot(visitorDoc, (snap) => { if(snap.exists()) document.getElementById('globalVisitorCount').innerText = snap.data().count; });
+        // --- Core Functions ---
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            applyLanguage(currentLang);
         };
-        handleGlobalVisitor();
 
-        // 🔗 Fetch Discord Link
-        const handleDiscordLinkFetch = () => {
-            onSnapshot(doc(db, "config", "discord"), (snap) => {
-                if(snap.exists()) {
-                    activeDiscordLink = snap.data().link;
-                    document.getElementById('disLinkInput').value = activeDiscordLink;
-                }
-            });
-        };
-        handleDiscordLinkFetch();
-        document.getElementById('headerDiscordBtn').onclick = () => window.open(activeDiscordLink, '_blank');
-
-        // 🌐 Language System
-        window.applyLanguage = (lang) => {
-            currentLang = lang;
+        const applyLanguage = (lang) => {
             localStorage.setItem('dirt_lang', lang);
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (i18n[lang][key]) {
-                    if (el.tagName === 'INPUT') el.placeholder = i18n[lang][key];
-                    else el.innerText = i18n[lang][key];
-                }
+                if (i18n[lang][key]) el.tagName === 'INPUT' ? el.placeholder = i18n[lang][key] : el.innerText = i18n[lang][key];
             });
-            if (window.renderStoreData) window.renderStoreData(document.getElementById('searchInput').value);
+            renderStore();
         };
 
-        window.triggerCinematicLang = (lang, btnElement) => {
-            btnElement.style.animation = "dropToCart 0.8s forwards";
-            setTimeout(() => { document.getElementById('langModal').classList.add('hidden'); showLoadingScreen(() => applyLanguage(lang)); }, 800);
-        };
-
-        window.triggerLoadingAndSwitch = (lang) => {
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('sidebarLangSubmenu').classList.remove('active');
-            showLoadingScreen(() => applyLanguage(lang));
-        };
-
-        const showLoadingScreen = (callback) => {
-            const loader = document.getElementById('loadingScreen');
-            loader.classList.remove('hidden');
-            const bar = loader.querySelector('.loading-bar');
-            bar.style.animation = 'none'; bar.offsetHeight;
-            bar.style.animation = 'loadAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-            setTimeout(() => { if(callback) callback(); }, 500);
-            setTimeout(() => loader.classList.add('hidden'), 1600);
-        };
-
-        const savedLang = localStorage.getItem('dirt_lang');
-        if (!savedLang) document.getElementById('langModal').classList.remove('hidden');
-        else applyLanguage(savedLang);
-
-        // UI Routing
         const showSection = (id) => {
             document.querySelectorAll('.section-view').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.scrollTo(0,0);
         };
 
-        document.getElementById('openMenu').onclick = () => document.getElementById('sidebar').classList.add('open');
-        document.getElementById('closeSidebar').onclick = () => document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('navLangToggle').onclick = () => document.getElementById('sidebarLangSubmenu').classList.toggle('active');
-
-        document.getElementById('navStore').onclick = () => showSection('secStore');
-        document.getElementById('navLogin').onclick = () => showSection('secLogin');
-        document.getElementById('navUpload').onclick = () => { showSection('secUpload'); window.togglePublishForm(false); };
-        document.getElementById('navManage').onclick = () => showSection('secManage');
-        document.getElementById('navDisManager').onclick = () => showSection('secDisManager');
-
-        // Auth
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            const adminItems = ['navUpload', 'navManage', 'navDisManager', 'btnLogOut'];
-            adminItems.forEach(id => document.getElementById(id).classList.toggle('hidden', !user));
+        // --- Auth & Admin ---
+        onAuthStateChanged(auth, user => {
+            const adminOnly = ['navUpload', 'navManage', 'btnLogOut'];
+            adminOnly.forEach(id => document.getElementById(id).classList.toggle('hidden', !user));
             document.getElementById('navLogin').classList.toggle('hidden', !!user);
-            if(user) fetchAdmins(); else showSection('secStore');
+            if(user) fetchAdmins();
         });
 
-        document.getElementById('btnLoginAction').onclick = async () => {
-            try { await signInWithEmailAndPassword(auth, document.getElementById('logEmail').value, document.getElementById('logPass').value); showSection('secStore'); } 
-            catch (e) { alert("Invalid Credentials"); }
-        };
-        document.getElementById('btnLogOut').onclick = () => signOut(auth);
-
-        // Save Discord Link
-        document.getElementById('btnSaveDisLink').onclick = async () => {
-            const status = document.getElementById('disStatus');
-            const newLink = document.getElementById('disLinkInput').value;
-            if(!newLink || !newLink.startsWith('http')) return alert("Enter valid URL");
-            status.innerText = "Saving...";
-            try { await setDoc(doc(db, "config", "discord"), { link: newLink }); status.innerText = "Link Saved!"; setTimeout(()=> status.innerText = "", 2000); } 
-            catch(e) { alert("Error saving"); status.innerText = ""; }
+        const fetchAdmins = () => {
+            onSnapshot(collection(db, "admins"), snap => {
+                const cont = document.getElementById('adminListContainer');
+                cont.innerHTML = "";
+                snap.forEach(d => {
+                    cont.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:rgba(255,255,255,0.05); margin:5px; border-radius:10px;">
+                        <span>${d.data().email}</span>
+                        <button onclick="deleteAdmin('${d.id}')" style="color:red; background:none; border:none; cursor:pointer;">Remove</button>
+                    </div>`;
+                });
+            });
         };
 
-        // Publish Flow Setup (The 4 Grid Logic)
-        window.togglePublishForm = (showForm) => {
-            document.getElementById('publishTableMode').classList.toggle('hidden', showForm);
-            document.getElementById('publishFormMode').classList.toggle('hidden', !showForm);
-            document.getElementById('actualForm').classList.add('hidden');
+        window.deleteAdmin = async (id) => { if(confirm("Revoke admin?")) await deleteDoc(doc(db, "admins", id)); };
+
+        // --- Upload Flow ---
+        window.togglePublishForm = (show) => {
+            document.getElementById('publishTableMode').classList.toggle('hidden', show);
+            document.getElementById('publishFormMode').classList.toggle('hidden', !show);
         };
 
         window.setPublishType = (type) => {
             currentPublishType = type;
             document.getElementById('actualForm').classList.remove('hidden');
-            
-            // Reset Button Styles
-            ['code', 'schematic', 'file', 'photo'].forEach(t => {
-                let btnId = t === 'photo' ? 'btnTypePhoto' : t === 'schematic' ? 'btnTypeSchem' : 'btnType' + t.charAt(0).toUpperCase() + t.slice(1);
-                document.getElementById(btnId).className = 'btn btn-secondary';
-            });
-            
-            // Highlight selected
-            let activeBtnId = type === 'photo' ? 'btnTypePhoto' : type === 'schematic' ? 'btnTypeSchem' : 'btnType' + type.charAt(0).toUpperCase() + type.slice(1);
-            document.getElementById(activeBtnId).className = 'btn';
-
-            // Show relevant fields
-            document.getElementById('fieldCode').classList.toggle('hidden', type !== 'code');
+            document.getElementById('pTextCode').classList.toggle('hidden', type !== 'code');
             document.getElementById('fieldFile').classList.toggle('hidden', type === 'code');
-            document.getElementById('fieldImage').classList.toggle('hidden', type === 'code');
         };
 
         document.getElementById('btnStartUpload').onclick = async () => {
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
-            const imgURL = document.getElementById('pImgURL').value || "";
-            const textCode = document.getElementById('pTextCode').value;
-            const dataFile = document.getElementById('pFile').files[0];
-            const status = document.getElementById('uploadStatus');
+            const code = document.getElementById('pTextCode').value;
+            const file = document.getElementById('pFile').files[0];
+            const img = document.getElementById('pImgURL').value;
 
-            if(!name || price==="") return alert("Fill required title and price!");
-            if(currentPublishType === 'code' && !textCode) return alert("Please enter the code!");
-            if(currentPublishType !== 'code' && !dataFile) return alert("Please upload a file!");
+            if(!name) return alert("Name is required");
+            showLoading(true);
 
-            status.innerText = "Publishing to Database...";
             try {
-                let finalFileUrl = "";
-                let finalFilePath = "";
-
-                if(currentPublishType !== 'code' && dataFile) {
-                    finalFilePath = `files/${Date.now()}_${dataFile.name}`;
-                    await supabase.storage.from('dirt-assets').upload(finalFilePath, dataFile);
-                    finalFileUrl = (await supabase.storage.from('dirt-assets').getPublicUrl(finalFilePath)).data.publicUrl;
+                let fileUrl = "";
+                let filePath = "";
+                if(currentPublishType !== 'code' && file) {
+                    filePath = `uploads/${Date.now()}_${file.name}`;
+                    await supabase.storage.from('dirt-assets').upload(filePath, file);
+                    fileUrl = (await supabase.storage.from('dirt-assets').getPublicUrl(filePath)).data.publicUrl;
                 }
 
                 await addDoc(collection(db, "products"), {
-                    name, price: Number(price), img: imgURL, 
-                    type: currentPublishType, // code, schematic, file, photo
-                    codeData: textCode, file: finalFileUrl, filePath: finalFilePath, 
-                    downloads: 0, createdAt: new Date()
+                    name, price: Number(price), type: currentPublishType,
+                    codeData: code, file: fileUrl, filePath, img, downloads: 0, createdAt: new Date()
                 });
 
-                alert("Product Published Successfully!");
-                window.togglePublishForm(false);
-                document.getElementById('pName').value = ''; document.getElementById('pTextCode').value = ''; document.getElementById('pFile').value = '';
-                status.innerText = "";
-            } catch (e) { alert(e.message); status.innerText = ""; }
+                alert("Published!");
+                togglePublishForm(false);
+            } catch(e) { alert(e.message); }
+            showLoading(false);
         };
 
-        // Action Buttons logic (Download / Copy Code)
-        window.handleAction = async (id, fileUrl, type, codeData) => {
-            try {
-                const downloadKey = 'dirt_dl_' + id;
-                if (!localStorage.getItem(downloadKey)) {
-                    await updateDoc(doc(db, "products", id), { downloads: increment(1) });
-                    localStorage.setItem(downloadKey, 'true');
-                }
-                
-                if (type === 'code') {
-                    navigator.clipboard.writeText(codeData).then(() => alert(currentLang === 'ar' ? "تم نسخ الكود بنجاح!" : "Code copied to clipboard!"));
-                } else {
-                    window.open(fileUrl, '_blank');
-                }
-            } catch (e) { 
-                if(type !== 'code') window.open(fileUrl, '_blank'); 
-            }
-        };
-
-        // Render Store Data
-        let cachedSnap = null;
-        window.renderStoreData = (filter = "") => {
-            if (!cachedSnap) return;
+        // --- Store Rendering ---
+        const renderStore = () => {
             const grid = document.getElementById('productGrid');
             const adminList = document.getElementById('adminProductsList');
+            const search = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = ""; adminList.innerHTML = "";
-            
-            cachedSnap.forEach(d => {
-                const p = d.data();
-                if(currentUser) {
-                    adminList.innerHTML += `<div class="admin-list-item"><span><b>${p.name}</b> (${p.type || 'item'})</span><button class="btn btn-danger" style="width:auto; padding:5px 15px; margin:0;" onclick="window.deleteItem('${d.id}', '${p.filePath}')">🗑️</button></div>`;
+
+            products.forEach(p => {
+                if(auth.currentUser) {
+                    adminList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:rgba(0,0,0,0.2); margin-bottom:5px; border-radius:10px;">
+                        <span>${p.name}</span>
+                        <button onclick="deleteProd('${p.id}', '${p.filePath}')" style="color:var(--danger); border:none; background:none; cursor:pointer;">Delete</button>
+                    </div>`;
                 }
 
-                if (p.name.toLowerCase().includes(filter.toLowerCase())) {
-                    const priceText = p.price == 0 ? i18n[currentLang].free : `$${p.price}`;
-                    
-                    let visualContent = "";
-                    if (p.type === 'code') {
-                        visualContent = `<div class="code-display">${p.codeData.substring(0, 100)}...</div>`;
-                    } else if (p.img) {
-                        visualContent = `<img src="${p.img}" alt="Item">`;
-                    } else {
-                        const icon = p.type === 'schematic' ? '🏗️' : '📁';
-                        visualContent = `<div class="no-photo-card"><h2 style="margin:0; font-size:3rem;">${icon}</h2></div>`;
-                    }
-
-                    let btnText = i18n[currentLang].get_it;
-                    if(p.type === 'code') btnText = i18n[currentLang].get_code;
-                    if(p.type === 'schematic') btnText = i18n[currentLang].get_schem;
-
-                    // Ensure parameters are properly escaped for onclick
-                    const safeCodeData = p.codeData ? encodeURIComponent(p.codeData) : '';
-
+                if(p.name.toLowerCase().includes(search)) {
+                    const priceLabel = p.price == 0 ? i18n[currentLang].free : `$${p.price}`;
                     grid.innerHTML += `
                         <div class="item-card">
-                            ${visualContent}
+                            ${p.img ? `<img src="${p.img}">` : `<div class="code-display">${p.codeData ? p.codeData.substring(0,60)+'...' : 'No Preview'}</div>`}
                             <div>
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                                     <h3 style="margin:0;">${p.name}</h3>
-                                    <span style="font-weight:900; font-size:1.4rem; color:var(--primary)">${priceText}</span>
+                                    <span class="price-tag">${priceLabel}</span>
                                 </div>
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <button class="btn" style="flex:1;" onclick="window.handleAction('${d.id}', '${p.file}', '${p.type}', decodeURIComponent('${safeCodeData}'))">⬇️ ${btnText}</button>
-                                    <div class="stats-badge" style="margin-top:0;">⬇️ <span>${p.downloads || 0}</span></div>
-                                </div>
+                                <button class="btn" onclick="handleAction('${p.id}', '${p.file}', '${p.type}', '${encodeURIComponent(p.codeData || '')}')">Get Now</button>
+                                <div style="margin-top:15px; font-size:12px; opacity:0.4; text-align:center;">⬇️ ${p.downloads || 0} Downloads</div>
                             </div>
                         </div>`;
                 }
             });
         };
 
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snap) => { cachedSnap = snap; window.renderStoreData(document.getElementById('searchInput').value); });
-        document.getElementById('searchInput').oninput = (e) => window.renderStoreData(e.target.value);
+        window.handleAction = async (id, url, type, code) => {
+            if(type === 'code') {
+                navigator.clipboard.writeText(decodeURIComponent(code));
+                alert("Code Copied!");
+            } else { window.open(url, '_blank'); }
+            await updateDoc(doc(db, "products", id), { downloads: increment(1) });
+        };
 
-        window.deleteItem = async (id, path) => {
-            if(confirm("Delete permanently?")) {
+        window.deleteProd = async (id, path) => {
+            if(confirm("Delete product?")) {
                 await deleteDoc(doc(db, "products", id));
                 if(path) await supabase.storage.from('dirt-assets').remove([path]);
             }
         };
 
-        function fetchAdmins() {
-            onSnapshot(collection(db, "admins"), (snap) => {
-                const container = document.getElementById('adminListContainer');
-                container.innerHTML = "";
-                snap.forEach(d => {
-                    container.innerHTML += `<div class="admin-list-item"><span><b>${d.data().email}</b></span><button class="btn btn-danger" style="width:auto; padding:8px 15px; margin:0;" onclick="window.deleteAdmin('${d.id}')">${i18n[currentLang].delete}</button></div>`;
-                });
-            });
-        }
-        window.deleteAdmin = async (id) => { if(confirm("Revoke admin access?")) await deleteDoc(doc(db, "admins", id)); };
-        document.getElementById('btnAddAdminAction').onclick = async () => {
-            try { await createUserWithEmailAndPassword(secondaryAuth, document.getElementById('newAdminEmail').value, document.getElementById('newAdminPass').value); alert("New Admin Appointed!"); } catch (e) { alert(e.message); }
+        // --- Init ---
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            products = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            renderStore();
+        });
+
+        onSnapshot(doc(db, "stats", "visitors"), snap => {
+            if(snap.exists()) document.getElementById('globalVisitorCount').innerText = snap.data().count;
+        });
+
+        const showLoading = (s) => document.getElementById('loadingScreen').classList.toggle('hidden', !s);
+        
+        // Navigation Events
+        document.getElementById('openMenu').onclick = () => document.getElementById('sidebar').classList.add('open');
+        document.getElementById('closeSidebar').onclick = () => document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('navStore').onclick = () => showSection('secStore');
+        document.getElementById('navLogin').onclick = () => showSection('secLogin');
+        document.getElementById('navManage').onclick = () => showSection('secManage');
+        document.getElementById('navUpload').onclick = () => showSection('secUpload');
+        document.getElementById('btnLogOut').onclick = () => signOut(auth);
+        document.getElementById('searchInput').oninput = renderStore;
+
+        document.getElementById('btnLoginAction').onclick = async () => {
+            try { await signInWithEmailAndPassword(auth, document.getElementById('logEmail').value, document.getElementById('logPass').value); showSection('secStore'); }
+            catch(e) { alert("Invalid Credentials"); }
         };
+
+        applyLanguage(currentLang);
     </script>
 </body>
 </html>
