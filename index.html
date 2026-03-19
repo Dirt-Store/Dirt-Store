@@ -22,8 +22,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
-            /* تحسين وضوح الخلفية باستخدام تدرج أخف */
-            background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), url('background.png');
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('background.png');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -38,22 +37,21 @@
             background: rgba(0,0,0,0.7);
             padding: 15px 5%;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(46, 184, 87, 0.2);
+            border-bottom: 2px solid rgba(46, 184, 87, 0.3);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .nav-logo { font-weight: 800; font-size: 1.6rem; letter-spacing: -1px; }
-        .logo-green { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
+        .nav-logo { font-weight: 800; font-size: 1.6rem; letter-spacing: -1px; display: flex; align-items: center; }
+        .logo-green { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); margin-left: 5px; }
 
-        /* توهج دائم لأيقونة الديسكورد */
         .discord-glow {
             height: 38px; cursor: pointer; transition: var(--transition);
-            filter: drop-shadow(0 0 8px #7289da);
+            filter: drop-shadow(0 0 10px #7289da);
             animation: pulseGlow 2s infinite alternate;
         }
         @keyframes pulseGlow {
             from { filter: drop-shadow(0 0 5px #7289da); transform: scale(1); }
-            to { filter: drop-shadow(0 0 15px #7289da); transform: scale(1.05); }
+            to { filter: drop-shadow(0 0 18px #7289da); transform: scale(1.08); }
         }
 
         /* --- Sidebar --- */
@@ -81,46 +79,50 @@
             visibility: hidden; opacity: 0; transition: 0.5s;
         }
         .loading-overlay.active { visibility: visible; opacity: 1; }
-        .load-bar-bg { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .load-bar-bg { width: 220px; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 25px; overflow: hidden; }
         .load-bar-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.4s; }
 
         /* --- Language Popup --- */
         .modal-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85);
+            position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9);
             z-index: 3000; display: flex; justify-content: center; align-items: center;
             visibility: hidden; opacity: 0; transition: 0.3s;
         }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-card {
-            background: #151515; padding: 40px; border-radius: 30px; border: 1px solid var(--primary);
-            text-align: center; width: 90%; max-width: 400px; transform: scale(0.8); transition: 0.3s;
+            background: #121212; padding: 40px; border-radius: 35px; border: 1px solid var(--primary);
+            text-align: center; width: 90%; max-width: 420px; transform: scale(0.85); transition: 0.3s;
         }
         .modal-overlay.active .modal-card { transform: scale(1); }
 
         /* --- UI Components --- */
-        .container { padding: 50px 5%; max-width: 1300px; margin: 0 auto; }
+        .container { padding: 50px 5%; max-width: 1350px; margin: 0 auto; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; margin-top: 50px; }
         
         .item-card {
-            background: var(--card-glass); backdrop-filter: blur(15px); border-radius: 30px;
-            padding: 25px; border: 1px solid rgba(255,255,255,0.08); transition: var(--transition);
+            background: var(--card-glass); backdrop-filter: blur(20px); border-radius: 35px;
+            padding: 28px; border: 1px solid rgba(255,255,255,0.08); transition: var(--transition);
+            display: flex; flex-direction: column; position: relative;
         }
-        .item-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .item-card img { width: 100%; height: 210px; object-fit: cover; border-radius: 20px; margin-bottom: 15px; }
+        .item-card:hover { transform: translateY(-12px); border-color: var(--primary); box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
+        .item-card img { width: 100%; height: 210px; object-fit: cover; border-radius: 25px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
         .btn {
             background: linear-gradient(135deg, var(--primary), #1e7a3a);
-            color: white; border: none; padding: 16px; border-radius: 15px;
-            cursor: pointer; width: 100%; font-weight: 700; transition: var(--transition);
-            text-transform: uppercase;
+            color: white; border: none; padding: 16px; border-radius: 18px;
+            cursor: pointer; width: 100%; font-weight: 800; transition: var(--transition);
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .btn:hover { box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-2px); }
+        .btn:hover { box-shadow: 0 0 25px var(--primary-glow); transform: translateY(-3px); filter: brightness(1.1); }
 
-        .price-tag { background: var(--primary-glow); color: var(--primary-light); padding: 5px 12px; border-radius: 10px; font-weight: 800; }
-        input, textarea, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; outline: none; }
+        .price-tag { background: rgba(46, 184, 87, 0.1); color: var(--primary-light); padding: 6px 14px; border-radius: 12px; font-weight: 900; border: 1px solid var(--primary-glow); }
+        input, textarea, select { width: 100%; padding: 16px; margin: 12px 0; border-radius: 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        
+        .get-counter { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: var(--primary-light); opacity: 0.8; letter-spacing: 0.5px; }
         
         .hidden { display: none !important; }
-        .panel { background: rgba(255,255,255,0.03); padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .panel { background: rgba(255,255,255,0.02); padding: 40px; border-radius: 35px; border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -132,10 +134,10 @@
 
     <div class="modal-overlay" id="langModal">
         <div class="modal-card">
-            <h2 style="margin-top:0;">Select Language | اختر اللغة</h2>
-            <div style="display:grid; gap: 15px; margin-top: 30px;">
-                <button class="btn" onclick="setLang('en')">English</button>
-                <button class="btn" onclick="setLang('ar')">العربية</button>
+            <h2 style="margin-top:0; font-size: 1.8rem;">Pick Language</h2>
+            <div style="display:grid; gap: 15px; margin-top: 35px;">
+                <button class="btn" onclick="setLang('en')">English (Global)</button>
+                <button class="btn" onclick="setLang('ar')">العربية (الافتراضية)</button>
             </div>
         </div>
     </div>
@@ -149,34 +151,33 @@
     </nav>
 
     <div class="sidebar" id="sidebar">
-        <div style="padding: 20px; text-align: right;"><span id="closeBtn" style="cursor:pointer; font-size: 24px;">✕</span></div>
+        <div style="padding: 20px; text-align: right;"><span id="closeBtn" style="cursor:pointer; font-size: 24px; opacity: 0.5;">✕</span></div>
         <div class="sidebar-item" onclick="navTo('secStore')">🏠 <span data-i18n="nav_store">Store Home</span></div>
         <div class="sidebar-item hidden" id="navUpload" onclick="navTo('secUpload')">📤 <span data-i18n="nav_upload">Publish Item</span></div>
         <div class="sidebar-item hidden" id="navManage" onclick="navTo('secManage')">⚙️ <span data-i18n="nav_manage">Admin Panel</span></div>
         <div class="sidebar-item" id="navLogin" onclick="navTo('secLogin')">🔑 <span data-i18n="nav_login">Staff Login</span></div>
         <div class="sidebar-item" onclick="openLangModal()">🌐 <span data-i18n="nav_lang">Language</span></div>
-        <div class="sidebar-item hidden" id="btnLogout" style="color:var(--danger); margin-top: 30px;">Sign Out</div>
+        <div class="sidebar-item hidden" id="btnLogout" style="color:var(--danger); margin-top: 40px;">Sign Out</div>
     </div>
 
     <div class="container">
-        
         <div id="secStore" class="section-view">
-            <div style="text-align:center; margin-bottom: 50px;">
-                <h1 style="font-size: 3rem; margin:0;" data-i18n="market_title">Marketplace</h1>
-                <p style="opacity:0.6;" data-i18n="market_subtitle">Premium Content for DirtMC</p>
-                <div style="max-width: 500px; margin: 30px auto;">
-                    <input type="text" id="mainSearch" data-i18n="search_ph" placeholder="Search for items...">
+            <div style="text-align:center; margin-bottom: 60px;">
+                <h1 style="font-size: 3.5rem; margin:0; font-weight: 800;" data-i18n="market_title">Marketplace</h1>
+                <p style="opacity:0.5; font-size: 1.1rem;" data-i18n="market_subtitle">Premium Content for DirtMC Community</p>
+                <div style="max-width: 600px; margin: 40px auto;">
+                    <input type="text" id="mainSearch" data-i18n="search_ph" placeholder="Search for premium assets...">
                 </div>
             </div>
             <div class="grid" id="marketGrid"></div>
         </div>
 
         <div id="secLogin" class="section-view hidden">
-            <div class="panel" style="max-width: 400px; margin: 50px auto;">
-                <h2 style="text-align:center;">Staff Access</h2>
-                <input type="email" id="emailInp" placeholder="Email">
-                <input type="password" id="passInp" placeholder="Password">
-                <button class="btn" id="doLogin">Login</button>
+            <div class="panel" style="max-width: 450px; margin: 60px auto;">
+                <h2 style="text-align:center; font-size: 2rem;">Staff Portal</h2>
+                <input type="email" id="emailInp" placeholder="Developer Email">
+                <input type="password" id="passInp" placeholder="Access Key">
+                <button class="btn" id="doLogin">Enter Dashboard</button>
             </div>
         </div>
 
@@ -184,49 +185,48 @@
             <div class="panel">
                 <h2>Admin Management</h2>
                 <div id="adminRows"></div>
-                <hr style="opacity:0.1; margin: 20px 0;">
-                <input type="email" id="admEmail" placeholder="New Admin Email">
+                <hr style="opacity:0.1; margin: 30px 0;">
+                <h3>Hire New Staff</h3>
+                <input type="email" id="admEmail" placeholder="New Email">
                 <input type="password" id="admPass" placeholder="Password">
-                <button class="btn" id="doAddAdmin">Add Admin</button>
+                <button class="btn" id="doAddAdmin">Create Admin</button>
             </div>
         </div>
 
         <div id="secUpload" class="section-view hidden">
             <div class="panel">
                 <div id="listView">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <h2>My Assets</h2>
-                        <button class="btn" style="width:auto; padding: 10px 20px;" onclick="toggleCreate(true)">+ New Asset</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                        <h2 style="margin:0;">Control Panel</h2>
+                        <button class="btn" style="width:auto; padding: 12px 25px;" onclick="toggleCreate(true)">+ Create Product</button>
                     </div>
                     <div id="myProductsList"></div>
                 </div>
-
                 <div id="createView" class="hidden">
-                    <button class="btn" style="width:auto; margin-bottom:20px; background: #333;" onclick="toggleCreate(false)">Back</button>
-                    <h2>Create Asset</h2>
+                    <button class="btn" style="width:auto; margin-bottom:30px; background: #222;" onclick="toggleCreate(false)">⬅ Back</button>
+                    <h2>New Premium Asset</h2>
                     <select id="assetType" onchange="adjustUploadForm(this.value)">
-                        <option value="photo">Photo/Image</option>
-                        <option value="code">Skript/Code</option>
-                        <option value="schematic">Schematic</option>
-                        <option value="file">File/Plugin</option>
+                        <option value="photo">Direct Image</option>
+                        <option value="code">Skript/Code Paste</option>
+                        <option value="schematic">Minecraft Schematic</option>
+                        <option value="file">Zip/Plugin File</option>
                     </select>
-                    <input type="text" id="assetName" placeholder="Asset Name">
-                    <input type="number" id="assetPrice" placeholder="Price">
-                    <input type="text" id="assetImg" placeholder="Image URL">
-                    <textarea id="assetCode" class="hidden" rows="5" placeholder="Paste Code Here..."></textarea>
+                    <input type="text" id="assetName" placeholder="Product Title">
+                    <input type="number" id="assetPrice" placeholder="Price (0 = Free)">
+                    <input type="text" id="assetImg" placeholder="Thumbnail URL">
+                    <textarea id="assetCode" class="hidden" rows="6" placeholder="Paste Code Content..."></textarea>
                     <input type="file" id="assetFile" class="hidden">
-                    <button class="btn" id="doPublish">Publish Now</button>
+                    <button class="btn" id="doPublish">Deploy Now</button>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKKTRIOY7pU8pwQLtcp9KLc5_vZ1hujhQ",
@@ -246,11 +246,11 @@
         let products = [];
 
         const i18n = {
-            en: { nav_store: "Store Home", nav_upload: "Publish Item", nav_manage: "Admin Panel", nav_login: "Staff Login", nav_lang: "Language", market_title: "Marketplace", market_subtitle: "Exclusive content for our community", search_ph: "Search assets...", free: "FREE" },
-            ar: { nav_store: "الرئيسية", nav_upload: "نشر سلعة", nav_manage: "لوحة التحكم", nav_login: "دخول الموظفين", nav_lang: "اللغة", market_title: "المتجر", market_subtitle: "إضافات حصرية لمجتمعنا", search_ph: "ابحث عن السلع...", free: "مجاناً" }
+            en: { nav_store: "Home", nav_upload: "Publish", nav_manage: "Admin", nav_login: "Login", nav_lang: "اللغة", market_title: "Marketplace", market_subtitle: "Exclusive digital assets", search_ph: "Search products...", free: "FREE", get_now: "Get Now", get_count: "people got this" },
+            ar: { nav_store: "الرئيسية", nav_upload: "نشر", nav_manage: "الإدارة", nav_login: "دخول", nav_lang: "Language", market_title: "المتجر", market_subtitle: "إضافات رقمية حصرية", search_ph: "ابحث عن السلع...", free: "مجاناً", get_now: "احصل عليه", get_count: "شخص حصل عليه" }
         };
 
-        // --- Core Functions ---
+        // --- Core UI Functions ---
         window.openLangModal = () => document.getElementById('langModal').classList.add('active');
         
         window.setLang = (l) => {
@@ -267,19 +267,15 @@
             const bar = document.getElementById('loadBar');
             overlay.classList.add('active');
             bar.style.width = '0%';
-            
             let w = 0;
             const interval = setInterval(() => {
-                w += 10;
+                w += 20;
                 bar.style.width = w + '%';
                 if(w >= 100) {
                     clearInterval(interval);
-                    setTimeout(() => {
-                        callback();
-                        overlay.classList.remove('active');
-                    }, 300);
+                    setTimeout(() => { callback(); overlay.classList.remove('active'); }, 300);
                 }
-            }, 50);
+            }, 60);
         }
 
         function applyLang() {
@@ -295,13 +291,13 @@
             document.querySelectorAll('.section-view').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             document.getElementById('sidebar').classList.remove('open');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
-        // --- Sidebar ---
         document.getElementById('openBtn').onclick = () => document.getElementById('sidebar').classList.add('open');
         document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-        // --- Auth & Admin ---
+        // --- Auth & Product Data ---
         onAuthStateChanged(auth, user => {
             ['navUpload', 'navManage', 'btnLogout'].forEach(id => document.getElementById(id).classList.toggle('hidden', !user));
             document.getElementById('navLogin').classList.toggle('hidden', !!user);
@@ -313,19 +309,19 @@
                 const container = document.getElementById('adminRows');
                 container.innerHTML = "";
                 snap.forEach(a => {
-                    container.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:rgba(255,255,255,0.05); margin-top:5px; border-radius:10px;">
+                    container.innerHTML += `<div style="display:flex; justify-content:space-between; padding:15px; background:rgba(255,255,255,0.03); margin-top:8px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
                         <span>${a.data().email}</span>
-                        <button onclick="delAdmin('${a.id}')" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
+                        <button onclick="delAdmin('${a.id}')" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">Revoke</button>
                     </div>`;
                 });
             });
         }
 
-        window.delAdmin = async (id) => { if(confirm("Revoke?")) await deleteDoc(doc(db, "admins", id)); };
+        window.delAdmin = async (id) => { if(confirm("Revoke admin access?")) await deleteDoc(doc(db, "admins", id)); };
 
         document.getElementById('doLogin').onclick = async () => {
             try { await signInWithEmailAndPassword(auth, document.getElementById('emailInp').value, document.getElementById('passInp').value); navTo('secStore'); }
-            catch(e) { alert("Error"); }
+            catch(e) { alert("Access Denied"); }
         };
         document.getElementById('btnLogout').onclick = () => signOut(auth);
 
@@ -347,6 +343,7 @@
             const type = document.getElementById('assetType').value;
             const code = document.getElementById('assetCode').value;
             const file = document.getElementById('assetFile').files[0];
+            if(!name) return alert("Title is mandatory");
 
             triggerLoading(async () => {
                 let fUrl = ""; let fPath = "";
@@ -362,7 +359,7 @@
             });
         };
 
-        // --- Render ---
+        // --- Render Marketplace ---
         function renderMarket() {
             const grid = document.getElementById('marketGrid');
             const myContainer = document.getElementById('myProductsList');
@@ -371,33 +368,51 @@
 
             products.forEach(p => {
                 if(auth.currentUser && myContainer) {
-                    myContainer.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:rgba(0,0,0,0.2); margin-top:5px; border-radius:10px;">
+                    myContainer.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; background:rgba(0,0,0,0.3); margin-top:8px; border-radius:15px; border:1px solid rgba(255,255,255,0.05);">
                         <span>${p.name}</span>
-                        <button onclick="delProduct('${p.id}', '${p.filePath}')" style="color:red; border:none; background:none; cursor:pointer;">Delete</button>
+                        <button onclick="delProduct('${p.id}', '${p.filePath}')" style="color:var(--danger); border:none; background:none; cursor:pointer;">Delete</button>
                     </div>`;
                 }
 
                 if(p.name.toLowerCase().includes(search)) {
+                    const priceVal = p.price == 0 ? i18n[currentLang].free : '$'+p.price;
                     grid.innerHTML += `
                         <div class="item-card">
-                            ${p.img ? `<img src="${p.img}">` : `<div style="height:210px; background:#111; border-radius:20px; display:flex; align-items:center; justify-content:center; color:#555;">No Preview</div>`}
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h3 style="margin:0;">${p.name}</h3>
-                                <span class="price-tag">${p.price == 0 ? i18n[currentLang].free : '$'+p.price}</span>
+                            ${p.img ? `<img src="${p.img}">` : `<div style="height:210px; background:#111; border-radius:25px; display:flex; align-items:center; justify-content:center; color:#444;">No Preview</div>`}
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                <h3 style="margin:0; font-size:1.3rem;">${p.name}</h3>
+                                <span class="price-tag">${priceVal}</span>
                             </div>
-                            <button class="btn" style="margin-top:15px;" onclick="takeAction('${p.id}', '${p.file}', '${p.type}', '${encodeURIComponent(p.codeData || '')}')">Get Now</button>
+                            <button class="btn" onclick="handleDownload('${p.id}', '${p.file}', '${p.type}', '${encodeURIComponent(p.codeData || '')}')">
+                                ${i18n[currentLang].get_now}
+                            </button>
+                            <div class="get-counter">✨ ${p.downloads || 0} ${i18n[currentLang].get_count}</div>
                         </div>`;
                 }
             });
         }
 
-        window.takeAction = async (id, url, type, code) => {
-            if(type === 'code') { navigator.clipboard.writeText(decodeURIComponent(code)); alert("Copied!"); }
-            else { window.open(url, '_blank'); }
-            await updateDoc(doc(db, "products", id), { downloads: increment(1) });
+        // --- Unique Download Handler (Anti-Spam) ---
+        window.handleDownload = async (id, url, type, code) => {
+            const storageKey = `got_${id}`;
+            const hasDownloaded = localStorage.getItem(storageKey);
+
+            if(!hasDownloaded) {
+                // First time: increment counter in DB and save to local storage
+                await updateDoc(doc(db, "products", id), { downloads: increment(1) });
+                localStorage.setItem(storageKey, "true");
+            }
+
+            // Perform Action
+            if(type === 'code') {
+                navigator.clipboard.writeText(decodeURIComponent(code));
+                alert(currentLang === 'ar' ? "تم نسخ الكود!" : "Code copied to clipboard!");
+            } else {
+                window.open(url, '_blank');
+            }
         };
 
-        window.delProduct = async (id, path) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "products", id)); if(path) await supabase.storage.from('dirt-assets').remove([path]); } };
+        window.delProduct = async (id, path) => { if(confirm("Permanent Delete?")) { await deleteDoc(doc(db, "products", id)); if(path) await supabase.storage.from('dirt-assets').remove([path]); } };
 
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
             products = snap.docs.map(d => ({id: d.id, ...d.data()}));
