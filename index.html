@@ -235,7 +235,6 @@
             ar: { nav_store: "الرئيسية", nav_upload: "نشر", nav_manage: "لوحة الإدارة", market_title: "المتجر", search_ph: "ابحث...", free: "مجاناً", get_now: "احصل عليه", get_count: "حصلوا عليه" }
         };
 
-        // --- Core UI ---
         function triggerLoading(callback) {
             const overlay = document.getElementById('loader'); const bar = document.getElementById('loadBar');
             overlay.classList.add('active'); bar.style.width = '0%';
@@ -255,7 +254,6 @@
         document.getElementById('openBtn').onclick = () => document.getElementById('sidebar').classList.add('open');
         document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-        // --- Auth & Admin Management ---
         onAuthStateChanged(auth, user => {
             ['navUpload', 'navManage', 'btnLogout'].forEach(id => document.getElementById(id).classList.toggle('hidden', !user));
             document.getElementById('navLogin').classList.toggle('hidden', !!user);
@@ -275,24 +273,20 @@
             });
         }
 
-        window.delAdmin = async (id) => { if(confirm("Revoke admin privilege?")) await deleteDoc(doc(db, "admins", id)); };
+        window.delAdmin = async (id) => { if(confirm("Revoke admin?")) await deleteDoc(doc(db, "admins", id)); };
 
         document.getElementById('doAddAdmin').onclick = async () => {
             const email = document.getElementById('admEmail').value;
             if(!email) return;
-            try {
-                await addDoc(collection(db, "admins"), { email });
-                alert("Admin email registered.");
-            } catch(e) { alert("Action failed."); }
+            try { await addDoc(collection(db, "admins"), { email }); alert("Registered."); } catch(e) {}
         };
 
         document.getElementById('doLogin').onclick = async () => {
             try { await signInWithEmailAndPassword(auth, document.getElementById('emailInp').value, document.getElementById('passInp').value); navTo('secStore'); }
-            catch(e) { alert("Login Error: Please check your credentials."); }
+            catch(e) { alert("Access Denied"); }
         };
         document.getElementById('btnLogout').onclick = () => signOut(auth);
 
-        // --- Product Deployment ---
         window.adjustUploadForm = (v) => {
             document.getElementById('assetCode').classList.toggle('hidden', v !== 'code');
             document.getElementById('fileLabel').classList.toggle('hidden', v === 'code' || v === 'photo');
@@ -332,7 +326,6 @@
             });
         };
 
-        // --- Market Rendering ---
         function renderMarket() {
             const grid = document.getElementById('marketGrid');
             const myContainer = document.getElementById('myProductsList');
@@ -340,7 +333,6 @@
             grid.innerHTML = ""; if(myContainer) myContainer.innerHTML = "";
 
             products.forEach(p => {
-                // Admin List Item
                 if(auth.currentUser && myContainer) {
                     myContainer.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; background:rgba(0,0,0,0.3); margin-top:8px; border-radius:15px; border:1px solid rgba(255,255,255,0.05);">
                         <span>${p.name}</span>
@@ -348,7 +340,6 @@
                     </div>`;
                 }
 
-                // Public Card Item
                 if(p.name.toLowerCase().includes(search)) {
                     const pVal = p.price == 0 ? i18n[currentLang].free : '$'+p.price;
                     grid.innerHTML += `
@@ -365,28 +356,24 @@
             });
         }
 
-        window.delProduct = async (id, path) => { if(confirm("Delete this product permanently?")) { await deleteDoc(doc(db, "products", id)); if(path) await supabase.storage.from('dirt-assets').remove([path]); } };
+        window.delProduct = async (id, path) => { if(confirm("Delete?")) { await deleteDoc(doc(db, "products", id)); if(path) await supabase.storage.from('dirt-assets').remove([path]); } };
 
-        // --- iOS Compatible Download Logic ---
-        window.handleDownload = async (id, url, type, code) => {
+        // --- نظام التحميل المطور للآيفون ---
+        window.handleDownload = (id, url, type, code) => {
+            // تحديث العداد في الخلفية دون انتظار (للحفاظ على تفاعل المستخدم)
             const key = `got_${id}`;
             if(!localStorage.getItem(key)) {
-                await updateDoc(doc(db, "products", id), { downloads: increment(1) });
+                updateDoc(doc(db, "products", id), { downloads: increment(1) });
                 localStorage.setItem(key, "true");
             }
             
             if(type === 'code') {
                 navigator.clipboard.writeText(decodeURIComponent(code));
-                alert("Code copied to clipboard!");
+                alert("Code copied!");
             } else { 
-                // Creating a temporary anchor tag for better iOS/Safari support
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', ''); // Suggest download
-                link.target = '_blank'; // Opens in new tab if direct download fails
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
+                // الطريقة المضمونة للآيفون: التحميل المباشر عبر تغيير موقع النافذة
+                // هذا يتجنب حظر الـ Pop-ups ويفتح رابط السوبربايس مباشرة
+                window.location.href = url;
             }
         };
 
