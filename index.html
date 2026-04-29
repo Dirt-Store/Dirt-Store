@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirt Store | Premium Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="loading-overlay" id="loader">
+        <h1 class="nav-logo">DIRT<span class="logo-green">STORE</span></h1>
+        <div class="load-bar-bg"><div class="load-bar-fill" id="loadBar"></div></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-logo">
+            <span id="openBtn" style="cursor:pointer; margin-right: 15px;">☰</span>
+            DIRT<span class="logo-green">STORE</span>
+        </div>
+        <img src="dis.png" class="discord-glow" onclick="window.open('https://discord.gg/NBXEbp67C', '_blank')">
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 10px 20px; text-align: right;"><span id="closeBtn" style="cursor:pointer; font-size: 20px; opacity: 0.5;">✕</span></div>
+        <div class="sidebar-item" onclick="navTo('secStore')">🏠 <span>Home</span></div>
+        <div class="sidebar-item hidden" id="navUpload" onclick="navTo('secUpload')">📤 <span>Publish</span></div>
+        <div class="sidebar-item hidden" id="navManage" onclick="navTo('secManage')">⚙️ <span>Admin Panel</span></div>
+        <div class="sidebar-item" id="navLogin" onclick="navTo('secLogin')">🔑 <span>Login</span></div>
+        <div class="sidebar-item hidden" id="btnLogout" style="color:var(--danger); margin-top: 20px;">Sign Out</div>
+    </div>
+
+    <div class="container">
+
+        <!-- ===== STORE ===== -->
+        <div id="secStore" class="section-view">
+            <div style="text-align:center; margin-bottom: 60px;">
+                <h1 style="font-size: 3rem; margin:0; font-weight: 800;">Marketplace</h1>
+                <div style="max-width: 600px; margin: 30px auto;">
+                    <input type="text" id="mainSearch" placeholder="Search products...">
+                </div>
+            </div>
+            <div class="grid" id="marketGrid"></div>
+        </div>
+
+        <!-- ===== UPLOAD ===== -->
+        <div id="secUpload" class="section-view hidden">
+            <div class="panel">
+                <div id="listView">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                        <h2 style="margin:0;">Control Panel</h2>
+                        <button class="btn" style="width:auto; padding: 12px 25px;" onclick="toggleCreate(true)">+ Create Product</button>
+                    </div>
+                    <div id="myProductsList"></div>
+                </div>
+                <div id="createView" class="hidden">
+                    <button class="btn" style="width:auto; margin-bottom:30px; background: #222;" onclick="toggleCreate(false)">⬅ Back</button>
+                    <h2>New Premium Asset</h2>
+                    <select id="assetType" onchange="adjustUploadForm(this.value)">
+                        <option value="photo">Direct Image</option>
+                        <option value="code">Skript/Code Paste</option>
+                        <option value="file">File (Zip/Schematic/Plugin)</option>
+                        <option value="role">Discord Role</option>
+                    </select>
+                    <input type="text" id="assetName" placeholder="Product Title">
+                    <input type="number" id="assetPrice" placeholder="Price (0 = Free)">
+                    <label class="file-label" id="imgLabel">🖼️ Select Product Thumbnail
+                        <input type="file" id="assetImgFile" accept="image/*" class="hidden">
+                    </label>
+                    <textarea id="assetCode" class="hidden" rows="6" placeholder="Paste Code Content..."></textarea>
+                    <label class="file-label hidden" id="fileLabel">📁 Select Asset File
+                        <input type="file" id="assetFile" class="hidden">
+                    </label>
+                    <button class="btn" id="doPublish" style="margin-top:20px;">Deploy Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ADMIN ===== -->
+        <div id="secManage" class="section-view hidden">
+            <div class="panel">
+                <h2>Admin Management</h2>
+                <div id="adminRows"></div>
+                <hr style="opacity:0.1; margin: 30px 0;">
+                <h3>Add New Admin</h3>
+                <input type="email" id="admEmail" placeholder="New Admin Email">
+                <input type="password" id="admPass" placeholder="Temporary Password">
+                <button class="btn" id="doAddAdmin">Register Admin</button>
+            </div>
+        </div>
+
+        <!-- ===== LOGIN ===== -->
+        <div id="secLogin" class="section-view hidden">
+            <div class="panel" style="max-width: 450px; margin: 60px auto;">
+                <h2 style="text-align:center;">Staff Login</h2>
+                <input type="email" id="emailInp" placeholder="Email">
+                <input type="password" id="passInp" placeholder="Password">
+                <button class="btn" id="doLogin">Login</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== ROLE MODAL ===== -->
+    <div id="roleModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-icon">🎖️</div>
+            <h2 class="modal-title">Get Your Role</h2>
+            <p class="modal-sub">Enter your Discord username to receive the role instantly</p>
+            <input type="text" id="discordUsername" placeholder="e.g. username#0000 or username" autocomplete="off">
+            <div id="roleStatus" class="role-status hidden"></div>
+            <div class="modal-btns">
+                <button class="btn" id="confirmRole">✅ Confirm & Get Role</button>
+                <button class="btn btn-cancel" id="cancelRole">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
