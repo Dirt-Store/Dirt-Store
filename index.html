@@ -6,6 +6,9 @@
 <meta name="description" content="DirtMC Store — Premium Minecraft marketplace">
 <meta name="theme-color" content="#080c09">
 <title>DirtMC Store</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>$\because$</text></svg>">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -178,8 +181,9 @@ body:not(.is-owner) .card-del{display:none}
 
 /* ── PIN ────────────────────────────────────────────────── */
 .pin-row{display:flex;gap:8px;justify-content:center;margin-bottom:6px}
-.pin-digit{width:42px;height:50px;background:var(--surface2);border:1.5px solid var(--border);
-  border-radius:9px;color:var(--text-bright);font-size:20px;font-weight:700;
+/* [تم التحديث] تعديل الحجم ليناسب 6 خانات على الموبايل */
+.pin-digit{width:38px;height:46px;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:9px;color:var(--text-bright);font-size:19px;font-weight:700;
   font-family:'Orbitron',monospace;text-align:center;outline:none;
   transition:border-color var(--trans),box-shadow var(--trans);caret-color:var(--g1)}
 .pin-digit:focus{border-color:var(--border-s);box-shadow:0 0 0 3px var(--glow)}
@@ -279,7 +283,9 @@ body:not(.is-owner) .card-del{display:none}
   .hero{padding:36px 16px 28px}
   .pill span{display:none}
   .modal{max-width:calc(100vw - 24px)}
-  .pin-digit{width:36px;height:44px;font-size:17px}
+  /* [تم التحديث] تحسين مظهر 6 خانات على الشاشات الصغيرة جداً */
+  .pin-digit{width:33px;height:40px;font-size:16px;gap:5px}
+  .pin-row{gap:5px}
 }
 @media(max-width:400px){#grid{grid-template-columns:1fr 1fr}}
 
@@ -293,7 +299,6 @@ body:not(.is-owner) .card-del{display:none}
 </head>
 <body>
 
-<!-- Loading -->
 <div id="loading-screen">
   <div class="loader-logo">DirtMC</div>
   <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
@@ -303,7 +308,6 @@ body:not(.is-owner) .card-del{display:none}
 <canvas id="canvas"></canvas>
 
 <div id="app">
-  <!-- HEADER -->
   <header>
     <div class="logo">DirtMC<em>STORE</em></div>
     <div class="h-center">
@@ -362,13 +366,11 @@ body:not(.is-owner) .card-del{display:none}
     </div>
   </header>
 
-  <!-- HERO -->
   <section class="hero">
     <h1>DirtMC Store</h1>
     <p>Premium Minecraft services. Browse, click, and open a support ticket on Discord.</p>
   </section>
 
-  <!-- STORE -->
   <section class="store">
     <div class="section-label">Products</div>
     <div id="grid">
@@ -382,9 +384,6 @@ body:not(.is-owner) .card-del{display:none}
 
 <div id="toast"></div>
 
-<!-- ══ MODALS ══ -->
-
-<!-- LOGIN -->
 <div class="overlay" id="loginModal">
   <div class="modal">
     <div class="modal-header">
@@ -393,13 +392,14 @@ body:not(.is-owner) .card-del{display:none}
     </div>
     <div class="modal-body">
       <div id="pin-step">
-        <div class="step-info">Enter the <strong>shared PIN</strong> to access the store</div>
+        <div class="step-info">Enter the <strong>6-digit shared PIN</strong> to access the store</div>
         <div class="pin-row">
-          <input class="pin-digit login-pin" type="text" inputmode="text" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="text" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="text" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="text" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="text" maxlength="1">
+          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
+          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
+          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
+          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
+          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
+          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
         </div>
         <div class="pin-error" id="loginPinErr"></div>
         <div class="form-hint text-center">Type continuously — digits auto-advance</div>
@@ -417,7 +417,6 @@ body:not(.is-owner) .card-del{display:none}
   </div>
 </div>
 
-<!-- CHANGE PIN -->
 <div class="overlay" id="pinModal">
   <div class="modal">
     <div class="modal-header">
@@ -430,8 +429,8 @@ body:not(.is-owner) .card-del{display:none}
         <input class="form-input" id="currentPinInput" type="password" placeholder="Current PIN" maxlength="64" autocomplete="current-password">
       </div>
       <div class="form-group">
-        <label class="form-label">New PIN (min 6 characters)</label>
-        <input class="form-input" id="newPinInput" type="password" placeholder="New PIN" maxlength="64" autocomplete="new-password">
+        <label class="form-label">New PIN (Exactly 6 digits)</label>
+        <input class="form-input" id="newPinInput" type="password" placeholder="New PIN" maxlength="6" autocomplete="new-password">
       </div>
       <div class="form-error" id="changePinErr"></div>
       <div class="form-hint">Current users won't be kicked when PIN changes.</div>
@@ -443,7 +442,6 @@ body:not(.is-owner) .card-del{display:none}
   </div>
 </div>
 
-<!-- USERS -->
 <div class="overlay" id="usersModal">
   <div class="modal">
     <div class="modal-header">
@@ -456,7 +454,6 @@ body:not(.is-owner) .card-del{display:none}
   </div>
 </div>
 
-<!-- ADD PRODUCT -->
 <div class="overlay" id="addProductModal">
   <div class="modal">
     <div class="modal-header">
@@ -490,7 +487,6 @@ body:not(.is-owner) .card-del{display:none}
   </div>
 </div>
 
-<!-- ══ SCRIPTS ══ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"
   integrity="sha512-luMnTJZ7onog1LrgxtM4svvkDFElQiPBCwi4BdzMsQkMChgRa/M4p6a/1tnRDDGGjo5GlNZbqFpvPWAlcgCdg=="
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -612,6 +608,7 @@ function initLoginModal(){
   setTimeout(()=>document.querySelectorAll('.login-pin')[0].focus(),120);
 }
 
+// [تم التحقق] هذا الكود سيعمل تلقائياً مع 6 خانات الآن
 document.querySelectorAll('.login-pin').forEach((el,i,all)=>{
   el.addEventListener('input',()=>{
     const v=el.value.slice(-1); el.value=v;
@@ -676,7 +673,8 @@ async function doChangePin(){
   const err=document.getElementById('changePinErr');
   err.textContent='';
   if(!cur||!nw){ err.textContent='Fill both fields.'; return; }
-  if(nw.length<6){ err.textContent='Min 6 characters.'; return; }
+  // [تم التحديث] التحقق من أن الرمز الجديد 6 أرقام بالضبط
+  if(nw.length !== 6){ err.textContent='Must be exactly 6 digits.'; return; }
   try{
     await api('POST','/auth/change-pin',{currentPin:cur,newPin:nw});
     closeModal('pinModal');
