@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,846 +7,335 @@
 <meta name="theme-color" content="#080c09">
 <title>DirtMC Store</title>
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>$\because$</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛒</text></svg>">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Changa:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
-/* ── DESIGN TOKENS ─────────────────────────────────────── */
+/* ── التصميم العام (Minecraft Style) ─────────────────────── */
 :root {
-  --g1: #2ecc71; --g2: #27ae60; --g3: #1a6b3c; --g4: #0d3d22;
-  --glow: rgba(46,204,113,0.14); --glow-soft: rgba(46,204,113,0.07);
-  --glow-mid: rgba(46,204,113,0.22);
-  --bg: #080c09; --bg2: #060909;
-  --surface: #0d1410; --surface2: #111a13; --surface3: #162019;
-  --border: rgba(46,204,113,0.10); --border-h: rgba(46,204,113,0.26);
-  --border-s: rgba(46,204,113,0.40);
-  --text: #c8e4d4; --text-mid: #6d9e7a; --text-dim: #37523f;
-  --text-bright: #e8f5ed;
-  --danger: #e74c3c; --danger-bg: rgba(231,76,60,0.08);
-  --warn: #f39c12;
-  --radius: 11px; --radius-sm: 7px;
-  --shadow: 0 16px 48px rgba(0,0,0,0.6);
-  --shadow-card: 0 4px 20px rgba(0,0,0,0.4);
-  --trans: .2s cubic-bezier(.4,0,.2,1);
+  --mc-green: #2ecc71;
+  --mc-dark-green: #27ae60;
+  --mc-stone: #c6c6c6;
+  --mc-dark-stone: #7e7e7e;
+  --mc-shadow: #3c3c3c;
+  --bg-color: #080c09;
+  --text-color: #e8f5ed;
+  
+  --font-pixel: 'VT323', monospace;
+  --font-arabic: 'Changa', sans-serif;
 }
 
-/* ── RESET ─────────────────────────────────────────────── */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
-  min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.55;
-  -webkit-font-smoothing:antialiased}
-button{cursor:pointer;font-family:inherit}
-input,textarea{font-family:inherit}
-a{color:inherit;text-decoration:none}
-img{display:block}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:99px}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── CANVAS ─────────────────────────────────────────────── */
-#canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
-
-/* ── APP ────────────────────────────────────────────────── */
-#app{position:relative;z-index:1;min-height:100vh}
-
-/* ── HEADER ─────────────────────────────────────────────── */
-header{display:flex;align-items:center;justify-content:space-between;
-  padding:13px 24px;background:rgba(8,12,9,0.88);border-bottom:1px solid var(--border);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  position:sticky;top:0;z-index:200;gap:12px}
-.logo{font-family:'Orbitron',monospace;font-size:1.15rem;font-weight:900;
-  color:var(--g1);letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
-.logo em{font-style:normal;font-size:8px;letter-spacing:3px;color:var(--text-dim);
-  margin-left:8px;vertical-align:middle}
-.h-center{flex:1;display:flex;justify-content:center;padding:0 12px}
-.search-wrap{display:flex;align-items:center;gap:8px;background:var(--surface2);
-  border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;
-  width:100%;max-width:320px;transition:border-color var(--trans),box-shadow var(--trans)}
-.search-wrap:focus-within{border-color:var(--border-h);box-shadow:0 0 0 3px var(--glow)}
-.search-wrap svg{flex-shrink:0;color:var(--text-dim)}
-#searchInput{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:100%}
-#searchInput::placeholder{color:var(--text-dim)}
-.h-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
-
-/* ── PILL ───────────────────────────────────────────────── */
-.pill{display:flex;align-items:center;gap:6px;background:var(--glow-soft);
-  border:1px solid var(--border-h);border-radius:99px;padding:4px 12px;
-  font-size:11.5px;color:var(--g1);font-weight:500;white-space:nowrap}
-.pill .dot{width:6px;height:6px;border-radius:50%;background:var(--g1);
-  animation:blink 1.5s infinite;box-shadow:0 0 6px var(--g1)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-
-/* ── ICON BUTTON ────────────────────────────────────────── */
-.ibtn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
-  background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text-mid);transition:border-color var(--trans),color var(--trans),background var(--trans);flex-shrink:0}
-.ibtn:hover{border-color:var(--border-h);color:var(--g1)}
-.ibtn.active{border-color:var(--border-s);color:var(--g1);background:var(--glow-soft)}
-
-/* ── DROPDOWN ───────────────────────────────────────────── */
-.menu-wrap{position:relative}
-#dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);
-  border:1px solid var(--border-h);border-radius:var(--radius);min-width:195px;
-  overflow:hidden;z-index:400;box-shadow:var(--shadow);
-  opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;
-  transition:opacity var(--trans),transform var(--trans)}
-#dropdown.open{opacity:1;transform:none;pointer-events:all}
-.dtag{font-size:9px;letter-spacing:2.5px;color:var(--text-dim);
-  padding:10px 15px 4px;text-transform:uppercase}
-.dsep{height:1px;background:var(--border);margin:4px 0}
-.ditem{display:flex;align-items:center;gap:9px;padding:10px 15px;
-  color:var(--text-mid);font-size:13px;cursor:pointer;border:none;background:none;
-  width:100%;transition:background var(--trans),color var(--trans);text-align:left}
-.ditem:hover{background:var(--glow-soft);color:var(--text-bright)}
-.ditem.danger:hover{background:var(--danger-bg);color:var(--danger)}
-
-/* ── HERO ───────────────────────────────────────────────── */
-.hero{text-align:center;padding:52px 20px 38px;position:relative}
-.hero::before{content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 100%,var(--glow) 0%,transparent 70%);
-  pointer-events:none}
-.hero h1{font-family:'Orbitron',monospace;font-size:clamp(1.8rem,5vw,3rem);font-weight:900;
-  color:var(--g1);letter-spacing:-.5px;margin-bottom:10px;animation:fadeUp .6s ease both}
-.hero p{color:var(--text-dim);font-size:13.5px;animation:fadeUp .6s .1s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-/* ── STORE ──────────────────────────────────────────────── */
-.store{padding:0 22px 80px;max-width:1280px;margin:0 auto}
-.section-label{font-size:10px;letter-spacing:3px;color:var(--text-dim);
-  text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
-.section-label::after{content:'';flex:1;height:1px;
-  background:linear-gradient(to right,var(--border),transparent)}
-
-/* ── GRID ───────────────────────────────────────────────── */
-#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:15px}
-
-/* ── CARD ───────────────────────────────────────────────── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  overflow:hidden;transition:transform var(--trans),box-shadow var(--trans),border-color var(--trans);
-  animation:cardIn .4s ease both;position:relative;cursor:pointer}
-.card:hover{transform:translateY(-4px);border-color:var(--border-h);
-  box-shadow:0 12px 32px rgba(0,0,0,.45),0 0 0 1px var(--border)}
-@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
-.card-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--surface2);position:relative}
-.card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease;will-change:transform}
-.card:hover .card-img-wrap img{transform:scale(1.06)}
-.card-img-fade{position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(8,12,9,.6) 0%,transparent 55%)}
-.card-body{padding:12px 14px 14px}
-.card-name{font-weight:600;font-size:13.5px;color:var(--text-bright);
-  margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-footer{display:flex;align-items:center;justify-content:space-between}
-.card-price{font-family:'Orbitron',monospace;font-size:12.5px;font-weight:700;color:var(--g1)}
-.card-buy{display:flex;align-items:center;gap:5px;background:var(--glow-soft);
-  border:1px solid rgba(46,204,113,.20);color:var(--g1);font-size:12px;font-weight:600;
-  padding:5px 12px;border-radius:6px;transition:all var(--trans)}
-.card-buy:hover{background:var(--g1);color:#000;border-color:var(--g1)}
-.card-del{position:absolute;top:8px;left:8px;background:rgba(231,76,60,.85);
-  border:none;color:#fff;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:500;
-  opacity:0;transition:opacity var(--trans),background var(--trans);z-index:10}
-.card:hover .card-del{opacity:1}
-.card-del:hover{background:var(--danger)}
-body:not(.is-owner) .card-del{display:none}
-
-/* ── EMPTY / SKELETON ───────────────────────────────────── */
-.empty-state{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--text-dim)}
-.empty-state p{font-size:13px;margin-top:12px}
-.skeleton-card{background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);overflow:hidden;animation:pulse 1.5s ease infinite}
-.skeleton-img{width:100%;aspect-ratio:1/1;background:var(--surface2)}
-.skeleton-body{padding:12px 14px}
-.skeleton-line{height:12px;border-radius:4px;background:var(--surface3);margin-bottom:8px}
-.skeleton-line.short{width:60%}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
-
-/* ── OVERLAY / MODAL ────────────────────────────────────── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:500;
-  align-items:center;justify-content:center;padding:20px}
-.overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border-h);border-radius:14px;
-  width:100%;max-width:420px;box-shadow:var(--shadow);
-  animation:modalIn .22s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden}
-@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:none}}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 0}
-.modal-title{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--text-bright)}
-.modal-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  background:none;border:none;color:var(--text-dim);font-size:18px;border-radius:6px;
-  transition:color var(--trans)}
-.modal-close:hover{color:var(--text)}
-.modal-body{padding:20px 22px 24px}
-
-/* ── PIN ────────────────────────────────────────────────── */
-.pin-row{display:flex;gap:8px;justify-content:center;margin-bottom:6px}
-/* [تم التحديث] تعديل الحجم ليناسب 6 خانات على الموبايل */
-.pin-digit{width:38px;height:46px;background:var(--surface2);border:1.5px solid var(--border);
-  border-radius:9px;color:var(--text-bright);font-size:19px;font-weight:700;
-  font-family:'Orbitron',monospace;text-align:center;outline:none;
-  transition:border-color var(--trans),box-shadow var(--trans);caret-color:var(--g1)}
-.pin-digit:focus{border-color:var(--border-s);box-shadow:0 0 0 3px var(--glow)}
-.pin-digit.err{border-color:var(--danger)!important;animation:shake .32s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
-.pin-error{text-align:center;color:var(--danger);font-size:12px;min-height:18px;margin-bottom:4px}
-
-/* ── FORM ───────────────────────────────────────────────── */
-.form-group{margin-bottom:14px}
-.form-label{display:block;font-size:12px;color:var(--text-mid);margin-bottom:6px}
-.form-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);color:var(--text-bright);font-size:13.5px;
-  padding:10px 13px;outline:none;transition:border-color var(--trans),box-shadow var(--trans)}
-.form-input:focus{border-color:var(--border-s);box-shadow:0 0 0 3px var(--glow)}
-.form-input::placeholder{color:var(--text-dim)}
-.form-error{font-size:12px;color:var(--danger);margin-top:5px;min-height:16px}
-.form-hint{font-size:11px;color:var(--text-dim);margin-top:4px}
-
-/* ── BUTTONS ────────────────────────────────────────────── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
-  padding:10px 20px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:600;
-  border:none;transition:all var(--trans);cursor:pointer}
-.btn-primary{background:linear-gradient(135deg,var(--g2),var(--g3));color:#fff;
-  box-shadow:0 4px 14px rgba(39,174,96,.25)}
-.btn-primary:hover{background:linear-gradient(135deg,var(--g1),var(--g2));transform:translateY(-1px)}
-.btn-ghost{background:none;border:1px solid var(--border);color:var(--text-mid)}
-.btn-ghost:hover{border-color:var(--border-h);color:var(--text)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-danger:hover{background:#c0392b;transform:translateY(-1px)}
-.btn-full{width:100%}
-
-/* ── UPLOAD ─────────────────────────────────────────────── */
-.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;
-  text-align:center;cursor:pointer;transition:border-color var(--trans),background var(--trans);
-  position:relative;overflow:hidden}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--border-s);background:var(--glow-soft)}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.upload-preview{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;
-  display:none;margin-bottom:8px}
-.upload-preview.visible{display:block}
-.upload-text{font-size:12.5px;color:var(--text-mid)}
-.upload-subtext{font-size:11px;color:var(--text-dim);margin-top:4px}
-
-/* ── USER ROWS ──────────────────────────────────────────── */
-.user-row{display:flex;align-items:center;justify-content:space-between;
-  padding:9px 0;border-bottom:1px solid var(--border)}
-.user-row:last-child{border-bottom:none}
-.user-info{display:flex;align-items:center;gap:8px}
-.user-dot{width:7px;height:7px;border-radius:50%;background:var(--g1);
-  box-shadow:0 0 6px var(--g1);flex-shrink:0}
-.user-name{font-size:13.5px;font-weight:500}
-.user-badge{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;
-  background:var(--glow-soft);border:1px solid var(--border-h);color:var(--g1);
-  border-radius:99px;padding:2px 7px}
-.user-badge.owner{background:rgba(243,156,18,.07);border-color:rgba(243,156,18,.2);color:var(--warn)}
-.kick-btn{font-size:11.5px;font-weight:600;background:var(--danger-bg);
-  border:1px solid rgba(231,76,60,.15);color:var(--danger);border-radius:5px;
-  padding:3px 10px;transition:all var(--trans)}
-.kick-btn:hover{background:var(--danger);color:#fff}
-.you-tag{font-size:10.5px;color:var(--text-dim)}
-
-/* ── TOAST ──────────────────────────────────────────────── */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--surface3);border:1px solid var(--border-h);border-radius:99px;
-  padding:10px 20px;font-size:13px;font-weight:500;color:var(--text-bright);
-  white-space:nowrap;z-index:1000;opacity:0;pointer-events:none;
-  transition:opacity .2s,transform .2s;box-shadow:var(--shadow-card)}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast.success{border-color:var(--border-s);color:var(--g1)}
-#toast.error{border-color:rgba(231,76,60,.3);color:var(--danger)}
-
-/* ── LOADING SCREEN ─────────────────────────────────────── */
-#loading-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:20px;transition:opacity .4s ease,visibility .4s}
-#loading-screen.gone{opacity:0;visibility:hidden;pointer-events:none}
-.loader-logo{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;
-  color:var(--g1);animation:pulse 1.4s ease infinite}
-.loader-bar-wrap{width:140px;height:2px;background:var(--border);border-radius:99px;overflow:hidden}
-.loader-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--g3),var(--g1));
-  border-radius:99px;transition:width .3s ease}
-
-/* ── STEP ───────────────────────────────────────────────── */
-#username-step{display:none}
-#username-step.visible{display:block}
-#pin-step.hidden{display:none}
-.step-info{text-align:center;margin-bottom:20px;color:var(--text-dim);font-size:12.5px}
-.step-info strong{color:var(--g1)}
-
-/* ── RESPONSIVE ─────────────────────────────────────────── */
-@media(max-width:640px){
-  header{padding:11px 14px;gap:8px}
-  .logo em{display:none}
-  .h-center{display:none}
-  .store{padding:0 14px 60px}
-  #grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-  .hero{padding:36px 16px 28px}
-  .pill span{display:none}
-  .modal{max-width:calc(100vw - 24px)}
-  /* [تم التحديث] تحسين مظهر 6 خانات على الشاشات الصغيرة جداً */
-  .pin-digit{width:33px;height:40px;font-size:16px;gap:5px}
-  .pin-row{gap:5px}
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-arabic);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-@media(max-width:400px){#grid{grid-template-columns:1fr 1fr}}
 
-/* ── UTILS ──────────────────────────────────────────────── */
-.hidden{display:none!important}
-.mt8{margin-top:8px}.mt16{margin-top:16px}
-.text-center{text-align:center}
-.flex-end{display:flex;justify-content:flex-end;gap:8px}
-.divider{height:1px;background:var(--border);margin:14px 0}
+/* ── الهيدر ─────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: #1e1e1e;
+  border-bottom: 4px solid var(--mc-dark-stone);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-family: var(--font-pixel);
+  font-size: 2.2rem;
+  color: var(--mc-green);
+  text-shadow: 3px 3px 0px #000;
+  letter-spacing: 1px;
+}
+
+.h-right { display: flex; align-items: center; gap: 15px; }
+
+/* ── الأزرار (Minecraft Button Look) ────────────────────── */
+.btn {
+  font-family: var(--font-pixel);
+  font-size: 1.4rem;
+  padding: 8px 18px;
+  border: 3px solid #000;
+  background: var(--mc-dark-stone);
+  color: #fff;
+  cursor: pointer;
+  text-shadow: 2px 2px 0px #333;
+  box-shadow: inset -3px -3px 0px #4a4a4a, inset 3px 3px 0px #bebebe;
+  transition: all 0.1s;
+}
+
+.btn:hover {
+  background: var(--mc-green);
+  box-shadow: inset -3px -3px 0px var(--mc-dark-green), inset 3px 3px 0px #95eb95;
+}
+
+.btn-primary {
+  background: var(--mc-dark-green);
+  box-shadow: inset -3px -3px 0px #1a6b3c, inset 3px 3px 0px var(--mc-green);
+}
+
+/* ── الواجهة الرئيسية ───────────────────────────────────── */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(to bottom, rgba(46,204,113,0.08), transparent);
+}
+
+.hero h1 {
+  font-family: var(--font-pixel);
+  font-size: 4rem;
+  color: var(--mc-green);
+  text-shadow: 4px 4px 0px #000;
+  margin-bottom: 10px;
+}
+
+.hero p { color: #6d9e7a; font-size: 1.1rem; }
+
+.store { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 25px;
+}
+
+/* ── الكروت ────────────────────────────────────────────── */
+.card {
+  background: #181818;
+  border: 4px solid var(--mc-shadow);
+  padding: 8px;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.card:hover { border-color: var(--mc-green); transform: translateY(-5px); }
+
+.card-img-wrap {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #000;
+  margin-bottom: 12px;
+  border: 2px solid #222;
+}
+
+.card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-body { text-align: center; }
+
+.card-name {
+  font-family: var(--font-pixel);
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.card-price {
+  font-family: var(--font-pixel);
+  font-size: 1.4rem;
+  color: var(--mc-green);
+  margin-bottom: 15px;
+}
+
+/* ── النوافذ المنبثقة (Modals) ─────────────────────────── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--mc-stone);
+  border: 4px solid #000;
+  box-shadow: inset -4px -4px 0px #555, inset 4px 4px 0px #fff;
+  width: 100%;
+  max-width: 420px;
+  color: #333;
+  padding: 25px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #555;
+  padding-bottom: 10px;
+}
+
+.modal-title { font-family: var(--font-pixel); font-size: 1.8rem; color: #000; }
+
+.form-group { margin-bottom: 15px; }
+
+.form-label { display: block; margin-bottom: 8px; font-weight: bold; }
+
+.form-input {
+  width: 100%;
+  background: #000;
+  border: 3px solid #555;
+  color: var(--mc-green);
+  padding: 12px;
+  font-family: var(--font-pixel);
+  font-size: 1.3rem;
+  outline: none;
+}
+
+.form-error { color: #aa0000; font-family: var(--font-pixel); font-size: 1.1rem; margin-top: 5px; }
+
+/* ── تأثيرات البحث ─────────────────────────────────────── */
+.search-container { max-width: 400px; margin: 0 auto 30px; }
+.search-input { width: 100%; background: #111; border: 3px solid var(--mc-shadow); padding: 10px; color: #fff; font-family: var(--font-pixel); font-size: 1.2rem; }
+
 </style>
 </head>
 <body>
 
-<div id="loading-screen">
-  <div class="loader-logo">DirtMC</div>
-  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
-  <div style="font-size:11px;color:var(--text-dim);letter-spacing:2px">LOADING STORE</div>
-</div>
-
-<canvas id="canvas"></canvas>
-
 <div id="app">
   <header>
-    <div class="logo">DirtMC<em>STORE</em></div>
-    <div class="h-center">
-      <div class="search-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input id="searchInput" placeholder="Search products…" autocomplete="off" maxlength="80">
-      </div>
-    </div>
+    <div class="logo">DirtMC Store</div>
     <div class="h-right">
-      <div class="pill" id="onlinePill" style="display:none">
-        <span class="dot"></span>
-        <span id="onlineCount">0</span>
-        <span style="font-size:10.5px">online</span>
+      <div id="logged-in-user" style="display:none; font-family: var(--font-pixel); font-size: 1.2rem;">
+        أهلاً، <span id="userNameDisplay" style="color:var(--mc-green)"></span>
       </div>
-      <div class="pill" id="userPill" style="display:none">
-        <span class="dot"></span>
-        <span id="pillName"></span>
-      </div>
-      <div class="menu-wrap">
-        <button class="ibtn" id="menuBtn" title="Menu" onclick="toggleMenu()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
-        </button>
-        <div id="dropdown">
-          <div id="dd-loggedout">
-            <div class="dtag">Account</div>
-            <button class="ditem" onclick="openModal('loginModal');closeMenu()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              Login
-            </button>
-          </div>
-          <div id="dd-loggedin" style="display:none">
-            <div class="dtag">Session</div>
-            <button class="ditem" onclick="openModal('usersModal');closeMenu()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-              Online Users
-            </button>
-            <button class="ditem" onclick="openModal('pinModal');closeMenu()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              Change PIN
-            </button>
-            <div class="dsep"></div>
-            <div id="dd-owner-items" style="display:none">
-              <button class="ditem" onclick="openModal('addProductModal');closeMenu()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Add Product
-              </button>
-              <div class="dsep"></div>
-            </div>
-            <button class="ditem danger" onclick="logout()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+      <button class="btn" id="loginBtn" onclick="openModal('loginModal')">تسجيل الدخول</button>
     </div>
   </header>
 
   <section class="hero">
     <h1>DirtMC Store</h1>
-    <p>Premium Minecraft services. Browse, click, and open a support ticket on Discord.</p>
+    <p>المتجر الرسمي للسيرفر - كل ما تحتاجه في مكان واحد</p>
   </section>
 
   <section class="store">
-    <div class="section-label">Products</div>
-    <div id="grid">
-      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-      <div class="skeleton-card" style="animation-delay:.1s"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-      <div class="skeleton-card" style="animation-delay:.2s"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-      <div class="skeleton-card" style="animation-delay:.3s"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="البحث عن منتج..." id="searchInput">
     </div>
+    <div id="grid">
+      </div>
   </section>
 </div>
-
-<div id="toast"></div>
 
 <div class="overlay" id="loginModal">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Enter PIN</span>
-      <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      <span class="modal-title">تسجيل الدخول</span>
+      <button style="background:none; border:none; cursor:pointer; font-size:1.5rem;" onclick="closeModal('loginModal')">✕</button>
     </div>
-    <div class="modal-body">
-      <div id="pin-step">
-        <div class="step-info">Enter the <strong>6-digit shared PIN</strong> to access the store</div>
-        <div class="pin-row">
-          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
-          <input class="pin-digit login-pin" type="text" inputmode="numeric" maxlength="1">
-        </div>
-        <div class="pin-error" id="loginPinErr"></div>
-        <div class="form-hint text-center">Type continuously — digits auto-advance</div>
+    
+    <div id="auth-step">
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input class="form-input" id="loginEmail" type="email" value="moradmorad461@gmail.com" readonly>
       </div>
-      <div id="username-step">
-        <div class="step-info">Choose a <strong>display name</strong> for this session</div>
-        <div class="form-group">
-          <label class="form-label">Username</label>
-          <input class="form-input" id="usernameInput" placeholder="e.g. Player1" maxlength="32" autocomplete="off">
-        </div>
-        <div class="form-error" id="usernameErr"></div>
-        <button class="btn btn-primary btn-full" onclick="doJoin()">Join Store</button>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <input class="form-input" id="loginPassword" type="password" placeholder="Password">
       </div>
+      <div class="form-error" id="loginErr"></div>
+      <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="verifyAuth()">دخول</button>
+    </div>
+
+    <div id="username-step" style="display:none">
+      <div class="form-group">
+        <label class="form-label">اسمك داخل السيرفر</label>
+        <input class="form-input" id="usernameInput" placeholder="Minecraft Username">
+      </div>
+      <div class="form-error" id="usernameErr"></div>
+      <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="completeLogin()">ابدأ التسوق</button>
     </div>
   </div>
 </div>
 
-<div class="overlay" id="pinModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Change PIN</span>
-      <button class="modal-close" onclick="closeModal('pinModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Current PIN</label>
-        <input class="form-input" id="currentPinInput" type="password" placeholder="Current PIN" maxlength="64" autocomplete="current-password">
-      </div>
-      <div class="form-group">
-        <label class="form-label">New PIN (Exactly 6 digits)</label>
-        <input class="form-input" id="newPinInput" type="password" placeholder="New PIN" maxlength="6" autocomplete="new-password">
-      </div>
-      <div class="form-error" id="changePinErr"></div>
-      <div class="form-hint">Current users won't be kicked when PIN changes.</div>
-      <div class="mt16 flex-end">
-        <button class="btn btn-ghost" onclick="closeModal('pinModal')">Cancel</button>
-        <button class="btn btn-primary" onclick="doChangePin()">Save PIN</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="usersModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Online Users</span>
-      <button class="modal-close" onclick="closeModal('usersModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="usersList"><div style="color:var(--text-dim);font-size:13px">Loading…</div></div>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="addProductModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Add Product</span>
-      <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Product Name</label>
-        <input class="form-input" id="prodName" placeholder="e.g. VIP Rank" maxlength="120" autocomplete="off">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Price</label>
-        <input class="form-input" id="prodPrice" placeholder="e.g. $9.99" maxlength="60" autocomplete="off">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Product Image</label>
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="prodImage" accept="image/*" onchange="handleImageSelect(event)">
-          <img id="imagePreview" class="upload-preview" alt="Preview">
-          <div class="upload-text">Drop image or click to browse</div>
-          <div class="upload-subtext">JPEG, PNG, WebP — max 5 MB — auto-cropped to square</div>
-        </div>
-      </div>
-      <div class="form-error" id="addProductErr"></div>
-      <div class="mt16 flex-end">
-        <button class="btn btn-ghost" onclick="closeModal('addProductModal')">Cancel</button>
-        <button class="btn btn-primary" id="addProductBtn" onclick="doAddProduct()">Add Product</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"
-  integrity="sha512-luMnTJZ7onog1LrgxtM4svvkDFElQiPBCwi4BdzMsQkMChgRa/M4p6a/1tnRDDGGjo5GlNZbqFpvPWAlcgCdg=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-'use strict';
+// --- البيانات الثابتة ---
+const ADMIN_EMAIL = "moradmorad461@gmail.com";
+const ADMIN_PASS = "531531morad";
 
-// ── CONFIG ────────────────────────────────────────────────
-const API    = '/api';
-const WS_URL = window.location.origin;
-const DISCORD_CHANNEL = '1409440646229393438';
+// --- المنتجات (مثال) ---
+const products = [
+  { id: 1, name: "VIP RANK", price: "$10.00", img: "https://placehold.co/400x400/000/2ecc71?text=VIP" },
+  { id: 2, name: "LEGEND RANK", price: "$25.00", img: "https://placehold.co/400x400/000/2ecc71?text=LEGEND" },
+  { id: 3, name: "SPAWHNER KEY", price: "$5.00", img: "https://placehold.co/400x400/000/2ecc71?text=KEY" }
+];
 
-// ── STATE ─────────────────────────────────────────────────
-let me = { loggedIn:false, username:'', isOwner:false, sessionId:'' };
-let allProducts = [];
-let onlineUsers = [];
-let socket = null;
-let toastTimer = null;
-let loginFails = 0;
-const MAX_FAILS = 8;
-let searchQ = '';
+// --- الوظائف الأساسية ---
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// ── CANVAS PARTICLES ──────────────────────────────────────
-(function initCanvas(){
-  const cv  = document.getElementById('canvas');
-  const ctx = cv.getContext('2d');
-  let W,H,stars=[];
-  function resize(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
-  function mkStar(){ return { x:Math.random()*W, y:Math.random()*H,
-    r:Math.random()*1.1+.2, o:Math.random()*.5+.1,
-    s:Math.random()*.3+.05, t:Math.random()*Math.PI*2 }; }
-  function init(){ resize(); stars=Array.from({length:160},mkStar); }
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    for(const s of stars){
-      s.t+=s.s*.015; s.o=.1+.35*Math.abs(Math.sin(s.t));
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(46,204,113,${s.o.toFixed(2)})`; ctx.fill();
-    }
-    requestAnimationFrame(draw);
-  }
-  window.addEventListener('resize',resize);
-  init(); draw();
-})();
-
-// ── LOADER ────────────────────────────────────────────────
-function setLoader(p){ document.getElementById('loaderBar').style.width=p+'%'; }
-function hideLoader(){ document.getElementById('loading-screen').classList.add('gone'); }
-
-// ── API ───────────────────────────────────────────────────
-async function api(method,path,body,isFormData){
-  const r = await fetch(API+path,{
-    method, credentials:'include',
-    headers: isFormData?{}:{'Content-Type':'application/json'},
-    body: body?(isFormData?body:JSON.stringify(body)):undefined,
-  });
-  const json = await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(json.error||'Request failed');
-  return json;
-}
-
-// ── SOCKET ────────────────────────────────────────────────
-function connectSocket(){
-  if(socket?.connected) return;
-  socket=io(WS_URL,{withCredentials:true,transports:['websocket','polling']});
-  socket.on('connect',()=>{ setInterval(()=>socket.emit('ping:alive'),30000); });
-  socket.on('users:update',(users)=>{
-    onlineUsers=users; renderOnlinePill();
-    if(document.getElementById('usersModal').classList.contains('open')) renderUsersList();
-  });
-  socket.on('product:added',(p)=>{ allProducts.unshift(p); renderGrid(); toast('New product added!','success'); });
-  socket.on('product:removed',({id})=>{ allProducts=allProducts.filter(p=>p._id!==id); renderGrid(); });
-  socket.on('kicked',({by})=>{
-    toast(`You were kicked by ${by}`,'error');
-    me={loggedIn:false,username:'',isOwner:false,sessionId:''};
-    socket.disconnect(); applyAuthState();
-  });
-}
-
-// ── INIT ──────────────────────────────────────────────────
-async function init(){
-  setLoader(20);
-  try{
-    const session=await api('GET','/auth/me'); setLoader(50);
-    if(session.loggedIn) me={loggedIn:true,username:session.username,isOwner:session.isOwner,sessionId:session.sessionId};
-    const products=await api('GET','/products'); setLoader(90);
-    allProducts=products; renderGrid(); applyAuthState();
-    if(me.loggedIn) connectSocket();
-    setLoader(100);
-  }catch(e){
-    toast('Connection error. Is the server running?','error');
-    renderGrid(); setLoader(100);
-  }
-  setTimeout(hideLoader,400);
-}
-
-// ── AUTH STATE ────────────────────────────────────────────
-function applyAuthState(){
-  const li=me.loggedIn, ow=me.isOwner;
-  document.getElementById('dd-loggedout').style.display=li?'none':'block';
-  document.getElementById('dd-loggedin').style.display=li?'block':'none';
-  document.getElementById('dd-owner-items').style.display=ow?'block':'none';
-  document.getElementById('userPill').style.display=li?'flex':'none';
-  document.getElementById('pillName').textContent=me.username;
-  document.getElementById('onlinePill').style.display=li?'flex':'none';
-  if(ow) document.body.classList.add('is-owner');
-  else   document.body.classList.remove('is-owner');
-}
-
-// ── LOGIN ─────────────────────────────────────────────────
-let pinVerified=false;
-function initLoginModal(){
-  pinVerified=false; loginFails=0;
-  document.getElementById('pin-step').classList.remove('hidden');
-  document.getElementById('username-step').style.display='none';
-  document.getElementById('loginPinErr').textContent='';
-  document.getElementById('usernameInput').value='';
-  document.getElementById('usernameErr').textContent='';
-  document.querySelectorAll('.login-pin').forEach(el=>el.value='');
-  setTimeout(()=>document.querySelectorAll('.login-pin')[0].focus(),120);
-}
-
-// [تم التحقق] هذا الكود سيعمل تلقائياً مع 6 خانات الآن
-document.querySelectorAll('.login-pin').forEach((el,i,all)=>{
-  el.addEventListener('input',()=>{
-    const v=el.value.slice(-1); el.value=v;
-    if(v&&i<all.length-1) all[i+1].focus();
-    if(i===all.length-1&&v){
-      const pin=[...all].map(d=>d.value).join('');
-      if(pin.length===all.length) checkLoginPin(pin);
-    }
-  });
-  el.addEventListener('keydown',e=>{
-    if(e.key==='Backspace'&&!el.value&&i>0) all[i-1].focus();
-  });
-});
-
-async function checkLoginPin(pin){
-  if(loginFails>=MAX_FAILS){ document.getElementById('loginPinErr').textContent='⛔ Too many attempts.'; return; }
-  try{
-    await api('POST','/auth/verify-pin',{pin});
-    pinVerified=true;
-    document.getElementById('pin-step').classList.add('hidden');
-    document.getElementById('username-step').style.display='block';
-    setTimeout(()=>document.getElementById('usernameInput').focus(),60);
-  }catch(e){
-    loginFails++;
-    const left=MAX_FAILS-loginFails;
-    document.getElementById('loginPinErr').textContent=`Wrong PIN — ${left} attempt${left===1?'':'s'} left`;
-    document.querySelectorAll('.login-pin').forEach(el=>{
-      el.value=''; el.classList.add('err');
-      setTimeout(()=>el.classList.remove('err'),380);
-    });
-    document.querySelectorAll('.login-pin')[0].focus();
-  }
-}
-
-async function doJoin(){
-  const username=document.getElementById('usernameInput').value.trim();
-  if(!username){ document.getElementById('usernameErr').textContent='Enter a username.'; return; }
-  try{
-    const res=await api('POST','/auth/join',{username});
-    me={loggedIn:true,username:res.username,isOwner:res.isOwner,sessionId:''};
-    closeModal('loginModal'); applyAuthState(); connectSocket();
-    toast(`Welcome, ${res.username}!`,'success');
-  }catch(e){ document.getElementById('usernameErr').textContent=e.message; }
-}
-
-document.getElementById('usernameInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doJoin(); });
-
-// ── LOGOUT ────────────────────────────────────────────────
-async function logout(){
-  closeMenu();
-  try{ await api('POST','/auth/logout'); }catch(_){}
-  me={loggedIn:false,username:'',isOwner:false,sessionId:''};
-  socket?.disconnect(); socket=null;
-  applyAuthState(); onlineUsers=[]; renderOnlinePill();
-  toast('Logged out');
-}
-
-// ── CHANGE PIN ────────────────────────────────────────────
-async function doChangePin(){
-  const cur=document.getElementById('currentPinInput').value;
-  const nw =document.getElementById('newPinInput').value;
-  const err=document.getElementById('changePinErr');
-  err.textContent='';
-  if(!cur||!nw){ err.textContent='Fill both fields.'; return; }
-  // [تم التحديث] التحقق من أن الرمز الجديد 6 أرقام بالضبط
-  if(nw.length !== 6){ err.textContent='Must be exactly 6 digits.'; return; }
-  try{
-    await api('POST','/auth/change-pin',{currentPin:cur,newPin:nw});
-    closeModal('pinModal');
-    document.getElementById('currentPinInput').value='';
-    document.getElementById('newPinInput').value='';
-    toast('PIN changed!','success');
-  }catch(e){ err.textContent=e.message; }
-}
-
-// ── KICK ──────────────────────────────────────────────────
-async function doKick(sessionId,username){
-  if(!confirm(`Kick ${username}?`)) return;
-  try{ await api('POST','/auth/kick',{sessionId}); toast(`Kicked ${username}`); renderUsersList(); }
-  catch(e){ toast(e.message,'error'); }
-}
-
-// ── USERS ─────────────────────────────────────────────────
-function renderOnlinePill(){ document.getElementById('onlineCount').textContent=onlineUsers.length; }
-async function renderUsersList(){
-  try{
-    const users=await api('GET','/sessions'); onlineUsers=users;
-    const el=document.getElementById('usersList');
-    if(!users.length){ el.innerHTML='<div style="color:var(--text-dim);font-size:13px;padding:8px 0">No users online.</div>'; return; }
-    el.innerHTML=users.map(u=>`
-      <div class="user-row">
-        <div class="user-info">
-          <div class="user-dot"></div>
-          <span class="user-name">${esc(u.username)}</span>
-          ${u.isOwner?'<span class="user-badge owner">Owner</span>':'<span class="user-badge">User</span>'}
+// رندر المنتجات
+function renderProducts(filter = "") {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = "";
+  products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).forEach(p => {
+    grid.innerHTML += `
+      <div class="card">
+        <div class="card-img-wrap">
+          <img src="${p.img}" alt="${p.name}">
         </div>
-        <button class="kick-btn" onclick="doKick('${esc(u.sessionId)}','${esc(u.username)}')">Kick</button>
-      </div>`).join('');
-  }catch(e){ document.getElementById('usersList').innerHTML='<div style="color:var(--danger);font-size:13px">Error loading users.</div>'; }
+        <div class="card-body">
+          <div class="card-name">${p.name}</div>
+          <div class="card-price">${p.price}</div>
+          <button class="btn btn-primary" style="width:100%" onclick="alert('تواصل معنا في الديسكورد للشراء')">شراء</button>
+        </div>
+      </div>
+    `;
+  });
 }
 
-// ── GRID ──────────────────────────────────────────────────
-function renderGrid(){
-  const grid=document.getElementById('grid');
-  const f=searchQ?allProducts.filter(p=>p.name.toLowerCase().includes(searchQ.toLowerCase())):allProducts;
-  if(!f.length){
-    grid.innerHTML=`<div class="empty-state">
-      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto;opacity:.25"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-      <p>${searchQ?'No products match your search.':'No products yet.'}</p>
-    </div>`;
+// التحقق من الدخول
+function verifyAuth() {
+  const pass = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginErr');
+  
+  if (pass === ADMIN_PASS) {
+    document.getElementById('auth-step').style.display = 'none';
+    document.getElementById('username-step').style.display = 'block';
+  } else {
+    err.textContent = "كلمة المرور غير صحيحة!";
+  }
+}
+
+// إتمام الدخول
+function completeLogin() {
+  const user = document.getElementById('usernameInput').value;
+  if (user.trim().length < 3) {
+    document.getElementById('usernameErr').textContent = "الاسم قصير جداً!";
     return;
   }
-  grid.innerHTML=f.map((p,i)=>{
-    const imgSrc=p.imagePath?`${WS_URL}${p.imagePath}`:`https://placehold.co/600x600/0d1410/2ecc71?text=${encodeURIComponent(p.name)}`;
-    return `<div class="card" style="animation-delay:${Math.min(i,.12)*.06}s" onclick="handleCardClick(event,'${esc(p._id)}')">
-      <button class="card-del" onclick="event.stopPropagation();deleteProduct('${esc(p._id)}')">✕ Remove</button>
-      <div class="card-img-wrap">
-        <img src="${esc(imgSrc)}" alt="${esc(p.name)}" loading="lazy"
-          onerror="this.src='https://placehold.co/600x600/0d1410/2ecc71?text=${encodeURIComponent(p.name)}'">
-        <div class="card-img-fade"></div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">${esc(p.name)}</div>
-        <div class="card-footer">
-          <span class="card-price">${esc(p.price)}</span>
-          <button class="card-buy">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 19.839 19.839 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-            Buy
-          </button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  
+  document.getElementById('loginBtn').style.display = 'none';
+  document.getElementById('logged-in-user').style.display = 'block';
+  document.getElementById('userNameDisplay').textContent = user;
+  closeModal('loginModal');
 }
 
-function handleCardClick(e,id){ if(e.target.closest('.card-del')) return; openDiscord(); }
-function openDiscord(){ window.open(`https://discord.com/channels/@me/${DISCORD_CHANNEL}`,'_blank','noopener'); }
-
-// ── ADD PRODUCT ───────────────────────────────────────────
-function handleImageSelect(e){
-  const file=e.target.files[0]; if(!file) return;
-  const prev=document.getElementById('imagePreview');
-  prev.src=URL.createObjectURL(file); prev.classList.add('visible');
-}
-const uploadZone=document.getElementById('uploadZone');
-uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('drag')});
-uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('drag'));
-uploadZone.addEventListener('drop',e=>{
-  e.preventDefault(); uploadZone.classList.remove('drag');
-  const file=e.dataTransfer.files[0]; if(!file) return;
-  document.getElementById('prodImage').files=e.dataTransfer.files;
-  const prev=document.getElementById('imagePreview');
-  prev.src=URL.createObjectURL(file); prev.classList.add('visible');
+// البحث
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  renderProducts(e.target.value);
 });
 
-async function doAddProduct(){
-  const name=document.getElementById('prodName').value.trim();
-  const price=document.getElementById('prodPrice').value.trim();
-  const imgFile=document.getElementById('prodImage').files[0];
-  const errEl=document.getElementById('addProductErr');
-  errEl.textContent='';
-  if(!name||!price){ errEl.textContent='Name and price are required.'; return; }
-  const btn=document.getElementById('addProductBtn');
-  btn.textContent='Uploading…'; btn.disabled=true;
-  try{
-    const fd=new FormData();
-    fd.append('name',name); fd.append('price',price);
-    if(imgFile) fd.append('image',imgFile);
-    await api('POST','/products',fd,true);
-    closeModal('addProductModal');
-    document.getElementById('prodName').value='';
-    document.getElementById('prodPrice').value='';
-    document.getElementById('prodImage').value='';
-    document.getElementById('imagePreview').classList.remove('visible');
-    toast('Product added!','success');
-  }catch(e){ errEl.textContent=e.message; }
-  finally{ btn.textContent='Add Product'; btn.disabled=false; }
-}
-
-async function deleteProduct(id){
-  if(!confirm('Remove this product?')) return;
-  try{ await api('DELETE',`/products/${id}`); toast('Product removed'); }
-  catch(e){ toast(e.message,'error'); }
-}
-
-// ── SEARCH ────────────────────────────────────────────────
-let searchTimer;
-document.getElementById('searchInput').addEventListener('input',e=>{
-  clearTimeout(searchTimer);
-  searchTimer=setTimeout(()=>{ searchQ=e.target.value.trim(); renderGrid(); },200);
-});
-
-// ── MODALS ────────────────────────────────────────────────
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-  if(id==='loginModal') initLoginModal();
-  if(id==='usersModal') renderUsersList();
-}
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.overlay').forEach(o=>{
-  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
-    closeMenu();
-  }
-});
-
-// ── MENU ──────────────────────────────────────────────────
-function toggleMenu(){
-  document.getElementById('dropdown').classList.toggle('open');
-  document.getElementById('menuBtn').classList.toggle('active');
-}
-function closeMenu(){
-  document.getElementById('dropdown').classList.remove('open');
-  document.getElementById('menuBtn').classList.remove('active');
-}
-document.addEventListener('click',e=>{
-  const w=document.querySelector('.menu-wrap');
-  if(w&&!w.contains(e.target)) closeMenu();
-});
-
-// ── TOAST ─────────────────────────────────────────────────
-function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='show'+(type?' '+type:'');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.className='',2800);
-}
-
-// ── XSS ESCAPE ────────────────────────────────────────────
-function esc(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// ── BOOT ──────────────────────────────────────────────────
-init();
+// التشغيل الأولي
+renderProducts();
 </script>
+
 </body>
 </html>
