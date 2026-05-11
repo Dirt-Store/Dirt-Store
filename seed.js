@@ -2,32 +2,49 @@
 'use strict';
 
 /**
- * Seed script — sets the initial shared PIN in MongoDB.
- * Run ONCE after first install:
- * node seed.js
- *
- * Or set a custom PIN:
- * SHARED_PIN=mySecret node seed.js
+ * سكريبت التحديث (Seed) لمتجر DirtMC
+ * يقوم هذا السكريبت بضبط البريد الإلكتروني وكلمة المرور في قاعدة البيانات
  */
 
 const mongoose = require('mongoose');
-// تأكد من أن المسار هنا صحيح بالنسبة لمشروعك (./server/models)
+// تأكد أن هذا المسار يشير إلى ملف المودلز في مشروعك
 const { Settings } = require('./server/models');
 
-const MONGO_URI  = process.env.MONGO_URI  || 'mongodb://127.0.0.1:27017/dirtmc';
-// [تم التحديث] تم تغيير الرمز الافتراضي ليكون 6 أرقام ليتوافق مع الواجهة
-const SHARED_PIN = process.env.SHARED_PIN || '563489';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/dirtmc';
+
+// البيانات التي حددتها أنت
+const ADMIN_EMAIL = 'moradmorad461@gmail.com';
+const ADMIN_PASS  = '531531morad';
 
 async function main() {
-  await mongoose.connect(MONGO_URI);
-  console.log('[db] Connected to Database');
+  try {
+    console.log('--- [DirtMC Auth Update] ---');
+    await mongoose.connect(MONGO_URI);
+    console.log('[db] Connected to MongoDB.');
 
-  await Settings.setPin(SHARED_PIN);
-  console.log(`[seed] Shared PIN set to: "${SHARED_PIN}"`);
-  console.log('[seed] You can change it later via the owner menu (Change PIN) after logging in.');
+    // تحديث أو إنشاء الإعدادات في قاعدة البيانات
+    // نستخدم updateOne مع upsert لضمان وجود السجل وتحديثه
+    await Settings.updateOne({}, { 
+      adminEmail: ADMIN_EMAIL, 
+      adminPassword: ADMIN_PASS 
+    }, { upsert: true });
 
-  await mongoose.disconnect();
-  console.log('[done]');
+    console.log('---------------------------------');
+    console.log('✅ Authentication Details Updated!');
+    console.log(`📧 Email: ${ADMIN_EMAIL}`);
+    console.log(`🔑 Password: ${ADMIN_PASS}`);
+    console.log('---------------------------------');
+    console.log('[seed] You can now login using these credentials.');
+
+  } catch (error) {
+    console.error('[error] Failed to seed database:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('[db] Disconnected. Done.');
+  }
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
