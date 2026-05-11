@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
 const { Settings } = require('./server/models');
 
 const MONGO_URI  = process.env.MONGO_URI  || 'mongodb://127.0.0.1:27017/dirtmc';
-const SHARED_PIN = process.env.SHARED_PIN || '56348';
+const SHARED_PIN = process.env.SHARED_PIN || '888888';
 
 async function main() {
   await mongoose.connect(MONGO_URI);
