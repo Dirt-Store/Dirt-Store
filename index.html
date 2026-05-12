@@ -4,1467 +4,1029 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DirtMC Store</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green-dark: #1a3a1a;
-    --green-mid: #2d6a2d;
-    --green-light: #4caf50;
-    --green-bright: #6fcf6f;
-    --green-glow: #a8e6a8;
-    --white: #f0fff0;
-    --white-dim: rgba(240,255,240,0.85);
-    --white-faint: rgba(240,255,240,0.12);
-    --bg: #0a1a0a;
-    --card-bg: rgba(20,45,20,0.82);
-    --border: rgba(76,175,80,0.3);
-    --gold: #f5c842;
-    --shadow-green: 0 0 30px rgba(76,175,80,0.25);
+    --dark-green: #003a1a;
+    --mid-green: #006b30;
+    --light-green: #00b050;
+    --accent-green: #39ff14;
+    --soft-white: #e8f5e9;
+    --card-bg: rgba(0, 40, 20, 0.85);
+    --border: rgba(0, 176, 80, 0.3);
+    --text: #c8e6c9;
+    --star-color: rgba(200,255,200,0.07);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Tajawal', sans-serif;
-    background: var(--bg);
-    color: var(--white);
+    background: var(--dark-green);
+    color: var(--soft-white);
     min-height: 100vh;
     overflow-x: hidden;
+    position: relative;
   }
 
-  /* STARS BACKGROUND */
-  #stars-canvas {
+  /* ===== STARFIELD ===== */
+  #starfield {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    inset: 0;
     z-index: 0;
     pointer-events: none;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--dur, 4s) var(--delay, 0s) infinite alternate;
+    opacity: 0;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: var(--max-op, 0.06); transform: scale(1.2); }
   }
 
-  /* GRADIENT OVERLAY */
-  .bg-overlay {
+  /* ===== TOP BAR / NAV ===== */
+  nav {
     position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at top, rgba(45,106,45,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse at bottom, rgba(10,26,10,0.95) 0%, transparent 80%);
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  /* ===== LOGIN SCREEN ===== */
-  #login-screen {
-    position: fixed;
-    inset: 0;
+    top: 0; left: 0; right: 0;
     z-index: 100;
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 32px;
-    background: rgba(5,12,5,0.97);
-    backdrop-filter: blur(8px);
+    justify-content: space-between;
+    padding: 12px 28px;
+    background: rgba(0, 20, 10, 0.9);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
   }
-
-  .login-logo {
+  .nav-logo {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 16px;
-    animation: floatLogo 3s ease-in-out infinite;
-  }
-
-  @keyframes floatLogo {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  .login-logo img {
-    width: 120px;
-    height: 120px;
-    border-radius: 16px;
-    filter: drop-shadow(0 0 24px rgba(76,175,80,0.7));
-  }
-
-  .login-logo h1 {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 2.4rem;
-    background: linear-gradient(135deg, var(--green-bright), var(--white), var(--green-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: none;
+    gap: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: var(--accent-green);
+    text-shadow: 0 0 12px var(--accent-green);
     letter-spacing: 2px;
   }
-
-  .login-subtitle {
-    color: var(--green-glow);
-    font-size: 1rem;
-    font-weight: 300;
-    opacity: 0.75;
+  .nav-logo img {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-green);
+    object-fit: cover;
+  }
+  .nav-logo .logo-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-green);
+    background: linear-gradient(135deg, var(--mid-green), var(--dark-green));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: var(--accent-green);
+    box-shadow: 0 0 12px rgba(57,255,20,0.4);
   }
 
-  .discord-login-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 40px;
-    background: linear-gradient(135deg, #5865F2, #4752c4);
-    border: none;
-    border-radius: 12px;
+  .nav-right {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .cart-btn {
+    position: relative;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--soft-white);
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    transition: all .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cart-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
+  .cart-count {
+    position: absolute;
+    top: -6px; left: -6px;
+    background: var(--accent-green);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 900;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logout-btn {
+    background: rgba(255,0,0,0.1);
+    border: 1px solid rgba(255,80,80,0.3);
+    color: #ff6b6b;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    transition: all .2s;
+  }
+  .logout-btn:hover { background: rgba(255,0,0,0.2); }
+
+  /* ===== LOGIN OVERLAY ===== */
+  #loginOverlay {
+    position: fixed; inset: 0;
+    z-index: 999;
+    background: rgba(0,10,5,0.97);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .login-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 52px;
+    text-align: center;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 0 60px rgba(0,176,80,0.15);
+    animation: fadeIn .5s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .login-box .logo-big {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-green);
+    background: linear-gradient(135deg, var(--mid-green), var(--dark-green));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 30px rgba(57,255,20,0.35);
+  }
+  .login-box h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-green);
+    font-size: 1.6rem;
+    text-shadow: 0 0 14px var(--accent-green);
+    margin-bottom: 6px;
+  }
+  .login-box p {
+    color: var(--text); font-size: 0.95rem; margin-bottom: 30px;
+  }
+  .discord-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: #5865F2;
     color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
     font-family: 'Tajawal', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 20px rgba(88,101,242,0.5);
+    width: 100%;
+    transition: all .2s;
+    box-shadow: 0 4px 20px rgba(88,101,242,0.4);
   }
+  .discord-btn:hover { background: #4752c4; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(88,101,242,0.5); }
+  .discord-btn svg { width: 24px; height: 24px; }
 
-  .discord-login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(88,101,242,0.7);
-  }
-
-  .discord-login-btn svg { width: 28px; height: 28px; }
-
-  /* ===== MAIN APP ===== */
-  #app { display: none; position: relative; z-index: 2; }
-
-  /* NAVBAR */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 32px;
-    background: rgba(10,26,10,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
-  }
-
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .nav-logo img {
-    width: 46px;
-    height: 46px;
-    border-radius: 8px;
-    filter: drop-shadow(0 0 10px rgba(76,175,80,0.6));
-  }
-
-  .nav-logo span {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.2rem;
-    background: linear-gradient(135deg, var(--green-bright), var(--white));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
-  }
-
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .user-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--white-faint);
-    border: 1px solid var(--border);
-    border-radius: 30px;
-    padding: 6px 16px;
-    font-size: 0.9rem;
-  }
-
-  .user-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--green-mid), var(--green-bright));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-  }
-
-  .admin-badge {
-    background: linear-gradient(135deg, var(--gold), #e0a020);
-    color: #1a1000;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 10px;
+  /* ===== MAIN CONTENT ===== */
+  #mainContent {
+    position: relative; z-index: 1;
+    padding-top: 80px;
+    min-height: 100vh;
     display: none;
   }
 
-  .cart-btn {
-    position: relative;
-    background: var(--white-faint);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 16px;
-    color: var(--white);
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.95rem;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .cart-btn:hover {
-    background: rgba(76,175,80,0.2);
-    border-color: var(--green-light);
-  }
-
-  .cart-count {
-    background: var(--green-light);
-    color: #0a1a0a;
-    font-size: 0.7rem;
-    font-weight: 900;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .logout-btn {
-    background: rgba(200,50,50,0.15);
-    border: 1px solid rgba(200,50,50,0.3);
-    border-radius: 10px;
-    padding: 8px 16px;
-    color: #ff8080;
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-  }
-
-  .logout-btn:hover { background: rgba(200,50,50,0.3); }
-
-  /* ADMIN PANEL BTN */
-  .admin-panel-btn {
-    background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
-    border: 1px solid rgba(245,200,66,0.4);
-    border-radius: 10px;
-    padding: 8px 16px;
-    color: var(--gold);
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-    display: none;
-  }
-
-  .admin-panel-btn:hover { background: rgba(245,200,66,0.2); }
-
-  /* HERO */
   .hero {
     text-align: center;
-    padding: 64px 20px 40px;
-    position: relative;
+    padding: 60px 20px 30px;
   }
-
   .hero h2 {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    background: linear-gradient(135deg, var(--green-bright) 0%, var(--white) 50%, var(--green-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    color: var(--accent-green);
+    text-shadow: 0 0 20px rgba(57,255,20,0.5);
+    margin-bottom: 10px;
   }
+  .hero p { color: var(--text); font-size: 1.05rem; }
 
-  .hero p {
-    color: var(--green-glow);
-    font-size: 1rem;
-    font-weight: 300;
-    opacity: 0.7;
-  }
-
-  /* MAIN CONTENT */
-  .main-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px 20px 80px;
-  }
-
-  /* CATEGORY SECTION */
-  .category-section {
-    margin-bottom: 48px;
-  }
-
-  .category-header {
-    display: flex;
-    align-items: center;
+  /* ===== ADMIN BAR ===== */
+  #adminBar {
+    display: none;
+    background: rgba(0,30,15,0.9);
+    border: 1px solid rgba(57,255,20,0.25);
+    border-radius: 14px;
+    margin: 20px auto;
+    max-width: 900px;
+    padding: 16px 22px;
     gap: 12px;
-    margin-bottom: 20px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, rgba(45,106,45,0.3), rgba(20,45,20,0.2));
-    border-radius: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  #adminBar span { color: var(--accent-green); font-weight: 700; font-size: 0.95rem; margin-left: auto; }
+  .admin-btn {
+    background: rgba(0,176,80,0.15);
     border: 1px solid var(--border);
-    border-right: 4px solid var(--green-light);
+    color: var(--light-green);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    transition: all .2s;
   }
+  .admin-btn:hover { background: rgba(0,176,80,0.3); }
+  .admin-btn.danger { border-color: rgba(255,80,80,0.3); color: #ff6b6b; background: rgba(255,0,0,0.08); }
+  .admin-btn.danger:hover { background: rgba(255,0,0,0.18); }
 
-  .category-header h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--green-bright);
+  /* ===== STORE LAYOUT ===== */
+  .store-container { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
+
+  .category-section { margin-bottom: 48px; }
+  .category-header {
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
   }
+  .category-header h3 { font-size: 1.3rem; color: var(--light-green); font-weight: 700; }
+  .category-icon { font-size: 1.5rem; }
+  .category-edit-btns { margin-right: auto; display: flex; gap: 8px; }
+  .cat-edit-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 4px 10px; border-radius: 6px; cursor: pointer;
+    font-family: 'Tajawal', sans-serif; font-size: 0.8rem;
+    transition: all .2s;
+  }
+  .cat-edit-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
+  .cat-edit-btn.del { border-color: rgba(255,80,80,0.3); color: #ff6b6b; }
+  .cat-edit-btn.del:hover { background: rgba(255,0,0,0.1); }
 
-  /* PRODUCTS GRID */
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
   }
 
+  /* ===== PRODUCT CARD ===== */
   .product-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s;
+    transition: transform .25s, box-shadow .25s;
     cursor: pointer;
     position: relative;
-    backdrop-filter: blur(8px);
   }
-
-  .product-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--green-light);
-    box-shadow: var(--shadow-green);
-  }
-
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,176,80,0.2); }
   .product-img {
-    width: 100%;
-    height: 160px;
+    width: 100%; height: 160px;
     object-fit: cover;
-    background: linear-gradient(135deg, #1a3a1a, #0d200d);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
+    background: linear-gradient(135deg, var(--dark-green), #001a0c);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
   }
-
-  .product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .product-info {
-    padding: 16px;
-  }
-
-  .product-name {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: var(--white);
-  }
-
-  .product-bio {
-    font-size: 0.82rem;
-    color: rgba(240,255,240,0.55);
-    margin-bottom: 12px;
-    line-height: 1.5;
-    min-height: 36px;
-  }
-
-  .product-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .product-price {
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: var(--green-bright);
-  }
-
-  .product-stock {
-    font-size: 0.75rem;
-    color: rgba(240,255,240,0.4);
-  }
-
-  .buy-btn {
-    background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+  .product-img img { width: 100%; height: 100%; object-fit: cover; }
+  .product-body { padding: 14px 16px; }
+  .product-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; color: var(--soft-white); }
+  .product-bio { font-size: 0.82rem; color: var(--text); margin-bottom: 10px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { color: var(--accent-green); font-weight: 900; font-size: 1.05rem; }
+  .product-qty { font-size: 0.78rem; color: #7cb87c; }
+  .add-to-cart-btn {
+    background: var(--mid-green);
     border: none;
-    border-radius: 8px;
-    padding: 8px 18px;
     color: white;
-    font-family: 'Tajawal', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
+    padding: 7px 14px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all .2s;
+    margin-top: 10px;
+    width: 100%;
   }
-
-  .buy-btn:hover { opacity: 0.85; transform: scale(1.05); }
+  .add-to-cart-btn:hover { background: var(--light-green); }
+  .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .sold-out-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(200,0,0,0.85);
+    color: white; font-size: 0.75rem; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+  }
+  .admin-prod-btns { display: flex; gap: 6px; margin-top: 8px; }
+  .prod-edit-btn {
+    flex: 1; background: transparent; border: 1px solid var(--border);
+    color: var(--text); padding: 5px 8px; border-radius: 6px;
+    cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.8rem;
+    transition: all .2s;
+  }
+  .prod-edit-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
+  .prod-edit-btn.del { border-color: rgba(255,80,80,0.3); color: #ff6b6b; }
+  .prod-edit-btn.del:hover { background: rgba(255,0,0,0.1); }
 
   /* ===== CART SIDEBAR ===== */
-  #cart-sidebar {
-    position: fixed;
-    top: 0; left: -420px;
-    width: 420px;
-    height: 100%;
-    background: rgba(10,22,10,0.97);
-    backdrop-filter: blur(20px);
-    border-right: 1px solid var(--border);
-    z-index: 200;
-    transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    gap: 20px;
-    box-shadow: 4px 0 40px rgba(0,0,0,0.6);
-  }
-
-  #cart-sidebar.open { left: 0; }
-
-  .cart-overlay {
-    position: fixed;
-    inset: 0;
+  #cartOverlay {
+    position: fixed; inset: 0;
     background: rgba(0,0,0,0.6);
-    z-index: 199;
+    z-index: 200;
     display: none;
+    align-items: flex-start;
+    justify-content: flex-end;
   }
-
-  .cart-overlay.show { display: block; }
-
-  .cart-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .cart-header h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--green-bright);
-  }
-
-  .close-cart {
-    background: none;
-    border: none;
-    color: var(--white);
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-  }
-
-  .close-cart:hover { opacity: 1; }
-
-  .cart-items {
-    flex: 1;
+  .cart-panel {
+    background: #001a0c;
+    border-right: 1px solid var(--border);
+    width: 360px; max-width: 95vw;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    animation: slideIn .3s ease;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
   }
-
+  @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  .cart-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cart-header h3 { font-size: 1.1rem; font-weight: 700; }
+  .close-cart { background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+  .cart-items { flex: 1; padding: 16px 22px; display: flex; flex-direction: column; gap: 14px; }
   .cart-item {
-    background: var(--white-faint);
+    background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 12px 14px;
+    display: flex; gap: 12px; align-items: center;
   }
-
-  .cart-item-name {
-    font-weight: 700;
-    font-size: 0.95rem;
+  .cart-item-img {
+    width: 54px; height: 54px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--dark-green), #001a0c);
+    flex-shrink: 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
   }
-
-  .cart-item-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .qty-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
+  .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+  .cart-item-price { color: var(--accent-green); font-size: 0.85rem; }
+  .qty-controls { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
   .qty-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: rgba(76,175,80,0.15);
-    color: var(--green-bright);
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    background: rgba(0,176,80,0.2); border: 1px solid var(--border);
+    color: white; width: 26px; height: 26px; border-radius: 6px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: all .2s;
   }
-
-  .qty-btn:hover { background: rgba(76,175,80,0.3); }
-
-  .qty-num {
-    font-weight: 700;
-    font-size: 1rem;
-    min-width: 24px;
-    text-align: center;
-  }
-
-  .item-total {
-    font-weight: 700;
-    color: var(--green-bright);
-  }
-
-  .remove-item {
-    background: none;
-    border: none;
-    color: #ff8080;
-    cursor: pointer;
-    font-size: 0.8rem;
-    opacity: 0.7;
-  }
-
-  .remove-item:hover { opacity: 1; }
-
-  .cart-empty {
-    text-align: center;
-    opacity: 0.4;
-    padding: 40px 0;
-    font-size: 0.95rem;
-  }
-
-  .cart-total-bar {
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 1.1rem;
-    font-weight: 700;
-  }
-
+  .qty-btn:hover { background: rgba(0,176,80,0.4); }
+  .qty-val { font-size: 0.9rem; font-weight: 700; min-width: 20px; text-align: center; }
+  .remove-item { background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 1.2rem; flex-shrink: 0; }
+  .cart-footer { padding: 18px 22px; border-top: 1px solid var(--border); }
+  .cart-total { display: flex; justify-content: space-between; margin-bottom: 16px; font-weight: 700; font-size: 1.05rem; }
+  .cart-total span:last-child { color: var(--accent-green); }
   .checkout-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--green-mid), var(--green-bright));
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 900;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 20px rgba(76,175,80,0.4);
+    width: 100%; background: var(--mid-green);
+    border: none; color: white; padding: 14px;
+    border-radius: 12px; font-family: 'Tajawal', sans-serif;
+    font-size: 1.1rem; font-weight: 700; cursor: pointer;
+    transition: all .2s;
   }
+  .checkout-btn:hover { background: var(--light-green); }
+  .empty-cart { color: var(--text); text-align: center; padding: 40px 0; font-size: 1rem; }
 
-  .checkout-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(76,175,80,0.6);
-  }
-
-  /* ===== CHECKOUT MODAL ===== */
+  /* ===== MODALS ===== */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
     z-index: 300;
     display: none;
     align-items: center;
     justify-content: center;
+    padding: 20px;
   }
-
-  .modal-overlay.show { display: flex; }
-
   .modal {
-    background: rgba(12,28,12,0.98);
-    border: 1px solid var(--green-light);
-    border-radius: 20px;
-    padding: 36px;
-    max-width: 480px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 0 60px rgba(76,175,80,0.3);
-    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  }
-
-  @keyframes popIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-
-  .modal h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: var(--green-bright);
-  }
-
-  .modal p {
-    color: var(--white-dim);
-    margin-bottom: 24px;
-    line-height: 1.7;
-    font-size: 1rem;
-  }
-
-  .modal p strong {
-    color: var(--gold);
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-  }
-
-  .modal-btn-primary {
-    padding: 12px 28px;
-    background: linear-gradient(135deg, #5865F2, #4752c4);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-family: 'Tajawal', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .modal-btn-primary:hover { opacity: 0.85; transform: scale(1.04); }
-
-  .modal-btn-cancel {
-    padding: 12px 28px;
-    background: var(--white-faint);
+    background: #001a0c;
     border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--white-dim);
-    font-family: 'Tajawal', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .modal-btn-cancel:hover { background: rgba(255,255,255,0.08); }
-
-  .warning-box {
-    background: rgba(200,50,50,0.12);
-    border: 1px solid rgba(200,50,50,0.35);
-    border-radius: 10px;
-    padding: 12px 16px;
-    color: #ff9090;
-    font-size: 0.88rem;
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-
-  /* ===== ADMIN PANEL ===== */
-  #admin-panel {
-    position: fixed;
-    inset: 0;
-    z-index: 250;
-    background: rgba(5,12,5,0.98);
-    backdrop-filter: blur(16px);
-    display: none;
-    flex-direction: column;
+    border-radius: 18px;
+    padding: 32px 30px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(0,176,80,0.15);
+    animation: fadeIn .3s ease;
+    max-height: 90vh;
     overflow-y: auto;
   }
-
-  #admin-panel.show { display: flex; }
-
-  .admin-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 32px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,26,10,0.9);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  .admin-header h2 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  .close-admin {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--white);
-    padding: 8px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    transition: all 0.2s;
-  }
-
-  .close-admin:hover { background: var(--white-faint); }
-
-  .admin-body {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 32px 20px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
-
-  .admin-section {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-  }
-
-  .admin-section h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--green-bright);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .form-group label {
-    font-size: 0.88rem;
-    color: var(--green-glow);
-    opacity: 0.8;
-  }
-
+  .modal h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 22px; color: var(--soft-white); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 0.88rem; color: var(--text); margin-bottom: 6px; }
   .form-group input, .form-group textarea, .form-group select {
-    background: rgba(10,26,10,0.8);
+    width: 100%;
+    background: rgba(0,40,20,0.8);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    color: var(--soft-white);
     padding: 10px 14px;
-    color: var(--white);
+    border-radius: 9px;
     font-family: 'Tajawal', sans-serif;
     font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color .2s;
   }
-
-  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-    border-color: var(--green-light);
-  }
-
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--light-green); }
   .form-group textarea { resize: vertical; min-height: 80px; }
+  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+  .btn-cancel {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text); padding: 9px 20px; border-radius: 9px;
+    cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
+    transition: all .2s;
+  }
+  .btn-cancel:hover { border-color: #ff6b6b; color: #ff6b6b; }
+  .btn-save {
+    background: var(--mid-green); border: none;
+    color: white; padding: 9px 24px; border-radius: 9px;
+    cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
+    font-weight: 700; transition: all .2s;
+  }
+  .btn-save:hover { background: var(--light-green); }
 
-  .admin-submit {
-    padding: 12px 28px;
-    background: linear-gradient(135deg, var(--green-mid), var(--green-light));
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-family: 'Tajawal', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 8px;
+  /* ===== TOAST ===== */
+  #toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,100,40,0.95);
+    border: 1px solid var(--light-green);
+    color: white; padding: 12px 28px;
+    border-radius: 30px; z-index: 999;
+    display: none; font-size: 0.95rem;
+    box-shadow: 0 4px 20px rgba(0,176,80,0.3);
+    animation: fadeIn .3s ease;
   }
 
-  .admin-submit:hover { opacity: 0.85; }
-
-  .admin-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 16px;
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:600px){
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .cart-panel { width: 100%; }
+    .login-box { padding: 32px 22px; }
   }
-
-  .admin-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--white-faint);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-  }
-
-  .delete-btn {
-    background: rgba(200,50,50,0.2);
-    border: 1px solid rgba(200,50,50,0.3);
-    border-radius: 6px;
-    color: #ff8080;
-    padding: 4px 10px;
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.8rem;
-    transition: all 0.2s;
-  }
-
-  .delete-btn:hover { background: rgba(200,50,50,0.4); }
-
-  /* WEB ADMIN USERS */
-  .web-admin-section {}
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 32px;
-    right: 50%;
-    transform: translateX(50%);
-    background: rgba(45,106,45,0.95);
-    border: 1px solid var(--green-light);
-    border-radius: 12px;
-    padding: 14px 28px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    backdrop-filter: blur(8px);
-  }
-
-  .toast.show { opacity: 1; }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 3px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    nav { padding: 10px 16px; }
-    .main-content { padding: 16px 12px 80px; }
-    #cart-sidebar { width: 100%; left: -100%; }
-    .modal { padding: 24px 20px; }
-  }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    opacity: 0.5;
-    font-size: 1rem;
-    line-height: 2;
-  }
-
-  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
 </style>
 </head>
 <body>
 
-<canvas id="stars-canvas"></canvas>
-<div class="bg-overlay"></div>
+<!-- ===== STARFIELD ===== -->
+<div id="starfield"></div>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="login-logo">
-    <img src="/mnt/user-data/uploads/ddirtm_ccc.png" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232d6a2d%22/><text y=%2260%22 x=%2215%22 font-size=%2255%22>⛏️</text></svg>'" alt="DirtMC">
-    <h1>DirtMC</h1>
-    <span class="login-subtitle">Store — سوق السيرفر</span>
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="logo-big">🌿</div>
+    <h1>DirtMC Store</h1>
+    <p>سجّل دخول بحسابك في ديسكورد لمتابعة التسوق</p>
+    <button class="discord-btn" onclick="loginWithDiscord()">
+      <svg viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.401329 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C7.41372 50.7009 14.2196 53.9829 20.893 56.1439C20.9854 56.1721 21.0833 56.1383 21.1418 56.0652C22.7963 53.8348 24.2793 51.4857 25.5618 49.0196C25.6231 48.8998 25.5647 48.7573 25.441 48.7065C23.1298 47.8188 20.9278 46.7323 18.8067 45.4998C18.6703 45.4213 18.659 45.2281 18.7839 45.1353C19.2331 44.8044 19.6823 44.4591 20.1119 44.1138C20.1769 44.0606 20.2663 44.0494 20.3418 44.0831C32.1102 49.5583 44.8979 49.5583 56.5293 44.0831C56.6048 44.046 56.6942 44.0577 56.7621 44.1109C57.1917 44.4562 57.641 44.8044 58.0931 45.1353C58.218 45.2281 58.2095 45.4213 58.0731 45.4998C55.9521 46.7551 53.7501 47.8188 51.4332 48.7037C51.3094 48.7546 51.2538 48.8998 51.3152 49.0196C52.6205 51.4829 54.1034 53.8292 55.7298 56.0623C55.7855 56.1383 55.8863 56.1721 55.9787 56.1439C62.6802 53.9829 69.486 50.7009 76.514 45.5576C76.5672 45.5182 76.6008 45.4591 76.6064 45.3942C78.1068 30.0813 73.9517 16.7809 65.1747 4.9823C65.155 4.9429 65.1214 4.9147 65.0794 4.8978H60.1045ZM25.4743 37.3335C22.1314 37.3335 19.3785 34.2844 19.3785 30.4999C19.3785 26.7154 22.0794 23.6663 25.4743 23.6663C28.8973 23.6663 31.6225 26.7437 31.5701 30.4999C31.5701 34.2844 28.8692 37.3335 25.4743 37.3335ZM50.5514 37.3335C47.2085 37.3335 44.4556 34.2844 44.4556 30.4999C44.4556 26.7154 47.1565 23.6663 50.5514 23.6663C53.9744 23.6663 56.6996 26.7437 56.6472 30.4999C56.6472 34.2844 53.9744 37.3335 50.5514 37.3335Z" fill="white"/>
+      </svg>
+      تسجيل الدخول عبر Discord
+    </button>
   </div>
-  <button class="discord-login-btn" onclick="loginWithDiscord()">
-    <svg viewBox="0 0 127.14 96.36" fill="white"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
-    تسجيل الدخول بواسطة Discord
-  </button>
 </div>
 
-<!-- MAIN APP -->
-<div id="app">
-  <!-- NAVBAR -->
-  <nav>
-    <div class="nav-logo">
-      <img src="/mnt/user-data/uploads/ddirtm_ccc.png" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232d6a2d%22/><text y=%2260%22 x=%2215%22 font-size=%2255%22>⛏️</text></svg>'" alt="DirtMC">
-      <span>DirtMC Store</span>
-    </div>
-    <div class="nav-right">
-      <button class="admin-panel-btn" id="adminPanelBtn" onclick="openAdmin()">⚙️ لوحة الإدارة</button>
-      <button class="cart-btn" onclick="toggleCart()">
-        🛒 السلة
-        <span class="cart-count" id="cartCount">0</span>
-      </button>
-      <div class="user-badge" id="userBadge">
-        <div class="user-avatar" id="userAvatar">U</div>
-        <span id="userName">مستخدم</span>
-        <span class="admin-badge" id="adminBadge">ADMIN</span>
-      </div>
-      <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
-    </div>
-  </nav>
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-placeholder">🌿</div>
+    DirtMC Store
+  </div>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="openCart()">
+      <span>🛒</span> السلة
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+  </div>
+</nav>
 
-  <!-- HERO -->
+<!-- ===== MAIN CONTENT ===== -->
+<div id="mainContent">
   <div class="hero">
-    <h2>متجر DirtMC</h2>
-    <p>اشتري منتجاتك المفضلة بسهولة وأمان</p>
+    <h2>🌿 DirtMC Store</h2>
+    <p>مرحباً بك في ستور ديرت — اختر منتجك وأكمل الشراء بسهولة</p>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content" id="storeContent">
-    <div class="empty-state">
-      <div class="empty-icon">📦</div>
-      <div>لا توجد منتجات بعد<br><span style="font-size:0.85rem;opacity:0.6">يمكن للمسؤول إضافة منتجات من لوحة الإدارة</span></div>
+  <!-- Admin Bar -->
+  <div id="adminBar">
+    <span>⚡ لوحة الإدارة</span>
+    <button class="admin-btn" onclick="openAddCategoryModal()">➕ إضافة كاتجوري</button>
+    <button class="admin-btn" onclick="openAddProductModal()">🛍️ إضافة منتج</button>
+  </div>
+
+  <!-- Store -->
+  <div class="store-container" id="storeContainer">
+    <!-- categories rendered here -->
+  </div>
+</div>
+
+<!-- ===== CART SIDEBAR ===== -->
+<div id="cartOverlay" onclick="closeCartOnOverlay(event)">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h3>🛒 سلة المشتريات</h3>
+      <button class="close-cart" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total"><span>المجموع</span><span id="cartTotal">0$</span></div>
+      <button class="checkout-btn" onclick="checkout()">إتمام الدفع 💳</button>
     </div>
   </div>
 </div>
 
-<!-- CART SIDEBAR -->
-<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
-<div id="cart-sidebar">
-  <div class="cart-header">
-    <h3>🛒 سلة الشراء</h3>
-    <button class="close-cart" onclick="toggleCart()">✕</button>
-  </div>
-  <div class="cart-items" id="cartItems">
-    <div class="cart-empty">السلة فارغة</div>
-  </div>
-  <div class="cart-total-bar">
-    <span>المجموع:</span>
-    <span id="cartTotal" style="color:var(--green-bright)">0 ريال</span>
-  </div>
-  <button class="checkout-btn" onclick="checkout()">إتمام الدفع</button>
-</div>
-
-<!-- CHECKOUT MODAL -->
-<div class="modal-overlay" id="checkoutModal">
+<!-- ===== ADD CATEGORY MODAL ===== -->
+<div class="modal-overlay" id="addCategoryModal">
   <div class="modal">
-    <div style="font-size:2.5rem;margin-bottom:12px">🎉</div>
-    <h3>إتمام الشراء</h3>
-    <p>لإتمام عملية الشراء، يرجى فتح تذكرة في سيرفر الديسكورد وسيتم مساعدتك في أقرب وقت.</p>
-    <div class="warning-box">
-      ⚠️ تحذير: في حال فتحت التذكرة للكلام فقط وما تشتري، سيتم وضعك في القائمة السوداء بدون رجعة!
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn-primary" onclick="goToTicket()">فتح تذكرة 🎫</button>
-      <button class="modal-btn-cancel" onclick="closeCheckout()">إلغاء</button>
+    <h3>➕ إضافة كاتجوري</h3>
+    <div class="form-group"><label>اسم الكاتجوري</label><input type="text" id="catName" placeholder="مثال: VIP Ranks"></div>
+    <div class="form-group"><label>إيموجي</label><input type="text" id="catEmoji" placeholder="مثال: 👑"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('addCategoryModal')">إلغاء</button>
+      <button class="btn-save" onclick="saveCategory()">حفظ</button>
     </div>
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
-  <div class="admin-header">
-    <h2>⚙️ لوحة الإدارة — DirtMC Store</h2>
-    <button class="close-admin" onclick="closeAdmin()">إغلاق ✕</button>
-  </div>
-  <div class="admin-body">
-
-    <!-- WEB ADMINS -->
-    <div class="admin-section">
-      <h3>👑 مسؤولو الويب</h3>
-      <p style="font-size:0.85rem;opacity:0.6;margin-bottom:12px">استخدم امر <code style="background:rgba(76,175,80,0.15);padding:2px 6px;border-radius:4px">/add web @منشن</code> في الديسكورد لإضافة مسؤول جديد</p>
-      <div class="admin-list" id="webAdminsList"></div>
+<!-- ===== ADD PRODUCT MODAL ===== -->
+<div class="modal-overlay" id="addProductModal">
+  <div class="modal">
+    <h3>🛍️ إضافة منتج</h3>
+    <div class="form-group"><label>الكاتجوري</label>
+      <select id="prodCategory"><option value="">اختر الكاتجوري</option></select>
     </div>
-
-    <!-- ADD CATEGORY -->
-    <div class="admin-section">
-      <h3>📁 إضافة كتجوري</h3>
-      <div class="form-group">
-        <label>اسم الكتجوري</label>
-        <input type="text" id="catName" placeholder="مثال: VIP Ranks">
-      </div>
-      <button class="admin-submit" onclick="addCategory()">➕ إضافة كتجوري</button>
-      <div class="admin-list" id="categoriesList"></div>
+    <div class="form-group"><label>اسم المنتج</label><input type="text" id="prodName" placeholder="مثال: VIP Package"></div>
+    <div class="form-group"><label>السعر (مثال: 10$)</label><input type="text" id="prodPrice" placeholder="10$"></div>
+    <div class="form-group"><label>رابط الصورة (اختياري)</label><input type="text" id="prodImage" placeholder="https://..."></div>
+    <div class="form-group"><label>الوصف</label><textarea id="prodBio" placeholder="وصف المنتج..."></textarea></div>
+    <div class="form-group"><label>الكمية (اتركه فارغ لكمية غير محدودة)</label><input type="number" id="prodQty" placeholder="∞ لا محدودة"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('addProductModal')">إلغاء</button>
+      <button class="btn-save" onclick="saveProduct()">حفظ</button>
     </div>
-
-    <!-- ADD PRODUCT -->
-    <div class="admin-section">
-      <h3>🛍️ إضافة منتج</h3>
-      <div class="form-group">
-        <label>الكتجوري</label>
-        <select id="productCategory">
-          <option value="">-- اختر كتجوري --</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>اسم المنتج</label>
-        <input type="text" id="productName" placeholder="اسم المنتج">
-      </div>
-      <div class="form-group">
-        <label>سعر المنتج (ريال)</label>
-        <input type="number" id="productPrice" placeholder="0" min="0">
-      </div>
-      <div class="form-group">
-        <label>رابط صورة المنتج (اختياري)</label>
-        <input type="text" id="productImage" placeholder="https://...">
-      </div>
-      <div class="form-group">
-        <label>وصف المنتج (البايو)</label>
-        <textarea id="productBio" placeholder="وصف مختصر عن المنتج..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>الكمية (اتركه فارغاً لكمية غير محدودة)</label>
-        <input type="number" id="productStock" placeholder="غير محدودة" min="1">
-      </div>
-      <button class="admin-submit" onclick="addProduct()">➕ إضافة منتج</button>
-      <div class="admin-list" id="productsList"></div>
-    </div>
-
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- ===== EDIT PRODUCT MODAL ===== -->
+<div class="modal-overlay" id="editProductModal">
+  <div class="modal">
+    <h3>✏️ تعديل منتج</h3>
+    <input type="hidden" id="editProdId">
+    <div class="form-group"><label>اسم المنتج</label><input type="text" id="editProdName"></div>
+    <div class="form-group"><label>السعر</label><input type="text" id="editProdPrice"></div>
+    <div class="form-group"><label>رابط الصورة</label><input type="text" id="editProdImage"></div>
+    <div class="form-group"><label>الوصف</label><textarea id="editProdBio"></textarea></div>
+    <div class="form-group"><label>الكمية (اتركه فارغ لغير محدودة)</label><input type="number" id="editProdQty"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('editProductModal')">إلغاء</button>
+      <button class="btn-save" onclick="updateProduct()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast"></div>
 
 <script>
-// ============================
-// STATE
-// ============================
-const OWNER_ID = '1279392021236158566';
-const TICKET_URL = 'https://ptb.discord.com/channels/1409158681232281610/1409440646229393438';
+// ============================================================
+//  STATE & STORAGE
+// ============================================================
+const OWNER_DISCORD_ID = '1279392021236158566';
+const CHECKOUT_DISCORD_LINK = 'https://ptb.discord.com/channels/1409158681232281610/1409440646229393438';
 
-let state = {
-  loggedIn: false,
-  user: null, // { id, name, isAdmin }
-  categories: [],
-  products: [],
-  webAdmins: [], // list of discord IDs with admin
-  cart: [],
+// In-memory database (survives page session)
+let db = {
+  categories: {},   // { catId: { name, emoji } }
+  products: {},     // { prodId: { name, price, image, bio, qty, catId } }
+  admins: [],       // [discordId, ...]
+  blacklist: []     // [discordId, ...]
 };
 
-// Load from localStorage
-function loadState() {
-  try {
-    const saved = localStorage.getItem('dirtmc_state');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      state.categories = parsed.categories || [];
-      state.products = parsed.products || [];
-      state.webAdmins = parsed.webAdmins || [];
-    }
-  } catch(e) {}
-}
+let currentUser = null; // { id, username, avatar, isOwner, isAdmin }
+let cart = [];           // [{ prodId, qty }, ...]
+let editingProdId = null;
 
-function saveState() {
-  localStorage.setItem('dirtmc_state', JSON.stringify({
-    categories: state.categories,
-    products: state.products,
-    webAdmins: state.webAdmins,
-  }));
+// Persist to localStorage
+function saveDB() {
+  localStorage.setItem('dirtmc_db', JSON.stringify(db));
 }
-
+function loadDB() {
+  const raw = localStorage.getItem('dirtmc_db');
+  if (raw) {
+    try { db = JSON.parse(raw); } catch(e) {}
+  }
+}
+function saveCart() {
+  localStorage.setItem('dirtmc_cart', JSON.stringify(cart));
+}
+function loadCart() {
+  const raw = localStorage.getItem('dirtmc_cart');
+  if (raw) {
+    try { cart = JSON.parse(raw); } catch(e) {}
+  }
+}
+function saveSession() {
+  if (currentUser) localStorage.setItem('dirtmc_user', JSON.stringify(currentUser));
+  else localStorage.removeItem('dirtmc_user');
+}
 function loadSession() {
-  try {
-    const sess = localStorage.getItem('dirtmc_session');
-    if (sess) {
-      state.user = JSON.parse(sess);
-      state.loggedIn = true;
-    }
-  } catch(e) {}
-}
-
-// ============================
-// STARS
-// ============================
-const canvas = document.getElementById('stars-canvas');
-const ctx = canvas.getContext('2d');
-let stars = [];
-
-function initStars() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  stars = [];
-  for (let i = 0; i < 120; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.2 + 0.2,
-      a: Math.random() * 0.4 + 0.05,
-      speed: Math.random() * 0.3 + 0.05,
-    });
+  const raw = localStorage.getItem('dirtmc_user');
+  if (raw) {
+    try { currentUser = JSON.parse(raw); } catch(e) {}
   }
 }
 
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(s => {
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(200,255,200,${s.a})`;
-    ctx.fill();
-    s.a += s.speed * 0.01;
-    if (s.a > 0.45) s.speed = -Math.abs(s.speed);
-    if (s.a < 0.03) s.speed = Math.abs(s.speed);
-  });
-  requestAnimationFrame(drawStars);
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  generateStars();
+  loadDB();
+  loadCart();
+  loadSession();
+
+  if (currentUser) {
+    showMain();
+  }
+  // else login overlay remains
+});
+
+function generateStars() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 180; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%;
+      left:${Math.random()*100}%;
+      --dur:${(Math.random()*5+3).toFixed(1)}s;
+      --delay:${(Math.random()*5).toFixed(1)}s;
+      --max-op:${(Math.random()*0.07+0.02).toFixed(3)};
+    `;
+    sf.appendChild(s);
+  }
 }
 
-window.addEventListener('resize', initStars);
-initStars();
-drawStars();
-
-// ============================
-// AUTH
-// ============================
+// ============================================================
+//  AUTH
+// ============================================================
 function loginWithDiscord() {
-  // Simulate Discord OAuth - show name input since we can't do real OAuth in HTML
-  const name = prompt('أدخل اسم المستخدم الخاص بك في ديسكورد:');
-  if (!name) return;
-  const id = prompt('أدخل رقم الID الخاص بك في ديسكورد (للتحقق من الصلاحيات):');
-  if (!id) return;
-
-  const isOwner = id.trim() === OWNER_ID;
-  const isWebAdmin = state.webAdmins.includes(id.trim());
-
-  state.user = {
-    id: id.trim(),
-    name: name.trim(),
-    isAdmin: isOwner || isWebAdmin,
-    isOwner,
+  // Simulate Discord OAuth login
+  const mockUser = {
+    id: prompt('أدخل Discord ID الخاص بك (للاختبار):', '123456789') || '123456789',
+    username: 'User',
+    isOwner: false,
+    isAdmin: false
   };
-  state.loggedIn = true;
+  mockUser.isOwner = (mockUser.id === OWNER_DISCORD_ID);
+  mockUser.isAdmin = mockUser.isOwner || db.admins.includes(mockUser.id);
 
-  localStorage.setItem('dirtmc_session', JSON.stringify(state.user));
+  if (db.blacklist.includes(mockUser.id)) {
+    showToast('⛔ أنت في قائمة البلاك لست!');
+    return;
+  }
 
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-
-  updateUI();
-  renderStore();
+  currentUser = mockUser;
+  saveSession();
+  showMain();
 }
 
 function logout() {
-  localStorage.removeItem('dirtmc_session');
-  state.loggedIn = false;
-  state.user = null;
-  state.cart = [];
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  showToast('تم تسجيل الخروج');
+  currentUser = null;
+  saveSession();
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('loginOverlay').style.display = 'flex';
 }
 
-function updateUI() {
-  if (!state.user) return;
-  document.getElementById('userName').textContent = state.user.name;
-  document.getElementById('userAvatar').textContent = state.user.name.charAt(0).toUpperCase();
+function showMain() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
 
-  if (state.user.isAdmin) {
-    document.getElementById('adminBadge').style.display = 'inline';
-    document.getElementById('adminPanelBtn').style.display = 'flex';
+  if (currentUser.isAdmin) {
+    document.getElementById('adminBar').style.display = 'flex';
   }
+  renderStore();
+  updateCartUI();
 }
 
-// ============================
-// STORE RENDER
-// ============================
+// ============================================================
+//  RENDER STORE
+// ============================================================
 function renderStore() {
-  const container = document.getElementById('storeContent');
+  const container = document.getElementById('storeContainer');
+  const cats = Object.entries(db.categories);
 
-  if (state.categories.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📦</div>
-        <div>لا توجد منتجات بعد<br><span style="font-size:0.85rem;opacity:0.6">يمكن للمسؤول إضافة منتجات من لوحة الإدارة</span></div>
-      </div>`;
+  if (cats.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text);padding:60px 0;">لا يوجد منتجات حتى الآن 🌿</p>';
     return;
   }
 
-  let html = '';
-  state.categories.forEach(cat => {
-    const catProducts = state.products.filter(p => p.categoryId === cat.id);
-    if (catProducts.length === 0) return;
-
-    html += `<div class="category-section">
-      <div class="category-header">
-        <h3>📁 ${cat.name}</h3>
-        <span style="font-size:0.8rem;opacity:0.5">${catProducts.length} منتج</span>
-      </div>
-      <div class="products-grid">`;
-
-    catProducts.forEach(p => {
-      const stockText = p.stock ? `${p.stock} متاح` : 'غير محدود';
-      html += `
-        <div class="product-card">
-          <div class="product-img">
-            ${p.image ? `<img src="${p.image}" alt="${p.name}" onerror="this.parentElement.innerHTML='📦'">` : '📦'}
-          </div>
-          <div class="product-info">
-            <div class="product-name">${p.name}</div>
-            <div class="product-bio">${p.bio || ''}</div>
-            <div class="product-footer">
-              <div>
-                <div class="product-price">${p.price} ريال</div>
-                <div class="product-stock">${stockText}</div>
-              </div>
-              <button class="buy-btn" onclick="addToCart('${p.id}')">أضف للسلة</button>
-            </div>
-          </div>
-        </div>`;
-    });
-
-    html += `</div></div>`;
-  });
-
-  if (!html) {
-    html = `<div class="empty-state"><div class="empty-icon">📦</div><div>لا توجد منتجات</div></div>`;
-  }
-
-  container.innerHTML = html;
+  container.innerHTML = cats.map(([catId, cat]) => {
+    const prods = Object.entries(db.products).filter(([pid, p]) => p.catId === catId);
+    const editBtns = currentUser?.isAdmin ? `
+      <div class="category-edit-btns">
+        <button class="cat-edit-btn del" onclick="deleteCategory('${catId}')">🗑️ حذف</button>
+      </div>` : '';
+    const prodCards = prods.map(([pid, p]) => productCard(pid, p)).join('');
+    return `
+      <div class="category-section">
+        <div class="category-header">
+          <span class="category-icon">${cat.emoji || '📦'}</span>
+          <h3>${cat.name}</h3>
+          ${editBtns}
+        </div>
+        <div class="products-grid">
+          ${prodCards || '<p style="color:var(--text);font-size:.9rem;">لا توجد منتجات في هذا القسم.</p>'}
+        </div>
+      </div>`;
+  }).join('');
 }
 
-// ============================
-// CART
-// ============================
-function addToCart(productId) {
-  const product = state.products.find(p => p.id === productId);
-  if (!product) return;
+function productCard(pid, p) {
+  const isSoldOut = p.qty !== null && p.qty !== undefined && p.qty !== '' && Number(p.qty) <= 0;
+  const imgHtml = p.image
+    ? `<div class="product-img"><img src="${p.image}" onerror="this.parentElement.innerHTML='📦'" alt="${p.name}"></div>`
+    : `<div class="product-img">📦</div>`;
+  const qtyBadge = (p.qty !== null && p.qty !== undefined && p.qty !== '')
+    ? `<span class="product-qty">متبقي: ${p.qty}</span>` : '';
+  const soldBadge = isSoldOut ? '<span class="sold-out-badge">نفذت الكمية</span>' : '';
+  const adminBtns = currentUser?.isAdmin ? `
+    <div class="admin-prod-btns">
+      <button class="prod-edit-btn" onclick="openEditProduct('${pid}')">✏️ تعديل</button>
+      <button class="prod-edit-btn del" onclick="deleteProduct('${pid}')">🗑️ حذف</button>
+    </div>` : '';
+  return `
+    <div class="product-card">
+      ${soldBadge}
+      ${imgHtml}
+      <div class="product-body">
+        <div class="product-name">${p.name}</div>
+        <div class="product-bio">${p.bio || ''}</div>
+        <div class="product-footer">
+          <span class="product-price">${p.price}</span>
+          ${qtyBadge}
+        </div>
+        <button class="add-to-cart-btn" onclick="addToCart('${pid}')" ${isSoldOut ? 'disabled' : ''}>
+          ${isSoldOut ? 'نفذت الكمية' : '🛒 أضف للسلة'}
+        </button>
+        ${adminBtns}
+      </div>
+    </div>`;
+}
 
-  const existing = state.cart.find(i => i.id === productId);
-  if (existing) {
-    existing.qty++;
-  } else {
-    state.cart.push({ ...product, qty: 1 });
+// ============================================================
+//  CART
+// ============================================================
+function addToCart(pid) {
+  const p = db.products[pid];
+  if (!p) return;
+  const existing = cart.find(i => i.prodId === pid);
+  const totalInCart = existing ? existing.qty : 0;
+
+  // Check stock
+  if (p.qty !== null && p.qty !== undefined && p.qty !== '') {
+    if (Number(p.qty) <= totalInCart) {
+      showToast('⚠️ لا تتوفر كمية كافية!'); return;
+    }
   }
 
+  if (existing) existing.qty++;
+  else cart.push({ prodId: pid, qty: 1 });
+  saveCart();
   updateCartUI();
-  toggleCart();
-  showToast(`✅ تمت إضافة "${product.name}" للسلة`);
+  showToast('✅ تم الإضافة للسلة!');
 }
 
 function updateCartUI() {
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const count = state.cart.reduce((s, i) => s + i.qty, 0);
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = total;
 
-  document.getElementById('cartCount').textContent = count;
-  document.getElementById('cartTotal').textContent = `${total} ريال`;
-
-  const container = document.getElementById('cartItems');
-  if (state.cart.length === 0) {
-    container.innerHTML = '<div class="cart-empty">السلة فارغة</div>';
+  const itemsEl = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<div class="empty-cart">🛒 السلة فارغة</div>';
+    document.getElementById('cartTotal').textContent = '0$';
     return;
   }
 
-  container.innerHTML = state.cart.map((item, idx) => `
-    <div class="cart-item">
-      <div class="cart-item-name">${item.name}</div>
-      <div class="cart-item-controls">
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
-          <span class="qty-num">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+  let grandTotal = 0;
+  itemsEl.innerHTML = cart.map(i => {
+    const p = db.products[i.prodId];
+    if (!p) return '';
+    const priceNum = parseFloat((p.price || '0').replace(/[^0-9.]/g, '')) || 0;
+    grandTotal += priceNum * i.qty;
+    const imgHtml = p.image
+      ? `<img src="${p.image}" onerror="this.style.display='none'" alt="">`
+      : '📦';
+    return `
+      <div class="cart-item">
+        <div class="cart-item-img">${imgHtml}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${p.name}</div>
+          <div class="cart-item-price">${p.price}</div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('${i.prodId}', -1)">−</button>
+            <span class="qty-val">${i.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${i.prodId}', 1)">+</button>
+          </div>
         </div>
-        <span class="item-total">${item.price * item.qty} ريال</span>
-        <button class="remove-item" onclick="removeFromCart(${idx})">🗑️ حذف</button>
-      </div>
-    </div>
-  `).join('');
+        <button class="remove-item" onclick="removeFromCart('${i.prodId}')">🗑️</button>
+      </div>`;
+  }).join('');
+  document.getElementById('cartTotal').textContent = grandTotal.toFixed(2) + '$';
 }
 
-function changeQty(idx, delta) {
-  state.cart[idx].qty += delta;
-  if (state.cart[idx].qty < 1) {
-    state.cart.splice(idx, 1);
+function changeQty(pid, delta) {
+  const item = cart.find(i => i.prodId === pid);
+  if (!item) return;
+  const p = db.products[pid];
+
+  if (delta > 0 && p.qty !== null && p.qty !== undefined && p.qty !== '') {
+    if (item.qty >= Number(p.qty)) { showToast('⚠️ وصلت للحد الأقصى المتاح!'); return; }
   }
+
+  item.qty = Math.max(1, item.qty + delta);
+  saveCart();
   updateCartUI();
 }
 
-function removeFromCart(idx) {
-  state.cart.splice(idx, 1);
+function removeFromCart(pid) {
+  cart = cart.filter(i => i.prodId !== pid);
+  saveCart();
   updateCartUI();
 }
 
-function toggleCart() {
-  const sidebar = document.getElementById('cart-sidebar');
-  const overlay = document.getElementById('cartOverlay');
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('show');
+function openCart() {
+  document.getElementById('cartOverlay').style.display = 'flex';
+  updateCartUI();
+}
+function closeCart() {
+  document.getElementById('cartOverlay').style.display = 'none';
+}
+function closeCartOnOverlay(e) {
+  if (e.target === document.getElementById('cartOverlay')) closeCart();
 }
 
 function checkout() {
-  if (state.cart.length === 0) {
-    showToast('⚠️ السلة فارغة!');
-    return;
-  }
-  toggleCart();
-  document.getElementById('checkoutModal').classList.add('show');
+  if (cart.length === 0) { showToast('السلة فارغة!'); return; }
+  closeCart();
+  showToast('🔗 يتم توجيهك لإكمال الشراء...');
+  setTimeout(() => {
+    window.open(CHECKOUT_DISCORD_LINK, '_blank');
+    showToast('📋 لإكمال الشراء يرجى فتح تذكرة في ديسكورد');
+  }, 1000);
 }
 
-function closeCheckout() {
-  document.getElementById('checkoutModal').classList.remove('show');
-}
-
-function goToTicket() {
-  window.open(TICKET_URL, '_blank');
-  closeCheckout();
-}
-
-// ============================
-// ADMIN
-// ============================
-function openAdmin() {
-  if (!state.user?.isAdmin) return;
-  document.getElementById('admin-panel').classList.add('show');
-  renderAdminLists();
-}
-
-function closeAdmin() {
-  document.getElementById('admin-panel').classList.remove('show');
-}
-
-function renderAdminLists() {
-  // Web admins
-  const adminsList = document.getElementById('webAdminsList');
-  if (state.webAdmins.length === 0) {
-    adminsList.innerHTML = '<div style="opacity:0.4;font-size:0.85rem">لا يوجد مسؤولون مضافون</div>';
-  } else {
-    adminsList.innerHTML = state.webAdmins.map((id, i) => `
-      <div class="admin-list-item">
-        <span>👤 ${id}</span>
-        ${state.user?.isOwner ? `<button class="delete-btn" onclick="removeWebAdmin(${i})">حذف</button>` : ''}
-      </div>`).join('');
-  }
-
-  // Categories
-  const catList = document.getElementById('categoriesList');
-  const catSelect = document.getElementById('productCategory');
-  catSelect.innerHTML = '<option value="">-- اختر كتجوري --</option>';
-  if (state.categories.length === 0) {
-    catList.innerHTML = '<div style="opacity:0.4;font-size:0.85rem;margin-top:12px">لا توجد كتجوريات بعد</div>';
-  } else {
-    catList.innerHTML = state.categories.map((c, i) => `
-      <div class="admin-list-item" style="margin-top:${i===0?'16px':'0'}">
-        <span>📁 ${c.name}</span>
-        <button class="delete-btn" onclick="deleteCategory('${c.id}')">حذف</button>
-      </div>`).join('');
-    state.categories.forEach(c => {
-      catSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-    });
-  }
-
-  // Products
-  const prodList = document.getElementById('productsList');
-  if (state.products.length === 0) {
-    prodList.innerHTML = '<div style="opacity:0.4;font-size:0.85rem;margin-top:12px">لا توجد منتجات بعد</div>';
-  } else {
-    prodList.innerHTML = state.products.map((p, i) => `
-      <div class="admin-list-item" style="margin-top:${i===0?'16px':'0'}">
-        <span>🛍️ ${p.name} — ${p.price} ريال</span>
-        <button class="delete-btn" onclick="deleteProduct('${p.id}')">حذف</button>
-      </div>`).join('');
-  }
-}
-
-function addCategory() {
-  const name = document.getElementById('catName').value.trim();
-  if (!name) return showToast('⚠️ أدخل اسم الكتجوري');
-  state.categories.push({ id: Date.now().toString(), name });
+// ============================================================
+//  ADMIN - CATEGORY
+// ============================================================
+function openAddCategoryModal() {
   document.getElementById('catName').value = '';
-  saveState();
-  renderAdminLists();
+  document.getElementById('catEmoji').value = '';
+  document.getElementById('addCategoryModal').style.display = 'flex';
+}
+
+function saveCategory() {
+  const name = document.getElementById('catName').value.trim();
+  const emoji = document.getElementById('catEmoji').value.trim();
+  if (!name) { showToast('⚠️ أدخل اسم الكاتجوري'); return; }
+  const id = 'cat_' + Date.now();
+  db.categories[id] = { name, emoji: emoji || '📦' };
+  saveDB();
+  closeModal('addCategoryModal');
   renderStore();
-  showToast(`✅ تمت إضافة الكتجوري: ${name}`);
+  showToast('✅ تمت إضافة الكاتجوري');
 }
 
-function deleteCategory(id) {
-  state.categories = state.categories.filter(c => c.id !== id);
-  state.products = state.products.filter(p => p.categoryId !== id);
-  saveState();
-  renderAdminLists();
+function deleteCategory(catId) {
+  if (!confirm('هل تريد حذف هذا القسم وجميع منتجاته؟')) return;
+  delete db.categories[catId];
+  Object.keys(db.products).forEach(pid => {
+    if (db.products[pid].catId === catId) delete db.products[pid];
+  });
+  saveDB();
   renderStore();
-  showToast('تم حذف الكتجوري');
+  showToast('🗑️ تم حذف القسم');
 }
 
-function addProduct() {
-  const catId = document.getElementById('productCategory').value;
-  const name = document.getElementById('productName').value.trim();
-  const price = parseFloat(document.getElementById('productPrice').value) || 0;
-  const image = document.getElementById('productImage').value.trim();
-  const bio = document.getElementById('productBio').value.trim();
-  const stockVal = document.getElementById('productStock').value.trim();
-  const stock = stockVal ? parseInt(stockVal) : null;
+// ============================================================
+//  ADMIN - PRODUCT
+// ============================================================
+function openAddProductModal() {
+  // Populate category dropdown
+  const sel = document.getElementById('prodCategory');
+  sel.innerHTML = '<option value="">اختر الكاتجوري</option>' +
+    Object.entries(db.categories).map(([id, c]) =>
+      `<option value="${id}">${c.emoji} ${c.name}</option>`).join('');
+  ['prodName','prodPrice','prodImage','prodBio','prodQty'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('addProductModal').style.display = 'flex';
+}
 
-  if (!catId) return showToast('⚠️ اختر كتجوري');
-  if (!name) return showToast('⚠️ أدخل اسم المنتج');
+function saveProduct() {
+  const catId = document.getElementById('prodCategory').value;
+  const name = document.getElementById('prodName').value.trim();
+  const price = document.getElementById('prodPrice').value.trim();
+  const image = document.getElementById('prodImage').value.trim();
+  const bio = document.getElementById('prodBio').value.trim();
+  const qtyRaw = document.getElementById('prodQty').value.trim();
+  const qty = qtyRaw === '' ? null : parseInt(qtyRaw);
 
-  state.products.push({ id: Date.now().toString(), categoryId: catId, name, price, image, bio, stock });
-  document.getElementById('productName').value = '';
-  document.getElementById('productPrice').value = '';
-  document.getElementById('productImage').value = '';
-  document.getElementById('productBio').value = '';
-  document.getElementById('productStock').value = '';
-  saveState();
-  renderAdminLists();
+  if (!catId || !name || !price) { showToast('⚠️ اكمل الحقول المطلوبة'); return; }
+
+  const id = 'prod_' + Date.now();
+  db.products[id] = { name, price, image, bio, qty, catId };
+  saveDB();
+  closeModal('addProductModal');
   renderStore();
-  showToast(`✅ تمت إضافة المنتج: ${name}`);
+  showToast('✅ تمت إضافة المنتج');
 }
 
-function deleteProduct(id) {
-  state.products = state.products.filter(p => p.id !== id);
-  saveState();
-  renderAdminLists();
+function openEditProduct(pid) {
+  const p = db.products[pid];
+  if (!p) return;
+  editingProdId = pid;
+  document.getElementById('editProdId').value = pid;
+  document.getElementById('editProdName').value = p.name;
+  document.getElementById('editProdPrice').value = p.price;
+  document.getElementById('editProdImage').value = p.image || '';
+  document.getElementById('editProdBio').value = p.bio || '';
+  document.getElementById('editProdQty').value = p.qty !== null && p.qty !== undefined ? p.qty : '';
+  document.getElementById('editProductModal').style.display = 'flex';
+}
+
+function updateProduct() {
+  const pid = editingProdId;
+  if (!pid || !db.products[pid]) return;
+  const qtyRaw = document.getElementById('editProdQty').value.trim();
+  db.products[pid] = {
+    ...db.products[pid],
+    name: document.getElementById('editProdName').value.trim(),
+    price: document.getElementById('editProdPrice').value.trim(),
+    image: document.getElementById('editProdImage').value.trim(),
+    bio: document.getElementById('editProdBio').value.trim(),
+    qty: qtyRaw === '' ? null : parseInt(qtyRaw)
+  };
+  saveDB();
+  closeModal('editProductModal');
   renderStore();
-  showToast('تم حذف المنتج');
+  showToast('✅ تم تحديث المنتج');
 }
 
-function removeWebAdmin(idx) {
-  state.webAdmins.splice(idx, 1);
-  saveState();
-  renderAdminLists();
-  showToast('تم حذف المسؤول');
+function deleteProduct(pid) {
+  if (!confirm('هل تريد حذف هذا المنتج؟')) return;
+  cart = cart.filter(i => i.prodId !== pid);
+  saveCart();
+  delete db.products[pid];
+  saveDB();
+  renderStore();
+  updateCartUI();
+  showToast('🗑️ تم حذف المنتج');
 }
 
-// /add web command simulation — owner only
-function handleDiscordCommand(userId, targetId) {
-  if (userId !== OWNER_ID) {
-    showToast('❌ ليس لديك صلاحية لهذا الأمر');
-    return;
-  }
-  if (!state.webAdmins.includes(targetId)) {
-    state.webAdmins.push(targetId);
-    saveState();
-    renderAdminLists();
-    showToast(`✅ تمت إضافة ${targetId} كمسؤول ويب`);
-  } else {
-    showToast('المستخدم موجود مسبقاً');
-  }
+// ============================================================
+//  ADMIN - /add web command simulation
+// ============================================================
+// This is handled in the Discord bot side. On the web side,
+// when an admin loads the site with their Discord ID already
+// in the admins array, they get admin access automatically.
+// The /add web command in Discord would call a webhook or API
+// to add the user ID to db.admins. Below is a manual function
+// for the owner to add an admin directly:
+function addWebAdmin(discordId) {
+  if (!db.admins.includes(discordId)) db.admins.push(discordId);
+  saveDB();
+  showToast(`✅ تم منح صلاحية الأدمن لـ ${discordId}`);
+}
+// Owner can run: addWebAdmin('USER_DISCORD_ID') from browser console
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
 }
 
-// ============================
-// TOAST
-// ============================
-let toastTimer;
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => {
+    if (e.target === el) el.style.display = 'none';
+  });
+});
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-// ============================
-// INIT
-// ============================
-loadState();
-loadSession();
-
-if (state.loggedIn && state.user) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  updateUI();
-  renderStore();
+  t.style.display = 'block';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2800);
 }
 </script>
 </body>
