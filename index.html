@@ -21,9 +21,9 @@
     --gold: #f5c842;
     --shadow-green: 0 0 30px rgba(76,175,80,0.25);
   }
-
+ 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
+ 
   body {
     font-family: 'Tajawal', sans-serif;
     background: var(--bg);
@@ -31,7 +31,7 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
+ 
   /* STARS BACKGROUND */
   #stars-canvas {
     position: fixed;
@@ -40,7 +40,7 @@
     z-index: 0;
     pointer-events: none;
   }
-
+ 
   /* GRADIENT OVERLAY */
   .bg-overlay {
     position: fixed;
@@ -51,7 +51,7 @@
     z-index: 1;
     pointer-events: none;
   }
-
+ 
   /* ===== LOGIN SCREEN ===== */
   #login-screen {
     position: fixed;
@@ -65,7 +65,7 @@
     background: rgba(5,12,5,0.97);
     backdrop-filter: blur(8px);
   }
-
+ 
   .login-logo {
     display: flex;
     flex-direction: column;
@@ -73,19 +73,19 @@
     gap: 16px;
     animation: floatLogo 3s ease-in-out infinite;
   }
-
+ 
   @keyframes floatLogo {
     0%,100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
-
+ 
   .login-logo img {
     width: 120px;
     height: 120px;
     border-radius: 16px;
     filter: drop-shadow(0 0 24px rgba(76,175,80,0.7));
   }
-
+ 
   .login-logo h1 {
     font-family: 'Cinzel Decorative', serif;
     font-size: 2.4rem;
@@ -95,14 +95,14 @@
     text-shadow: none;
     letter-spacing: 2px;
   }
-
+ 
   .login-subtitle {
     color: var(--green-glow);
     font-size: 1rem;
     font-weight: 300;
     opacity: 0.75;
   }
-
+ 
   .discord-login-btn {
     display: flex;
     align-items: center;
@@ -119,17 +119,17 @@
     transition: all 0.3s;
     box-shadow: 0 4px 20px rgba(88,101,242,0.5);
   }
-
+ 
   .discord-login-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(88,101,242,0.7);
   }
-
+ 
   .discord-login-btn svg { width: 28px; height: 28px; }
-
+ 
   /* ===== MAIN APP ===== */
   #app { display: none; position: relative; z-index: 2; }
-
+ 
   /* NAVBAR */
   nav {
     position: sticky;
@@ -144,20 +144,20 @@
     border-bottom: 1px solid var(--border);
     box-shadow: 0 2px 20px rgba(0,0,0,0.5);
   }
-
+ 
   .nav-logo {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
+ 
   .nav-logo img {
     width: 46px;
     height: 46px;
     border-radius: 8px;
     filter: drop-shadow(0 0 10px rgba(76,175,80,0.6));
   }
-
+ 
   .nav-logo span {
     font-family: 'Cinzel Decorative', serif;
     font-size: 1.2rem;
@@ -166,13 +166,13 @@
     -webkit-text-fill-color: transparent;
     letter-spacing: 1px;
   }
-
+ 
   .nav-right {
     display: flex;
     align-items: center;
     gap: 16px;
   }
-
+ 
   .user-badge {
     display: flex;
     align-items: center;
@@ -183,7 +183,7 @@
     padding: 6px 16px;
     font-size: 0.9rem;
   }
-
+ 
   .user-avatar {
     width: 30px;
     height: 30px;
@@ -195,7 +195,7 @@
     font-size: 0.85rem;
     font-weight: 700;
   }
-
+ 
   .admin-badge {
     background: linear-gradient(135deg, var(--gold), #e0a020);
     color: #1a1000;
@@ -205,7 +205,7 @@
     border-radius: 10px;
     display: none;
   }
-
+ 
   .cart-btn {
     position: relative;
     background: var(--white-faint);
@@ -221,12 +221,12 @@
     align-items: center;
     gap: 8px;
   }
-
+ 
   .cart-btn:hover {
     background: rgba(76,175,80,0.2);
     border-color: var(--green-light);
   }
-
+ 
   .cart-count {
     background: var(--green-light);
     color: #0a1a0a;
@@ -239,7 +239,7 @@
     align-items: center;
     justify-content: center;
   }
-
+ 
   .logout-btn {
     background: rgba(200,50,50,0.15);
     border: 1px solid rgba(200,50,50,0.3);
@@ -251,9 +251,9 @@
     font-size: 0.9rem;
     transition: all 0.3s;
   }
-
+ 
   .logout-btn:hover { background: rgba(200,50,50,0.3); }
-
+ 
   /* ADMIN PANEL BTN */
   .admin-panel-btn {
     background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
@@ -267,16 +267,16 @@
     transition: all 0.3s;
     display: none;
   }
-
+ 
   .admin-panel-btn:hover { background: rgba(245,200,66,0.2); }
-
+ 
   /* HERO */
   .hero {
     text-align: center;
     padding: 64px 20px 40px;
     position: relative;
   }
-
+ 
   .hero h2 {
     font-family: 'Cinzel Decorative', serif;
     font-size: clamp(1.8rem, 4vw, 3rem);
@@ -285,26 +285,26 @@
     -webkit-text-fill-color: transparent;
     margin-bottom: 12px;
   }
-
+ 
   .hero p {
     color: var(--green-glow);
     font-size: 1rem;
     font-weight: 300;
     opacity: 0.7;
   }
-
+ 
   /* MAIN CONTENT */
   .main-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px 20px 80px;
   }
-
+ 
   /* CATEGORY SECTION */
   .category-section {
     margin-bottom: 48px;
   }
-
+ 
   .category-header {
     display: flex;
     align-items: center;
@@ -316,20 +316,20 @@
     border: 1px solid var(--border);
     border-right: 4px solid var(--green-light);
   }
-
+ 
   .category-header h3 {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--green-bright);
   }
-
+ 
   /* PRODUCTS GRID */
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
   }
-
+ 
   .product-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -340,13 +340,13 @@
     position: relative;
     backdrop-filter: blur(8px);
   }
-
+ 
   .product-card:hover {
     transform: translateY(-4px);
     border-color: var(--green-light);
     box-shadow: var(--shadow-green);
   }
-
+ 
   .product-img {
     width: 100%;
     height: 160px;
@@ -357,24 +357,24 @@
     justify-content: center;
     font-size: 4rem;
   }
-
+ 
   .product-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-
+ 
   .product-info {
     padding: 16px;
   }
-
+ 
   .product-name {
     font-size: 1rem;
     font-weight: 700;
     margin-bottom: 6px;
     color: var(--white);
   }
-
+ 
   .product-bio {
     font-size: 0.82rem;
     color: rgba(240,255,240,0.55);
@@ -382,24 +382,24 @@
     line-height: 1.5;
     min-height: 36px;
   }
-
+ 
   .product-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-
+ 
   .product-price {
     font-size: 1.1rem;
     font-weight: 900;
     color: var(--green-bright);
   }
-
+ 
   .product-stock {
     font-size: 0.75rem;
     color: rgba(240,255,240,0.4);
   }
-
+ 
   .buy-btn {
     background: linear-gradient(135deg, var(--green-mid), var(--green-light));
     border: none;
@@ -412,9 +412,9 @@
     cursor: pointer;
     transition: all 0.3s;
   }
-
+ 
   .buy-btn:hover { opacity: 0.85; transform: scale(1.05); }
-
+ 
   /* ===== CART SIDEBAR ===== */
   #cart-sidebar {
     position: fixed;
@@ -432,9 +432,9 @@
     gap: 20px;
     box-shadow: 4px 0 40px rgba(0,0,0,0.6);
   }
-
+ 
   #cart-sidebar.open { left: 0; }
-
+ 
   .cart-overlay {
     position: fixed;
     inset: 0;
@@ -442,21 +442,21 @@
     z-index: 199;
     display: none;
   }
-
+ 
   .cart-overlay.show { display: block; }
-
+ 
   .cart-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-
+ 
   .cart-header h3 {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--green-bright);
   }
-
+ 
   .close-cart {
     background: none;
     border: none;
@@ -466,9 +466,9 @@
     opacity: 0.6;
     transition: opacity 0.2s;
   }
-
+ 
   .close-cart:hover { opacity: 1; }
-
+ 
   .cart-items {
     flex: 1;
     overflow-y: auto;
@@ -476,7 +476,7 @@
     flex-direction: column;
     gap: 12px;
   }
-
+ 
   .cart-item {
     background: var(--white-faint);
     border: 1px solid var(--border);
@@ -486,24 +486,24 @@
     flex-direction: column;
     gap: 8px;
   }
-
+ 
   .cart-item-name {
     font-weight: 700;
     font-size: 0.95rem;
   }
-
+ 
   .cart-item-controls {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-
+ 
   .qty-controls {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-
+ 
   .qty-btn {
     width: 30px;
     height: 30px;
@@ -518,21 +518,21 @@
     justify-content: center;
     transition: all 0.2s;
   }
-
+ 
   .qty-btn:hover { background: rgba(76,175,80,0.3); }
-
+ 
   .qty-num {
     font-weight: 700;
     font-size: 1rem;
     min-width: 24px;
     text-align: center;
   }
-
+ 
   .item-total {
     font-weight: 700;
     color: var(--green-bright);
   }
-
+ 
   .remove-item {
     background: none;
     border: none;
@@ -541,16 +541,16 @@
     font-size: 0.8rem;
     opacity: 0.7;
   }
-
+ 
   .remove-item:hover { opacity: 1; }
-
+ 
   .cart-empty {
     text-align: center;
     opacity: 0.4;
     padding: 40px 0;
     font-size: 0.95rem;
   }
-
+ 
   .cart-total-bar {
     border-top: 1px solid var(--border);
     padding-top: 16px;
@@ -560,7 +560,7 @@
     font-size: 1.1rem;
     font-weight: 700;
   }
-
+ 
   .checkout-btn {
     width: 100%;
     padding: 16px;
@@ -575,12 +575,12 @@
     transition: all 0.3s;
     box-shadow: 0 4px 20px rgba(76,175,80,0.4);
   }
-
+ 
   .checkout-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(76,175,80,0.6);
   }
-
+ 
   /* ===== CHECKOUT MODAL ===== */
   .modal-overlay {
     position: fixed;
@@ -591,9 +591,9 @@
     align-items: center;
     justify-content: center;
   }
-
+ 
   .modal-overlay.show { display: flex; }
-
+ 
   .modal {
     background: rgba(12,28,12,0.98);
     border: 1px solid var(--green-light);
@@ -605,36 +605,36 @@
     box-shadow: 0 0 60px rgba(76,175,80,0.3);
     animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
   }
-
+ 
   @keyframes popIn {
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
-
+ 
   .modal h3 {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--green-bright);
   }
-
+ 
   .modal p {
     color: var(--white-dim);
     margin-bottom: 24px;
     line-height: 1.7;
     font-size: 1rem;
   }
-
+ 
   .modal p strong {
     color: var(--gold);
   }
-
+ 
   .modal-actions {
     display: flex;
     gap: 12px;
     justify-content: center;
   }
-
+ 
   .modal-btn-primary {
     padding: 12px 28px;
     background: linear-gradient(135deg, #5865F2, #4752c4);
@@ -647,9 +647,9 @@
     cursor: pointer;
     transition: all 0.3s;
   }
-
+ 
   .modal-btn-primary:hover { opacity: 0.85; transform: scale(1.04); }
-
+ 
   .modal-btn-cancel {
     padding: 12px 28px;
     background: var(--white-faint);
@@ -662,9 +662,9 @@
     cursor: pointer;
     transition: all 0.3s;
   }
-
+ 
   .modal-btn-cancel:hover { background: rgba(255,255,255,0.08); }
-
+ 
   .warning-box {
     background: rgba(200,50,50,0.12);
     border: 1px solid rgba(200,50,50,0.35);
@@ -675,7 +675,7 @@
     margin-bottom: 20px;
     line-height: 1.6;
   }
-
+ 
   /* ===== ADMIN PANEL ===== */
   #admin-panel {
     position: fixed;
@@ -687,9 +687,9 @@
     flex-direction: column;
     overflow-y: auto;
   }
-
+ 
   #admin-panel.show { display: flex; }
-
+ 
   .admin-header {
     display: flex;
     align-items: center;
@@ -701,13 +701,13 @@
     top: 0;
     z-index: 10;
   }
-
+ 
   .admin-header h2 {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--gold);
   }
-
+ 
   .close-admin {
     background: none;
     border: 1px solid var(--border);
@@ -718,9 +718,9 @@
     font-family: 'Tajawal', sans-serif;
     transition: all 0.2s;
   }
-
+ 
   .close-admin:hover { background: var(--white-faint); }
-
+ 
   .admin-body {
     max-width: 800px;
     margin: 0 auto;
@@ -730,14 +730,14 @@
     flex-direction: column;
     gap: 32px;
   }
-
+ 
   .admin-section {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 24px;
   }
-
+ 
   .admin-section h3 {
     font-size: 1.1rem;
     font-weight: 700;
@@ -746,20 +746,20 @@
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
   }
-
+ 
   .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-bottom: 16px;
   }
-
+ 
   .form-group label {
     font-size: 0.88rem;
     color: var(--green-glow);
     opacity: 0.8;
   }
-
+ 
   .form-group input, .form-group textarea, .form-group select {
     background: rgba(10,26,10,0.8);
     border: 1px solid var(--border);
@@ -771,13 +771,13 @@
     outline: none;
     transition: border-color 0.2s;
   }
-
+ 
   .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
     border-color: var(--green-light);
   }
-
+ 
   .form-group textarea { resize: vertical; min-height: 80px; }
-
+ 
   .admin-submit {
     padding: 12px 28px;
     background: linear-gradient(135deg, var(--green-mid), var(--green-light));
@@ -791,16 +791,16 @@
     transition: all 0.3s;
     margin-top: 8px;
   }
-
+ 
   .admin-submit:hover { opacity: 0.85; }
-
+ 
   .admin-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 16px;
   }
-
+ 
   .admin-list-item {
     display: flex;
     align-items: center;
@@ -811,7 +811,7 @@
     padding: 10px 14px;
     font-size: 0.9rem;
   }
-
+ 
   .delete-btn {
     background: rgba(200,50,50,0.2);
     border: 1px solid rgba(200,50,50,0.3);
@@ -823,12 +823,12 @@
     font-size: 0.8rem;
     transition: all 0.2s;
   }
-
+ 
   .delete-btn:hover { background: rgba(200,50,50,0.4); }
-
+ 
   /* WEB ADMIN USERS */
   .web-admin-section {}
-
+ 
   /* TOAST */
   .toast {
     position: fixed;
@@ -847,14 +847,14 @@
     transition: opacity 0.3s;
     backdrop-filter: blur(8px);
   }
-
+ 
   .toast.show { opacity: 1; }
-
+ 
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 3px; }
-
+ 
   /* RESPONSIVE */
   @media (max-width: 600px) {
     nav { padding: 10px 16px; }
@@ -862,7 +862,7 @@
     #cart-sidebar { width: 100%; left: -100%; }
     .modal { padding: 24px 20px; }
   }
-
+ 
   /* EMPTY STATE */
   .empty-state {
     text-align: center;
@@ -871,15 +871,15 @@
     font-size: 1rem;
     line-height: 2;
   }
-
+ 
   .empty-icon { font-size: 3rem; margin-bottom: 12px; }
 </style>
 </head>
 <body>
-
+ 
 <canvas id="stars-canvas"></canvas>
 <div class="bg-overlay"></div>
-
+ 
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-logo">
@@ -892,7 +892,7 @@
     تسجيل الدخول بواسطة Discord
   </button>
 </div>
-
+ 
 <!-- MAIN APP -->
 <div id="app">
   <!-- NAVBAR -->
@@ -915,13 +915,13 @@
       <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
     </div>
   </nav>
-
+ 
   <!-- HERO -->
   <div class="hero">
     <h2>متجر DirtMC</h2>
     <p>اشتري منتجاتك المفضلة بسهولة وأمان</p>
   </div>
-
+ 
   <!-- MAIN CONTENT -->
   <div class="main-content" id="storeContent">
     <div class="empty-state">
@@ -930,7 +930,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- CART SIDEBAR -->
 <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
 <div id="cart-sidebar">
@@ -947,7 +947,7 @@
   </div>
   <button class="checkout-btn" onclick="checkout()">إتمام الدفع</button>
 </div>
-
+ 
 <!-- CHECKOUT MODAL -->
 <div class="modal-overlay" id="checkoutModal">
   <div class="modal">
@@ -963,7 +963,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
   <div class="admin-header">
@@ -971,14 +971,14 @@
     <button class="close-admin" onclick="closeAdmin()">إغلاق ✕</button>
   </div>
   <div class="admin-body">
-
+ 
     <!-- WEB ADMINS -->
     <div class="admin-section">
       <h3>👑 مسؤولو الويب</h3>
       <p style="font-size:0.85rem;opacity:0.6;margin-bottom:12px">استخدم امر <code style="background:rgba(76,175,80,0.15);padding:2px 6px;border-radius:4px">/add web @منشن</code> في الديسكورد لإضافة مسؤول جديد</p>
       <div class="admin-list" id="webAdminsList"></div>
     </div>
-
+ 
     <!-- ADD CATEGORY -->
     <div class="admin-section">
       <h3>📁 إضافة كتجوري</h3>
@@ -989,7 +989,7 @@
       <button class="admin-submit" onclick="addCategory()">➕ إضافة كتجوري</button>
       <div class="admin-list" id="categoriesList"></div>
     </div>
-
+ 
     <!-- ADD PRODUCT -->
     <div class="admin-section">
       <h3>🛍️ إضافة منتج</h3>
@@ -1022,20 +1022,20 @@
       <button class="admin-submit" onclick="addProduct()">➕ إضافة منتج</button>
       <div class="admin-list" id="productsList"></div>
     </div>
-
+ 
   </div>
 </div>
-
+ 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // ============================
 // STATE
 // ============================
 const OWNER_ID = '1279392021236158566';
 const TICKET_URL = 'https://ptb.discord.com/channels/1409158681232281610/1409440646229393438';
-
+ 
 let state = {
   loggedIn: false,
   user: null, // { id, name, isAdmin }
@@ -1044,7 +1044,7 @@ let state = {
   webAdmins: [], // list of discord IDs with admin
   cart: [],
 };
-
+ 
 // Load from localStorage
 function loadState() {
   try {
@@ -1057,7 +1057,7 @@ function loadState() {
     }
   } catch(e) {}
 }
-
+ 
 function saveState() {
   localStorage.setItem('dirtmc_state', JSON.stringify({
     categories: state.categories,
@@ -1065,7 +1065,7 @@ function saveState() {
     webAdmins: state.webAdmins,
   }));
 }
-
+ 
 function loadSession() {
   try {
     const sess = localStorage.getItem('dirtmc_session');
@@ -1075,14 +1075,14 @@ function loadSession() {
     }
   } catch(e) {}
 }
-
+ 
 // ============================
 // STARS
 // ============================
 const canvas = document.getElementById('stars-canvas');
 const ctx = canvas.getContext('2d');
 let stars = [];
-
+ 
 function initStars() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -1097,7 +1097,7 @@ function initStars() {
     });
   }
 }
-
+ 
 function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   stars.forEach(s => {
@@ -1111,11 +1111,11 @@ function drawStars() {
   });
   requestAnimationFrame(drawStars);
 }
-
+ 
 window.addEventListener('resize', initStars);
 initStars();
 drawStars();
-
+ 
 // ============================
 // AUTH
 // ============================
@@ -1125,10 +1125,10 @@ function loginWithDiscord() {
   if (!name) return;
   const id = prompt('أدخل رقم الID الخاص بك في ديسكورد (للتحقق من الصلاحيات):');
   if (!id) return;
-
+ 
   const isOwner = id.trim() === OWNER_ID;
   const isWebAdmin = state.webAdmins.includes(id.trim());
-
+ 
   state.user = {
     id: id.trim(),
     name: name.trim(),
@@ -1136,16 +1136,16 @@ function loginWithDiscord() {
     isOwner,
   };
   state.loggedIn = true;
-
+ 
   localStorage.setItem('dirtmc_session', JSON.stringify(state.user));
-
+ 
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-
+ 
   updateUI();
   renderStore();
 }
-
+ 
 function logout() {
   localStorage.removeItem('dirtmc_session');
   state.loggedIn = false;
@@ -1155,24 +1155,24 @@ function logout() {
   document.getElementById('app').style.display = 'none';
   showToast('تم تسجيل الخروج');
 }
-
+ 
 function updateUI() {
   if (!state.user) return;
   document.getElementById('userName').textContent = state.user.name;
   document.getElementById('userAvatar').textContent = state.user.name.charAt(0).toUpperCase();
-
+ 
   if (state.user.isAdmin) {
     document.getElementById('adminBadge').style.display = 'inline';
     document.getElementById('adminPanelBtn').style.display = 'flex';
   }
 }
-
+ 
 // ============================
 // STORE RENDER
 // ============================
 function renderStore() {
   const container = document.getElementById('storeContent');
-
+ 
   if (state.categories.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
@@ -1181,19 +1181,19 @@ function renderStore() {
       </div>`;
     return;
   }
-
+ 
   let html = '';
   state.categories.forEach(cat => {
     const catProducts = state.products.filter(p => p.categoryId === cat.id);
     if (catProducts.length === 0) return;
-
+ 
     html += `<div class="category-section">
       <div class="category-header">
         <h3>📁 ${cat.name}</h3>
         <span style="font-size:0.8rem;opacity:0.5">${catProducts.length} منتج</span>
       </div>
       <div class="products-grid">`;
-
+ 
     catProducts.forEach(p => {
       const stockText = p.stock ? `${p.stock} متاح` : 'غير محدود';
       html += `
@@ -1214,49 +1214,49 @@ function renderStore() {
           </div>
         </div>`;
     });
-
+ 
     html += `</div></div>`;
   });
-
+ 
   if (!html) {
     html = `<div class="empty-state"><div class="empty-icon">📦</div><div>لا توجد منتجات</div></div>`;
   }
-
+ 
   container.innerHTML = html;
 }
-
+ 
 // ============================
 // CART
 // ============================
 function addToCart(productId) {
   const product = state.products.find(p => p.id === productId);
   if (!product) return;
-
+ 
   const existing = state.cart.find(i => i.id === productId);
   if (existing) {
     existing.qty++;
   } else {
     state.cart.push({ ...product, qty: 1 });
   }
-
+ 
   updateCartUI();
   toggleCart();
   showToast(`✅ تمت إضافة "${product.name}" للسلة`);
 }
-
+ 
 function updateCartUI() {
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const count = state.cart.reduce((s, i) => s + i.qty, 0);
-
+ 
   document.getElementById('cartCount').textContent = count;
   document.getElementById('cartTotal').textContent = `${total} ريال`;
-
+ 
   const container = document.getElementById('cartItems');
   if (state.cart.length === 0) {
     container.innerHTML = '<div class="cart-empty">السلة فارغة</div>';
     return;
   }
-
+ 
   container.innerHTML = state.cart.map((item, idx) => `
     <div class="cart-item">
       <div class="cart-item-name">${item.name}</div>
@@ -1272,7 +1272,7 @@ function updateCartUI() {
     </div>
   `).join('');
 }
-
+ 
 function changeQty(idx, delta) {
   state.cart[idx].qty += delta;
   if (state.cart[idx].qty < 1) {
@@ -1280,19 +1280,19 @@ function changeQty(idx, delta) {
   }
   updateCartUI();
 }
-
+ 
 function removeFromCart(idx) {
   state.cart.splice(idx, 1);
   updateCartUI();
 }
-
+ 
 function toggleCart() {
   const sidebar = document.getElementById('cart-sidebar');
   const overlay = document.getElementById('cartOverlay');
   sidebar.classList.toggle('open');
   overlay.classList.toggle('show');
 }
-
+ 
 function checkout() {
   if (state.cart.length === 0) {
     showToast('⚠️ السلة فارغة!');
@@ -1301,16 +1301,16 @@ function checkout() {
   toggleCart();
   document.getElementById('checkoutModal').classList.add('show');
 }
-
+ 
 function closeCheckout() {
   document.getElementById('checkoutModal').classList.remove('show');
 }
-
+ 
 function goToTicket() {
   window.open(TICKET_URL, '_blank');
   closeCheckout();
 }
-
+ 
 // ============================
 // ADMIN
 // ============================
@@ -1319,11 +1319,11 @@ function openAdmin() {
   document.getElementById('admin-panel').classList.add('show');
   renderAdminLists();
 }
-
+ 
 function closeAdmin() {
   document.getElementById('admin-panel').classList.remove('show');
 }
-
+ 
 function renderAdminLists() {
   // Web admins
   const adminsList = document.getElementById('webAdminsList');
@@ -1336,7 +1336,7 @@ function renderAdminLists() {
         ${state.user?.isOwner ? `<button class="delete-btn" onclick="removeWebAdmin(${i})">حذف</button>` : ''}
       </div>`).join('');
   }
-
+ 
   // Categories
   const catList = document.getElementById('categoriesList');
   const catSelect = document.getElementById('productCategory');
@@ -1353,7 +1353,7 @@ function renderAdminLists() {
       catSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
     });
   }
-
+ 
   // Products
   const prodList = document.getElementById('productsList');
   if (state.products.length === 0) {
@@ -1366,7 +1366,7 @@ function renderAdminLists() {
       </div>`).join('');
   }
 }
-
+ 
 function addCategory() {
   const name = document.getElementById('catName').value.trim();
   if (!name) return showToast('⚠️ أدخل اسم الكتجوري');
@@ -1377,7 +1377,7 @@ function addCategory() {
   renderStore();
   showToast(`✅ تمت إضافة الكتجوري: ${name}`);
 }
-
+ 
 function deleteCategory(id) {
   state.categories = state.categories.filter(c => c.id !== id);
   state.products = state.products.filter(p => p.categoryId !== id);
@@ -1386,7 +1386,7 @@ function deleteCategory(id) {
   renderStore();
   showToast('تم حذف الكتجوري');
 }
-
+ 
 function addProduct() {
   const catId = document.getElementById('productCategory').value;
   const name = document.getElementById('productName').value.trim();
@@ -1395,10 +1395,10 @@ function addProduct() {
   const bio = document.getElementById('productBio').value.trim();
   const stockVal = document.getElementById('productStock').value.trim();
   const stock = stockVal ? parseInt(stockVal) : null;
-
+ 
   if (!catId) return showToast('⚠️ اختر كتجوري');
   if (!name) return showToast('⚠️ أدخل اسم المنتج');
-
+ 
   state.products.push({ id: Date.now().toString(), categoryId: catId, name, price, image, bio, stock });
   document.getElementById('productName').value = '';
   document.getElementById('productPrice').value = '';
@@ -1410,7 +1410,7 @@ function addProduct() {
   renderStore();
   showToast(`✅ تمت إضافة المنتج: ${name}`);
 }
-
+ 
 function deleteProduct(id) {
   state.products = state.products.filter(p => p.id !== id);
   saveState();
@@ -1418,14 +1418,14 @@ function deleteProduct(id) {
   renderStore();
   showToast('تم حذف المنتج');
 }
-
+ 
 function removeWebAdmin(idx) {
   state.webAdmins.splice(idx, 1);
   saveState();
   renderAdminLists();
   showToast('تم حذف المسؤول');
 }
-
+ 
 // /add web command simulation — owner only
 function handleDiscordCommand(userId, targetId) {
   if (userId !== OWNER_ID) {
@@ -1441,7 +1441,7 @@ function handleDiscordCommand(userId, targetId) {
     showToast('المستخدم موجود مسبقاً');
   }
 }
-
+ 
 // ============================
 // TOAST
 // ============================
@@ -1453,13 +1453,13 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
-
+ 
 // ============================
 // INIT
 // ============================
 loadState();
 loadSession();
-
+ 
 if (state.loggedIn && state.user) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
@@ -1469,3 +1469,4 @@ if (state.loggedIn && state.user) {
 </script>
 </body>
 </html>
+ 
