@@ -72,12 +72,6 @@
     text-shadow: 0 0 12px var(--accent-green);
     letter-spacing: 2px;
   }
-  .nav-logo img {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--accent-green);
-    object-fit: cover;
-  }
   .nav-logo .logo-placeholder {
     width: 40px; height: 40px;
     border-radius: 50%;
@@ -186,7 +180,6 @@
     box-shadow: 0 4px 20px rgba(88,101,242,0.4);
   }
   .discord-btn:hover { background: #4752c4; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(88,101,242,0.5); }
-  .discord-btn svg { width: 24px; height: 24px; }
 
   /* ===== MAIN CONTENT ===== */
   #mainContent {
@@ -234,13 +227,9 @@
     font-size: 0.9rem;
     transition: all .2s;
   }
-  .admin-btn:hover { background: rgba(0,176,80,0.3); }
-  .admin-btn.danger { border-color: rgba(255,80,80,0.3); color: #ff6b6b; background: rgba(255,0,0,0.08); }
-  .admin-btn.danger:hover { background: rgba(255,0,0,0.18); }
 
   /* ===== STORE LAYOUT ===== */
   .store-container { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
-
   .category-section { margin-bottom: 48px; }
   .category-header {
     display: flex; align-items: center; gap: 12px;
@@ -249,20 +238,6 @@
     margin-bottom: 24px;
   }
   .category-header h3 { font-size: 1.3rem; color: var(--light-green); font-weight: 700; }
-  .category-icon { font-size: 1.5rem; }
-  .category-edit-btns { margin-right: auto; display: flex; gap: 8px; }
-  .cat-edit-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 4px 10px; border-radius: 6px; cursor: pointer;
-    font-family: 'Tajawal', sans-serif; font-size: 0.8rem;
-    transition: all .2s;
-  }
-  .cat-edit-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
-  .cat-edit-btn.del { border-color: rgba(255,80,80,0.3); color: #ff6b6b; }
-  .cat-edit-btn.del:hover { background: rgba(255,0,0,0.1); }
-
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -278,6 +253,7 @@
     transition: transform .25s, box-shadow .25s;
     cursor: pointer;
     position: relative;
+    padding-bottom: 15px;
   }
   .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,176,80,0.2); }
   .product-img {
@@ -290,164 +266,37 @@
   .product-img img { width: 100%; height: 100%; object-fit: cover; }
   .product-body { padding: 14px 16px; }
   .product-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; color: var(--soft-white); }
-  .product-bio { font-size: 0.82rem; color: var(--text); margin-bottom: 10px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-bio { font-size: 0.82rem; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
   .product-footer { display: flex; align-items: center; justify-content: space-between; }
   .product-price { color: var(--accent-green); font-weight: 900; font-size: 1.05rem; }
-  .product-qty { font-size: 0.78rem; color: #7cb87c; }
   .add-to-cart-btn {
     background: var(--mid-green);
-    border: none;
-    color: white;
-    padding: 7px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    transition: all .2s;
-    margin-top: 10px;
-    width: 100%;
+    border: none; color: white;
+    padding: 10px; border-radius: 8px;
+    cursor: pointer; width: 100%;
+    margin-top: 10px; font-weight: 700;
   }
-  .add-to-cart-btn:hover { background: var(--light-green); }
-  .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .sold-out-badge {
-    position: absolute; top: 10px; right: 10px;
-    background: rgba(200,0,0,0.85);
-    color: white; font-size: 0.75rem; font-weight: 700;
-    padding: 3px 9px; border-radius: 20px;
-  }
-  .admin-prod-btns { display: flex; gap: 6px; margin-top: 8px; }
-  .prod-edit-btn {
-    flex: 1; background: transparent; border: 1px solid var(--border);
-    color: var(--text); padding: 5px 8px; border-radius: 6px;
-    cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.8rem;
-    transition: all .2s;
-  }
-  .prod-edit-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
-  .prod-edit-btn.del { border-color: rgba(255,80,80,0.3); color: #ff6b6b; }
-  .prod-edit-btn.del:hover { background: rgba(255,0,0,0.1); }
 
   /* ===== CART SIDEBAR ===== */
   #cartOverlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.6);
-    z-index: 200;
-    display: none;
-    align-items: flex-start;
-    justify-content: flex-end;
+    z-index: 200; display: none;
+    align-items: flex-start; justify-content: flex-end;
   }
   .cart-panel {
     background: #001a0c;
     border-right: 1px solid var(--border);
-    width: 360px; max-width: 95vw;
-    height: 100vh;
+    width: 360px; height: 100vh;
     display: flex; flex-direction: column;
     animation: slideIn .3s ease;
-    overflow-y: auto;
   }
   @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-  .cart-header {
-    padding: 20px 22px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .cart-header h3 { font-size: 1.1rem; font-weight: 700; }
-  .close-cart { background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
-  .cart-items { flex: 1; padding: 16px 22px; display: flex; flex-direction: column; gap: 14px; }
-  .cart-item {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex; gap: 12px; align-items: center;
-  }
-  .cart-item-img {
-    width: 54px; height: 54px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--dark-green), #001a0c);
-    flex-shrink: 0; overflow: hidden;
-    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
-  }
-  .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
-  .cart-item-info { flex: 1; }
-  .cart-item-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
-  .cart-item-price { color: var(--accent-green); font-size: 0.85rem; }
-  .qty-controls { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-  .qty-btn {
-    background: rgba(0,176,80,0.2); border: 1px solid var(--border);
-    color: white; width: 26px; height: 26px; border-radius: 6px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; transition: all .2s;
-  }
-  .qty-btn:hover { background: rgba(0,176,80,0.4); }
-  .qty-val { font-size: 0.9rem; font-weight: 700; min-width: 20px; text-align: center; }
-  .remove-item { background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 1.2rem; flex-shrink: 0; }
-  .cart-footer { padding: 18px 22px; border-top: 1px solid var(--border); }
-  .cart-total { display: flex; justify-content: space-between; margin-bottom: 16px; font-weight: 700; font-size: 1.05rem; }
-  .cart-total span:last-child { color: var(--accent-green); }
-  .checkout-btn {
-    width: 100%; background: var(--mid-green);
-    border: none; color: white; padding: 14px;
-    border-radius: 12px; font-family: 'Tajawal', sans-serif;
-    font-size: 1.1rem; font-weight: 700; cursor: pointer;
-    transition: all .2s;
-  }
-  .checkout-btn:hover { background: var(--light-green); }
-  .empty-cart { color: var(--text); text-align: center; padding: 40px 0; font-size: 1rem; }
-
-  /* ===== MODALS ===== */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 300;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal {
-    background: #001a0c;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 32px 30px;
-    max-width: 480px;
-    width: 100%;
-    box-shadow: 0 0 60px rgba(0,176,80,0.15);
-    animation: fadeIn .3s ease;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 22px; color: var(--soft-white); }
-  .form-group { margin-bottom: 16px; }
-  .form-group label { display: block; font-size: 0.88rem; color: var(--text); margin-bottom: 6px; }
-  .form-group input, .form-group textarea, .form-group select {
-    width: 100%;
-    background: rgba(0,40,20,0.8);
-    border: 1px solid var(--border);
-    color: var(--soft-white);
-    padding: 10px 14px;
-    border-radius: 9px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .form-group input:focus, .form-group textarea:focus { border-color: var(--light-green); }
-  .form-group textarea { resize: vertical; min-height: 80px; }
-  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
-  .btn-cancel {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text); padding: 9px 20px; border-radius: 9px;
-    cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
-    transition: all .2s;
-  }
-  .btn-cancel:hover { border-color: #ff6b6b; color: #ff6b6b; }
-  .btn-save {
-    background: var(--mid-green); border: none;
-    color: white; padding: 9px 24px; border-radius: 9px;
-    cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
-    font-weight: 700; transition: all .2s;
-  }
-  .btn-save:hover { background: var(--light-green); }
+  .cart-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .cart-items { flex: 1; padding: 16px; overflow-y: auto; }
+  .cart-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 10px; }
+  .cart-footer { padding: 20px; border-top: 1px solid var(--border); }
+  .checkout-btn { width: 100%; background: var(--mid-green); border: none; color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-weight: 700; }
 
   /* ===== TOAST ===== */
   #toast {
@@ -458,575 +307,173 @@
     color: white; padding: 12px 28px;
     border-radius: 30px; z-index: 999;
     display: none; font-size: 0.95rem;
-    box-shadow: 0 4px 20px rgba(0,176,80,0.3);
-    animation: fadeIn .3s ease;
-  }
-
-  /* ===== RESPONSIVE ===== */
-  @media(max-width:600px){
-    .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-    .cart-panel { width: 100%; }
-    .login-box { padding: 32px 22px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ===== STARFIELD ===== -->
 <div id="starfield"></div>
 
-<!-- ===== LOGIN OVERLAY ===== -->
+<!-- LOGIN -->
 <div id="loginOverlay">
   <div class="login-box">
     <div class="logo-big">🌿</div>
     <h1>DirtMC Store</h1>
     <p>سجّل دخول بحسابك في ديسكورد لمتابعة التسوق</p>
-    <button class="discord-btn" onclick="loginWithDiscord()">
-      <svg viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.401329 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C7.41372 50.7009 14.2196 53.9829 20.893 56.1439C20.9854 56.1721 21.0833 56.1383 21.1418 56.0652C22.7963 53.8348 24.2793 51.4857 25.5618 49.0196C25.6231 48.8998 25.5647 48.7573 25.441 48.7065C23.1298 47.8188 20.9278 46.7323 18.8067 45.4998C18.6703 45.4213 18.659 45.2281 18.7839 45.1353C19.2331 44.8044 19.6823 44.4591 20.1119 44.1138C20.1769 44.0606 20.2663 44.0494 20.3418 44.0831C32.1102 49.5583 44.8979 49.5583 56.5293 44.0831C56.6048 44.046 56.6942 44.0577 56.7621 44.1109C57.1917 44.4562 57.641 44.8044 58.0931 45.1353C58.218 45.2281 58.2095 45.4213 58.0731 45.4998C55.9521 46.7551 53.7501 47.8188 51.4332 48.7037C51.3094 48.7546 51.2538 48.8998 51.3152 49.0196C52.6205 51.4829 54.1034 53.8292 55.7298 56.0623C55.7855 56.1383 55.8863 56.1721 55.9787 56.1439C62.6802 53.9829 69.486 50.7009 76.514 45.5576C76.5672 45.5182 76.6008 45.4591 76.6064 45.3942C78.1068 30.0813 73.9517 16.7809 65.1747 4.9823C65.155 4.9429 65.1214 4.9147 65.0794 4.8978H60.1045ZM25.4743 37.3335C22.1314 37.3335 19.3785 34.2844 19.3785 30.4999C19.3785 26.7154 22.0794 23.6663 25.4743 23.6663C28.8973 23.6663 31.6225 26.7437 31.5701 30.4999C31.5701 34.2844 28.8692 37.3335 25.4743 37.3335ZM50.5514 37.3335C47.2085 37.3335 44.4556 34.2844 44.4556 30.4999C44.4556 26.7154 47.1565 23.6663 50.5514 23.6663C53.9744 23.6663 56.6996 26.7437 56.6472 30.4999C56.6472 34.2844 53.9744 37.3335 50.5514 37.3335Z" fill="white"/>
-      </svg>
-      تسجيل الدخول عبر Discord
-    </button>
+    <button class="discord-btn" onclick="loginWithDiscord()">تسجيل الدخول عبر Discord</button>
   </div>
 </div>
 
-<!-- ===== NAVIGATION ===== -->
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <div class="logo-placeholder">🌿</div>
-    DirtMC Store
-  </div>
+  <div class="nav-logo"><div class="logo-placeholder">🌿</div> DirtMC Store</div>
   <div class="nav-right">
-    <button class="cart-btn" onclick="openCart()">
-      <span>🛒</span> السلة
-      <span class="cart-count" id="cartCount">0</span>
-    </button>
-    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+    <button class="cart-btn" onclick="openCart()">🛒 السلة <span class="cart-count" id="cartCount">0</span></button>
+    <button class="logout-btn" onclick="logout()">خروج</button>
   </div>
 </nav>
 
-<!-- ===== MAIN CONTENT ===== -->
+<!-- MAIN -->
 <div id="mainContent">
   <div class="hero">
     <h2>🌿 DirtMC Store</h2>
-    <p>مرحباً بك في ستور ديرت — اختر منتجك وأكمل الشراء بسهولة</p>
+    <p>مرحباً بك في متجر ديرت - أفضل الخدمات في مكان واحد</p>
   </div>
 
-  <!-- Admin Bar -->
   <div id="adminBar">
     <span>⚡ لوحة الإدارة</span>
-    <button class="admin-btn" onclick="openAddCategoryModal()">➕ إضافة كاتجوري</button>
-    <button class="admin-btn" onclick="openAddProductModal()">🛍️ إضافة منتج</button>
+    <button class="admin-btn" onclick="alert('خاصية الإدارة قيد التطوير')">⚙️ الإعدادات</button>
   </div>
 
-  <!-- Store -->
-  <div class="store-container" id="storeContainer">
-    <!-- categories rendered here -->
-  </div>
+  <div class="store-container" id="storeContainer"></div>
 </div>
 
-<!-- ===== CART SIDEBAR ===== -->
+<!-- CART -->
 <div id="cartOverlay" onclick="closeCartOnOverlay(event)">
   <div class="cart-panel">
-    <div class="cart-header">
-      <h3>🛒 سلة المشتريات</h3>
-      <button class="close-cart" onclick="closeCart()">✕</button>
-    </div>
+    <div class="cart-header"><h3>🛒 سلة المشتريات</h3><button onclick="closeCart()" style="background:none;border:none;color:white;cursor:pointer;">✕</button></div>
     <div class="cart-items" id="cartItems"></div>
     <div class="cart-footer">
-      <div class="cart-total"><span>المجموع</span><span id="cartTotal">0$</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:15px;"><span>المجموع</span><span id="cartTotal" style="color:var(--accent-green)">0$</span></div>
       <button class="checkout-btn" onclick="checkout()">إتمام الدفع 💳</button>
     </div>
   </div>
 </div>
 
-<!-- ===== ADD CATEGORY MODAL ===== -->
-<div class="modal-overlay" id="addCategoryModal">
-  <div class="modal">
-    <h3>➕ إضافة كاتجوري</h3>
-    <div class="form-group"><label>اسم الكاتجوري</label><input type="text" id="catName" placeholder="مثال: VIP Ranks"></div>
-    <div class="form-group"><label>إيموجي</label><input type="text" id="catEmoji" placeholder="مثال: 👑"></div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal('addCategoryModal')">إلغاء</button>
-      <button class="btn-save" onclick="saveCategory()">حفظ</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== ADD PRODUCT MODAL ===== -->
-<div class="modal-overlay" id="addProductModal">
-  <div class="modal">
-    <h3>🛍️ إضافة منتج</h3>
-    <div class="form-group"><label>الكاتجوري</label>
-      <select id="prodCategory"><option value="">اختر الكاتجوري</option></select>
-    </div>
-    <div class="form-group"><label>اسم المنتج</label><input type="text" id="prodName" placeholder="مثال: VIP Package"></div>
-    <div class="form-group"><label>السعر (مثال: 10$)</label><input type="text" id="prodPrice" placeholder="10$"></div>
-    <div class="form-group"><label>رابط الصورة (اختياري)</label><input type="text" id="prodImage" placeholder="https://..."></div>
-    <div class="form-group"><label>الوصف</label><textarea id="prodBio" placeholder="وصف المنتج..."></textarea></div>
-    <div class="form-group"><label>الكمية (اتركه فارغ لكمية غير محدودة)</label><input type="number" id="prodQty" placeholder="∞ لا محدودة"></div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal('addProductModal')">إلغاء</button>
-      <button class="btn-save" onclick="saveProduct()">حفظ</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== EDIT PRODUCT MODAL ===== -->
-<div class="modal-overlay" id="editProductModal">
-  <div class="modal">
-    <h3>✏️ تعديل منتج</h3>
-    <input type="hidden" id="editProdId">
-    <div class="form-group"><label>اسم المنتج</label><input type="text" id="editProdName"></div>
-    <div class="form-group"><label>السعر</label><input type="text" id="editProdPrice"></div>
-    <div class="form-group"><label>رابط الصورة</label><input type="text" id="editProdImage"></div>
-    <div class="form-group"><label>الوصف</label><textarea id="editProdBio"></textarea></div>
-    <div class="form-group"><label>الكمية (اتركه فارغ لغير محدودة)</label><input type="number" id="editProdQty"></div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal('editProductModal')">إلغاء</button>
-      <button class="btn-save" onclick="updateProduct()">حفظ</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TOAST ===== -->
 <div id="toast"></div>
 
 <script>
-// ============================================================
-//  STATE & STORAGE
-// ============================================================
-const OWNER_DISCORD_ID = '1279392021236158566';
-const CHECKOUT_DISCORD_LINK = 'https://ptb.discord.com/channels/1409158681232281610/1409440646229393438';
+// الإعدادات الخاصة بك
+const OWNER_ID = '1279392021236158566';
+const CHECKOUT_LINK = 'https://ptb.discord.com/channels/1409158681232281610/1409440646229393438';
 
-// In-memory database (survives page session)
 let db = {
-  categories: {},   // { catId: { name, emoji } }
-  products: {},     // { prodId: { name, price, image, bio, qty, catId } }
-  admins: [],       // [discordId, ...]
-  blacklist: []     // [discordId, ...]
+  categories: { "c1": { name: "أقسام المتجر", emoji: "💎" } },
+  products: {
+    "p1": { name: "Discord Nitro", price: "5.00$", bio: "نيترو قيمنق كامل الصلاحيات", catId: "c1" },
+    "p2": { name: "Minecraft Account", price: "10.00$", bio: "حساب ماينكرافت أصلي (فول أكسس)", catId: "c1" }
+  }
 };
 
-let currentUser = null; // { id, username, avatar, isOwner, isAdmin }
-let cart = [];           // [{ prodId, qty }, ...]
-let editingProdId = null;
+let currentUser = JSON.parse(localStorage.getItem('dirtmc_user'));
+let cart = [];
 
-// Persist to localStorage
-function saveDB() {
-  localStorage.setItem('dirtmc_db', JSON.stringify(db));
-}
-function loadDB() {
-  const raw = localStorage.getItem('dirtmc_db');
-  if (raw) {
-    try { db = JSON.parse(raw); } catch(e) {}
-  }
-}
-function saveCart() {
-  localStorage.setItem('dirtmc_cart', JSON.stringify(cart));
-}
-function loadCart() {
-  const raw = localStorage.getItem('dirtmc_cart');
-  if (raw) {
-    try { cart = JSON.parse(raw); } catch(e) {}
-  }
-}
-function saveSession() {
-  if (currentUser) localStorage.setItem('dirtmc_user', JSON.stringify(currentUser));
-  else localStorage.removeItem('dirtmc_user');
-}
-function loadSession() {
-  const raw = localStorage.getItem('dirtmc_user');
-  if (raw) {
-    try { currentUser = JSON.parse(raw); } catch(e) {}
-  }
-}
-
-// ============================================================
-//  INIT
-// ============================================================
-window.addEventListener('DOMContentLoaded', () => {
+window.onload = () => {
   generateStars();
-  loadDB();
-  loadCart();
-  loadSession();
-
-  if (currentUser) {
-    showMain();
-  }
-  // else login overlay remains
-});
+  if (currentUser) showMain();
+};
 
 function generateStars() {
   const sf = document.getElementById('starfield');
-  for (let i = 0; i < 180; i++) {
+  for (let i = 0; i < 150; i++) {
     const s = document.createElement('div');
     s.className = 'star';
-    const size = Math.random() * 2.5 + 0.5;
-    s.style.cssText = `
-      width:${size}px; height:${size}px;
-      top:${Math.random()*100}%;
-      left:${Math.random()*100}%;
-      --dur:${(Math.random()*5+3).toFixed(1)}s;
-      --delay:${(Math.random()*5).toFixed(1)}s;
-      --max-op:${(Math.random()*0.07+0.02).toFixed(3)};
-    `;
+    s.style.cssText = `width:2px;height:2px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${Math.random()*5+3}s;--max-op:0.05;`;
     sf.appendChild(s);
   }
 }
 
-// ============================================================
-//  AUTH
-// ============================================================
 function loginWithDiscord() {
-  // Simulate Discord OAuth login
-  const mockUser = {
-    id: prompt('أدخل Discord ID الخاص بك (للاختبار):', '123456789') || '123456789',
-    username: 'User',
-    isOwner: false,
-    isAdmin: false
-  };
-  mockUser.isOwner = (mockUser.id === OWNER_DISCORD_ID);
-  mockUser.isAdmin = mockUser.isOwner || db.admins.includes(mockUser.id);
-
-  if (db.blacklist.includes(mockUser.id)) {
-    showToast('⛔ أنت في قائمة البلاك لست!');
-    return;
-  }
-
-  currentUser = mockUser;
-  saveSession();
+  const id = prompt("أدخل Discord ID الخاص بك:");
+  if (!id) return;
+  currentUser = { id: id, isAdmin: (id === OWNER_ID) };
+  localStorage.setItem('dirtmc_user', JSON.stringify(currentUser));
   showMain();
 }
 
 function logout() {
-  currentUser = null;
-  saveSession();
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('loginOverlay').style.display = 'flex';
+  localStorage.removeItem('dirtmc_user');
+  location.reload();
 }
 
 function showMain() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
-
-  if (currentUser.isAdmin) {
-    document.getElementById('adminBar').style.display = 'flex';
-  }
+  if (currentUser.isAdmin) document.getElementById('adminBar').style.display = 'flex';
   renderStore();
-  updateCartUI();
 }
 
-// ============================================================
-//  RENDER STORE
-// ============================================================
 function renderStore() {
   const container = document.getElementById('storeContainer');
-  const cats = Object.entries(db.categories);
-
-  if (cats.length === 0) {
-    container.innerHTML = '<p style="text-align:center;color:var(--text);padding:60px 0;">لا يوجد منتجات حتى الآن 🌿</p>';
-    return;
-  }
-
-  container.innerHTML = cats.map(([catId, cat]) => {
-    const prods = Object.entries(db.products).filter(([pid, p]) => p.catId === catId);
-    const editBtns = currentUser?.isAdmin ? `
-      <div class="category-edit-btns">
-        <button class="cat-edit-btn del" onclick="deleteCategory('${catId}')">🗑️ حذف</button>
-      </div>` : '';
-    const prodCards = prods.map(([pid, p]) => productCard(pid, p)).join('');
-    return `
-      <div class="category-section">
-        <div class="category-header">
-          <span class="category-icon">${cat.emoji || '📦'}</span>
-          <h3>${cat.name}</h3>
-          ${editBtns}
-        </div>
-        <div class="products-grid">
-          ${prodCards || '<p style="color:var(--text);font-size:.9rem;">لا توجد منتجات في هذا القسم.</p>'}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function productCard(pid, p) {
-  const isSoldOut = p.qty !== null && p.qty !== undefined && p.qty !== '' && Number(p.qty) <= 0;
-  const imgHtml = p.image
-    ? `<div class="product-img"><img src="${p.image}" onerror="this.parentElement.innerHTML='📦'" alt="${p.name}"></div>`
-    : `<div class="product-img">📦</div>`;
-  const qtyBadge = (p.qty !== null && p.qty !== undefined && p.qty !== '')
-    ? `<span class="product-qty">متبقي: ${p.qty}</span>` : '';
-  const soldBadge = isSoldOut ? '<span class="sold-out-badge">نفذت الكمية</span>' : '';
-  const adminBtns = currentUser?.isAdmin ? `
-    <div class="admin-prod-btns">
-      <button class="prod-edit-btn" onclick="openEditProduct('${pid}')">✏️ تعديل</button>
-      <button class="prod-edit-btn del" onclick="deleteProduct('${pid}')">🗑️ حذف</button>
-    </div>` : '';
-  return `
-    <div class="product-card">
-      ${soldBadge}
-      ${imgHtml}
-      <div class="product-body">
-        <div class="product-name">${p.name}</div>
-        <div class="product-bio">${p.bio || ''}</div>
-        <div class="product-footer">
-          <span class="product-price">${p.price}</span>
-          ${qtyBadge}
-        </div>
-        <button class="add-to-cart-btn" onclick="addToCart('${pid}')" ${isSoldOut ? 'disabled' : ''}>
-          ${isSoldOut ? 'نفذت الكمية' : '🛒 أضف للسلة'}
-        </button>
-        ${adminBtns}
-      </div>
-    </div>`;
-}
-
-// ============================================================
-//  CART
-// ============================================================
-function addToCart(pid) {
-  const p = db.products[pid];
-  if (!p) return;
-  const existing = cart.find(i => i.prodId === pid);
-  const totalInCart = existing ? existing.qty : 0;
-
-  // Check stock
-  if (p.qty !== null && p.qty !== undefined && p.qty !== '') {
-    if (Number(p.qty) <= totalInCart) {
-      showToast('⚠️ لا تتوفر كمية كافية!'); return;
+  let html = '';
+  for (let cId in db.categories) {
+    const cat = db.categories[cId];
+    html += `<div class="category-section"><div class="category-header"><span>${cat.emoji}</span><h3>${cat.name}</h3></div><div class="products-grid">`;
+    for (let pId in db.products) {
+      const p = db.products[pId];
+      if (p.catId === cId) {
+        html += `
+          <div class="product-card">
+            <div class="product-img">📦</div>
+            <div class="product-body">
+              <div class="product-name">${p.name}</div>
+              <div class="product-bio">${p.bio}</div>
+              <div class="product-footer"><span class="product-price">${p.price}</span></div>
+              <button class="add-to-cart-btn" onclick="addToCart('${pId}')">🛒 أضف للسلة</button>
+            </div>
+          </div>`;
+      }
     }
+    html += `</div></div>`;
   }
-
-  if (existing) existing.qty++;
-  else cart.push({ prodId: pid, qty: 1 });
-  saveCart();
-  updateCartUI();
-  showToast('✅ تم الإضافة للسلة!');
+  container.innerHTML = html;
 }
 
-function updateCartUI() {
-  const total = cart.reduce((s, i) => s + i.qty, 0);
-  document.getElementById('cartCount').textContent = total;
-
-  const itemsEl = document.getElementById('cartItems');
-  if (cart.length === 0) {
-    itemsEl.innerHTML = '<div class="empty-cart">🛒 السلة فارغة</div>';
-    document.getElementById('cartTotal').textContent = '0$';
-    return;
-  }
-
-  let grandTotal = 0;
-  itemsEl.innerHTML = cart.map(i => {
-    const p = db.products[i.prodId];
-    if (!p) return '';
-    const priceNum = parseFloat((p.price || '0').replace(/[^0-9.]/g, '')) || 0;
-    grandTotal += priceNum * i.qty;
-    const imgHtml = p.image
-      ? `<img src="${p.image}" onerror="this.style.display='none'" alt="">`
-      : '📦';
-    return `
-      <div class="cart-item">
-        <div class="cart-item-img">${imgHtml}</div>
-        <div class="cart-item-info">
-          <div class="cart-item-name">${p.name}</div>
-          <div class="cart-item-price">${p.price}</div>
-          <div class="qty-controls">
-            <button class="qty-btn" onclick="changeQty('${i.prodId}', -1)">−</button>
-            <span class="qty-val">${i.qty}</span>
-            <button class="qty-btn" onclick="changeQty('${i.prodId}', 1)">+</button>
-          </div>
-        </div>
-        <button class="remove-item" onclick="removeFromCart('${i.prodId}')">🗑️</button>
-      </div>`;
-  }).join('');
-  document.getElementById('cartTotal').textContent = grandTotal.toFixed(2) + '$';
-}
-
-function changeQty(pid, delta) {
-  const item = cart.find(i => i.prodId === pid);
-  if (!item) return;
-  const p = db.products[pid];
-
-  if (delta > 0 && p.qty !== null && p.qty !== undefined && p.qty !== '') {
-    if (item.qty >= Number(p.qty)) { showToast('⚠️ وصلت للحد الأقصى المتاح!'); return; }
-  }
-
-  item.qty = Math.max(1, item.qty + delta);
-  saveCart();
-  updateCartUI();
-}
-
-function removeFromCart(pid) {
-  cart = cart.filter(i => i.prodId !== pid);
-  saveCart();
-  updateCartUI();
+function addToCart(pId) {
+  cart.push(pId);
+  document.getElementById('cartCount').innerText = cart.length;
+  showToast("تمت الإضافة للسلة ✅");
 }
 
 function openCart() {
   document.getElementById('cartOverlay').style.display = 'flex';
-  updateCartUI();
+  renderCart();
 }
-function closeCart() {
-  document.getElementById('cartOverlay').style.display = 'none';
+
+function renderCart() {
+  const itemsDiv = document.getElementById('cartItems');
+  let total = 0;
+  itemsDiv.innerHTML = cart.map(pId => {
+    const p = db.products[pId];
+    total += parseFloat(p.price);
+    return `<div class="cart-item"><span>📦</span><div><div>${p.name}</div><div style="color:var(--accent-green)">${p.price}</div></div></div>`;
+  }).join('');
+  document.getElementById('cartTotal').innerText = total.toFixed(2) + '$';
 }
-function closeCartOnOverlay(e) {
-  if (e.target === document.getElementById('cartOverlay')) closeCart();
-}
+
+function closeCart() { document.getElementById('cartOverlay').style.display = 'none'; }
+function closeCartOnOverlay(e) { if (e.target.id === 'cartOverlay') closeCart(); }
 
 function checkout() {
-  if (cart.length === 0) { showToast('السلة فارغة!'); return; }
-  closeCart();
-  showToast('🔗 يتم توجيهك لإكمال الشراء...');
-  setTimeout(() => {
-    window.open(CHECKOUT_DISCORD_LINK, '_blank');
-    showToast('📋 لإكمال الشراء يرجى فتح تذكرة في ديسكورد');
-  }, 1000);
+  if (cart.length === 0) return alert("السلة فارغة!");
+  showToast("يتم توجيهك للديسكورد...");
+  setTimeout(() => window.open(CHECKOUT_LINK, '_blank'), 1500);
 }
-
-// ============================================================
-//  ADMIN - CATEGORY
-// ============================================================
-function openAddCategoryModal() {
-  document.getElementById('catName').value = '';
-  document.getElementById('catEmoji').value = '';
-  document.getElementById('addCategoryModal').style.display = 'flex';
-}
-
-function saveCategory() {
-  const name = document.getElementById('catName').value.trim();
-  const emoji = document.getElementById('catEmoji').value.trim();
-  if (!name) { showToast('⚠️ أدخل اسم الكاتجوري'); return; }
-  const id = 'cat_' + Date.now();
-  db.categories[id] = { name, emoji: emoji || '📦' };
-  saveDB();
-  closeModal('addCategoryModal');
-  renderStore();
-  showToast('✅ تمت إضافة الكاتجوري');
-}
-
-function deleteCategory(catId) {
-  if (!confirm('هل تريد حذف هذا القسم وجميع منتجاته؟')) return;
-  delete db.categories[catId];
-  Object.keys(db.products).forEach(pid => {
-    if (db.products[pid].catId === catId) delete db.products[pid];
-  });
-  saveDB();
-  renderStore();
-  showToast('🗑️ تم حذف القسم');
-}
-
-// ============================================================
-//  ADMIN - PRODUCT
-// ============================================================
-function openAddProductModal() {
-  // Populate category dropdown
-  const sel = document.getElementById('prodCategory');
-  sel.innerHTML = '<option value="">اختر الكاتجوري</option>' +
-    Object.entries(db.categories).map(([id, c]) =>
-      `<option value="${id}">${c.emoji} ${c.name}</option>`).join('');
-  ['prodName','prodPrice','prodImage','prodBio','prodQty'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('addProductModal').style.display = 'flex';
-}
-
-function saveProduct() {
-  const catId = document.getElementById('prodCategory').value;
-  const name = document.getElementById('prodName').value.trim();
-  const price = document.getElementById('prodPrice').value.trim();
-  const image = document.getElementById('prodImage').value.trim();
-  const bio = document.getElementById('prodBio').value.trim();
-  const qtyRaw = document.getElementById('prodQty').value.trim();
-  const qty = qtyRaw === '' ? null : parseInt(qtyRaw);
-
-  if (!catId || !name || !price) { showToast('⚠️ اكمل الحقول المطلوبة'); return; }
-
-  const id = 'prod_' + Date.now();
-  db.products[id] = { name, price, image, bio, qty, catId };
-  saveDB();
-  closeModal('addProductModal');
-  renderStore();
-  showToast('✅ تمت إضافة المنتج');
-}
-
-function openEditProduct(pid) {
-  const p = db.products[pid];
-  if (!p) return;
-  editingProdId = pid;
-  document.getElementById('editProdId').value = pid;
-  document.getElementById('editProdName').value = p.name;
-  document.getElementById('editProdPrice').value = p.price;
-  document.getElementById('editProdImage').value = p.image || '';
-  document.getElementById('editProdBio').value = p.bio || '';
-  document.getElementById('editProdQty').value = p.qty !== null && p.qty !== undefined ? p.qty : '';
-  document.getElementById('editProductModal').style.display = 'flex';
-}
-
-function updateProduct() {
-  const pid = editingProdId;
-  if (!pid || !db.products[pid]) return;
-  const qtyRaw = document.getElementById('editProdQty').value.trim();
-  db.products[pid] = {
-    ...db.products[pid],
-    name: document.getElementById('editProdName').value.trim(),
-    price: document.getElementById('editProdPrice').value.trim(),
-    image: document.getElementById('editProdImage').value.trim(),
-    bio: document.getElementById('editProdBio').value.trim(),
-    qty: qtyRaw === '' ? null : parseInt(qtyRaw)
-  };
-  saveDB();
-  closeModal('editProductModal');
-  renderStore();
-  showToast('✅ تم تحديث المنتج');
-}
-
-function deleteProduct(pid) {
-  if (!confirm('هل تريد حذف هذا المنتج؟')) return;
-  cart = cart.filter(i => i.prodId !== pid);
-  saveCart();
-  delete db.products[pid];
-  saveDB();
-  renderStore();
-  updateCartUI();
-  showToast('🗑️ تم حذف المنتج');
-}
-
-// ============================================================
-//  ADMIN - /add web command simulation
-// ============================================================
-// This is handled in the Discord bot side. On the web side,
-// when an admin loads the site with their Discord ID already
-// in the admins array, they get admin access automatically.
-// The /add web command in Discord would call a webhook or API
-// to add the user ID to db.admins. Below is a manual function
-// for the owner to add an admin directly:
-function addWebAdmin(discordId) {
-  if (!db.admins.includes(discordId)) db.admins.push(discordId);
-  saveDB();
-  showToast(`✅ تم منح صلاحية الأدمن لـ ${discordId}`);
-}
-// Owner can run: addWebAdmin('USER_DISCORD_ID') from browser console
-
-// ============================================================
-//  HELPERS
-// ============================================================
-function closeModal(id) {
-  document.getElementById(id).style.display = 'none';
-}
-
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => {
-    if (e.target === el) el.style.display = 'none';
-  });
-});
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2800);
+  t.innerText = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
 }
 </script>
 </body>
