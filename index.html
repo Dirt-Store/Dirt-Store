@@ -977,6 +977,20 @@
   </div>
 </div>
 
+
+<!-- Username Modal -->
+<div class="modal-overlay" id="modal-username">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:12px">🎮</div>
+    <h3 style="justify-content:center;margin-bottom:8px">أهلاً بك!</h3>
+    <p style="color:rgba(240,249,241,0.5);font-size:0.9rem;margin-bottom:22px">حط اسمك في اللعبة عشان نكمل</p>
+    <div class="form-group">
+      <input class="form-input" id="mc-username" placeholder="اسمك في Minecraft..." style="text-align:center;font-size:1rem">
+    </div>
+    <button class="form-submit" onclick="confirmUsername()">تسجيل الدخول ✓</button>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -1058,38 +1072,107 @@ function saveData() {
   window.addEventListener('resize', () => { resize(); initStars(); });
 })();
 
-// ============ LOGIN ============
-async function loginWithDiscord() {
-  // Simulate Discord OAuth — in real deployment you'd use Discord OAuth2
-  const mockUser = {
-    id: prompt('أدخل ديسكورد ID الخاص بك (للتجربة):', '123456789') || '123456789',
-    name: prompt('أدخل اسمك:', 'Player') || 'Player',
-    avatar: null
-  };
+// ============ DISCORD OAUTH2 ============
+const DISCORD_CLIENT_ID = 'YOUR_CLIENT_ID_HERE'; // ← حط Client ID تطبيقك هنا
+const DISCORD_INVITE    = 'https://discord.gg/x5a2uDPA3F';
+const WEBHOOK_URL       = 'https://ptb.discord.com/api/webhooks/1504130823346065538/psd51NxnhqAe3emeWtZNpEvMd2fHtP2cEFZxD2wivw0-KVZMp7GW_FQJPLzRcATdD9gd';
+const EXTRA_ADMIN       = '1185671281262219416';
 
-  mockUser.isAdmin = state.admins.includes(mockUser.id);
-  state.user = mockUser;
+// فتح صفحة OAuth ديسكورد
+function loginWithDiscord() {
+  const redirect = encodeURIComponent(location.origin + location.pathname);
+  const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=identify`;
+  location.href = url;
+}
+
+// بعد ما يرجع من ديسكورد
+async function handleOAuthCallback() {
+  const hash   = location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const token  = params.get('access_token');
+  if (!token) return;
+  history.replaceState(null, null, location.pathname);
+
+  try {
+    const res  = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const du = await res.json();
+    if (!du.id) return;
+
+    await fetchAdmins();
+
+    // إضافة الأدمن الثاني تلقائياً
+    if (!state.admins.includes(EXTRA_ADMIN)) state.admins.push(EXTRA_ADMIN);
+
+    const user = {
+      id:      du.id,
+      name:    du.global_name || du.username,
+      avatar:  du.avatar ? `https://cdn.discordapp.com/avatars/${du.id}/${du.avatar}.png` : null,
+      isAdmin: state.admins.includes(du.id)
+    };
+
+    state.user = user;
+    // حفظ مؤقت ريثما يحط اسمه بالعبة
+    localStorage.setItem('dmc_pending_user', JSON.stringify(user));
+
+    // افتح مودال اسم اللعبة
+    const savedName = localStorage.getItem('dmc_mcname_' + du.id);
+    if (savedName) {
+      user.mcName = savedName;
+      finishLogin(user);
+    } else {
+      document.getElementById('modal-username').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  } catch(e) {
+    showToast('❌ خطأ في تسجيل الدخول');
+  }
+}
+
+function confirmUsername() {
+  const mc = document.getElementById('mc-username').value.trim();
+  if (!mc) { showToast('❌ حط اسمك في اللعبة!'); return; }
+  const user = JSON.parse(localStorage.getItem('dmc_pending_user') || 'null');
+  if (!user) return;
+  user.mcName = mc;
+  localStorage.setItem('dmc_mcname_' + user.id, mc);
+  document.getElementById('modal-username').classList.remove('active');
+  document.body.style.overflow = '';
+  finishLogin(user);
+}
+
+function finishLogin(user) {
+  state.user = user;
   state.loggedIn = true;
 
   document.getElementById('login-overlay').style.display = 'none';
   document.getElementById('app').style.display = 'block';
 
-  // Update UI
-  document.getElementById('user-name-display').textContent = mockUser.name;
-  if (mockUser.avatar) {
-    document.getElementById('user-avatar').innerHTML = `<img src="${mockUser.avatar}" alt="">`;
+  document.getElementById('user-name-display').textContent = user.name;
+  if (user.avatar) {
+    document.getElementById('user-avatar').innerHTML = `<img src="${user.avatar}" alt="">`;
   } else {
-    document.getElementById('user-avatar').textContent = mockUser.name[0].toUpperCase();
+    document.getElementById('user-avatar').textContent = user.name[0].toUpperCase();
   }
 
-  if (mockUser.isAdmin) {
+  if (user.isAdmin) {
     document.getElementById('admin-badge').style.display = 'inline';
     document.getElementById('admin-panel').style.display = 'block';
   }
 
+  // فتح السيرفر أول مرة فقط
+  if (!localStorage.getItem('dmc_joined_' + user.id)) {
+    localStorage.setItem('dmc_joined_' + user.id, '1');
+    window.open(DISCORD_INVITE, '_blank');
+  }
+
   renderStore();
-  showToast(`مرحباً ${mockUser.name}! 👋`);
+  showToast(`مرحباً ${user.name}! 👋`);
 }
+
+// تشغيل callback عند تحميل الصفحة
+window.addEventListener('load', handleOAuthCallback);
 
 function logout() {
   state.loggedIn = false;
@@ -1336,9 +1419,39 @@ function changeQty(id, delta) {
   openCart(); // refresh cart UI
 }
 
-function checkout() {
+async function checkout() {
   if (state.cart.length === 0) { showToast('❌ السلة فارغة!'); return; }
+  if (!state.user) { showToast('❌ سجل دخولك أولاً'); return; }
+
   closeModal('modal-cart');
+
+  // تجميع المنتجات
+  const itemsList = state.cart.map(i => `• ${i.name} × ${i.qty} — ${(i.price * i.qty).toFixed(2)} SAR`).join('\n');
+  const total     = state.cart.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2);
+  const now       = new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' });
+
+  // إرسال Webhook
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        embeds: [{
+          title: '🛒 طلب شراء جديد',
+          color: 0x4CAF50,
+          fields: [
+            { name: '👤 اسم الشخص (Discord)',  value: `${state.user.name} (<@${state.user.id}>)`, inline: false },
+            { name: '🎮 الاسم في اللعبة',       value: state.user.mcName || 'غير محدد',            inline: false },
+            { name: '📦 المنتجات',               value: itemsList,                                   inline: false },
+            { name: '💰 المجموع',                value: `${total} SAR`,                              inline: true  },
+            { name: '📅 التاريخ',                value: now,                                         inline: true  }
+          ],
+          footer: { text: 'DirtMC Store' }
+        }]
+      })
+    });
+  } catch(e) { /* webhook error — نكمل على أي حال */ }
+
   showToast('🎫 لإكمال الشراء يرجى فتح تذكرة');
   setTimeout(() => {
     window.open('https://ptb.discord.com/channels/1409158681232281610/1409440646229393438', '_blank');
