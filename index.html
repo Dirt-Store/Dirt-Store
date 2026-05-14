@@ -894,6 +894,45 @@ nav {
 }
 .btn-del-row:hover { background: rgba(220,50,50,0.35); }
 
+
+/* ── ADMIN TABS ── */
+.atab {
+  padding: 11px 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: rgba(240,255,240,0.6);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.atab.active, .atab:hover {
+  background: rgba(76,175,80,0.2);
+  border-color: var(--green-light);
+  color: var(--green-bright);
+  box-shadow: 0 0 14px rgba(76,175,80,0.25);
+}
+.atab-content { display: block; }
+.atab-content.hidden { display: none !important; }
+
+/* delete list rows */
+.del-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+.del-row-info { flex:1; }
+.del-row-name { font-weight: 700; color: var(--white); font-size: 0.95rem; }
+.del-row-sub { font-size: 0.78rem; color: rgba(240,255,240,0.4); margin-top:2px; }
+
 /* ── MISC ── */
 .hidden { display: none !important; }
 
@@ -1023,16 +1062,49 @@ nav {
 
 <!-- ADMIN PANEL -->
 <div id="admin-panel" class="page">
-  <div style="padding:0 40px 20px;">
-    <button onclick="showStore()" style="background:transparent;border:1px solid var(--border);color:rgba(240,255,240,0.5);padding:8px 18px;border-radius:8px;cursor:pointer;font-family:Tajawal,sans-serif;font-size:0.9rem;">← العودة للمتجر</button>
+  <div style="padding:90px 32px 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <button onclick="showStore()" style="background:transparent;border:1px solid var(--border);color:rgba(240,255,240,0.5);padding:9px 20px;border-radius:8px;cursor:pointer;font-family:Tajawal,sans-serif;font-size:0.9rem;">← المتجر</button>
+    <span style="font-family:Cinzel,serif;font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,#6fcf6f,#4caf50);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">⚙️ لوحة الإدارة</span>
   </div>
-  <div style="padding: 0 40px 20px">
-    <div class="admin-title">⚙️ لوحة الإدارة</div>
+
+  <!-- ADMIN TABS -->
+  <div style="padding:24px 32px 0;display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="atab active" onclick="switchAdminTab('tab-add-cat',this)">➕ إنشاء كاتجوري</button>
+    <button class="atab" onclick="switchAdminTab('tab-del-cat',this)">🗑 حذف كاتجوري</button>
+    <button class="atab" onclick="switchAdminTab('tab-add-prod',this)">📦 إنشاء منتج</button>
+    <button class="atab" onclick="switchAdminTab('tab-del-prod',this)">❌ حذف منتج</button>
   </div>
-  <div class="admin-grid" style="padding: 0 40px 60px;">
-    <!-- ADD PRODUCT -->
-    <div class="admin-form-card">
-      <div class="admin-form-title">➕ إضافة منتج جديد</div>
+
+  <!-- TAB: ADD CATEGORY -->
+  <div id="tab-add-cat" class="atab-content" style="padding:28px 32px 60px;">
+    <div class="admin-form-card" style="max-width:480px;">
+      <div class="admin-form-title">➕ إنشاء كاتجوري جديدة</div>
+      <div class="form-group">
+        <label class="form-label">اسم الكاتجوري</label>
+        <input type="text" class="form-input" id="cat-name" placeholder="مثال: رانكات، حزم، كوينز...">
+      </div>
+      <button class="btn-submit" onclick="addCategory()">إنشاء الكاتجوري ✓</button>
+    </div>
+  </div>
+
+  <!-- TAB: DELETE CATEGORY -->
+  <div id="tab-del-cat" class="atab-content hidden" style="padding:28px 32px 60px;">
+    <div class="admin-form-card" style="max-width:480px;">
+      <div class="admin-form-title">🗑 حذف كاتجوري</div>
+      <div id="del-cats-list" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <!-- TAB: ADD PRODUCT -->
+  <div id="tab-add-prod" class="atab-content hidden" style="padding:28px 32px 60px;">
+    <div class="admin-form-card" style="max-width:520px;">
+      <div class="admin-form-title">📦 إنشاء منتج جديد</div>
+      <div class="form-group">
+        <label class="form-label">الكاتجوري</label>
+        <select class="form-select" id="p-cat">
+          <option value="">بدون كاتجوري</option>
+        </select>
+      </div>
       <div class="form-group">
         <label class="form-label">اسم المنتج</label>
         <input type="text" class="form-input" id="p-name" placeholder="مثال: رانك VIP">
@@ -1042,61 +1114,26 @@ nav {
         <input type="number" class="form-input" id="p-price" placeholder="50">
       </div>
       <div class="form-group">
-        <label class="form-label">رابط الصورة</label>
+        <label class="form-label">صورة المنتج (رابط)</label>
         <input type="text" class="form-input" id="p-img" placeholder="https://...">
       </div>
       <div class="form-group">
-        <label class="form-label">الوصف</label>
+        <label class="form-label">البايو / الوصف</label>
         <textarea class="form-textarea" id="p-bio" placeholder="وصف المنتج..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">الكمية (اتركها فارغة لكمية غير محدودة)</label>
-        <input type="number" class="form-input" id="p-qty" placeholder="∞">
+        <label class="form-label">الكمية (اتركها فارغة = غير محدودة)</label>
+        <input type="number" class="form-input" id="p-qty" placeholder="∞ غير محدودة">
       </div>
-      <div class="form-group">
-        <label class="form-label">الفئة</label>
-        <select class="form-select" id="p-cat">
-          <option value="">اختر فئة...</option>
-        </select>
-      </div>
-      <button class="btn-submit" onclick="addProduct()">إضافة المنتج</button>
+      <button class="btn-submit" onclick="addProduct()">إنشاء المنتج ✓</button>
     </div>
+  </div>
 
-    <!-- ADD CATEGORY -->
-    <div class="admin-form-card">
-      <div class="admin-form-title">🗂️ إضافة فئة جديدة</div>
-      <div class="form-group">
-        <label class="form-label">اسم الفئة</label>
-        <input type="text" class="form-input" id="cat-name" placeholder="مثال: رانكات، حزم...">
-      </div>
-      <div class="form-group">
-        <label class="form-label">إيموجي الفئة</label>
-        <input type="text" class="form-input" id="cat-emoji" placeholder="⭐">
-      </div>
-      <button class="btn-submit" onclick="addCategory()">إضافة الفئة</button>
-
-      <!-- CATEGORIES LIST -->
-      <div style="margin-top:24px;">
-        <div class="admin-form-title" style="margin-bottom:12px;">الفئات الحالية</div>
-        <div id="cats-list"></div>
-      </div>
-    </div>
-
-    <!-- PRODUCTS MANAGEMENT TABLE -->
-    <div class="admin-form-card manage-list">
-      <div class="admin-form-title">📋 إدارة المنتجات</div>
-      <table class="manage-table">
-        <thead>
-          <tr>
-            <th>المنتج</th>
-            <th>السعر</th>
-            <th>الفئة</th>
-            <th>الكمية</th>
-            <th>حذف</th>
-          </tr>
-        </thead>
-        <tbody id="products-table-body"></tbody>
-      </table>
+  <!-- TAB: DELETE PRODUCT -->
+  <div id="tab-del-prod" class="atab-content hidden" style="padding:28px 32px 60px;">
+    <div class="admin-form-card" style="max-width:520px;">
+      <div class="admin-form-title">❌ حذف منتج</div>
+      <div id="del-prods-list" style="margin-top:8px;"></div>
     </div>
   </div>
 </div>
@@ -1126,7 +1163,8 @@ let currentUser = null; // { id, username, discriminator, avatar, mcUsername }
 let products = JSON.parse(localStorage.getItem('dirtmc_products') || '[]');
 let categories = JSON.parse(localStorage.getItem('dirtmc_cats') || '[]');
 let cart = []; // [{product, qty}]
-let webAdmins = JSON.parse(localStorage.getItem('dirtmc_admins') || '["1185671281262219416"]');
+const HARDCODED_ADMINS = ["1279392021236158566", "1185671281262219416"];
+let webAdmins = [...new Set([...HARDCODED_ADMINS, ...JSON.parse(localStorage.getItem('dirtmc_admins') || '[]')])];
 
 // ─── STARS ───────────────────────────────────────────
 (function initStars() {
@@ -1251,33 +1289,38 @@ function showAdminPanel() {
   if (!isAdmin()) return;
   document.getElementById('store-page').style.display = 'none';
   document.getElementById('admin-panel').style.display = 'block';
-  renderAdminCats();
-  renderProductsTable();
-  populateCatSelect();
+  // reset to first tab
+  document.querySelectorAll('.atab-content').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.atab').forEach(b => b.classList.remove('active'));
+  const firstTab = document.getElementById('tab-add-cat');
+  const firstBtn = document.querySelector('.atab');
+  if (firstTab) firstTab.classList.remove('hidden');
+  if (firstBtn) firstBtn.classList.add('active');
 }
 
 // ─── CATEGORIES ─────────────────────────────────────────
 function addCategory() {
   const name = document.getElementById('cat-name').value.trim();
-  const emoji = document.getElementById('cat-emoji').value.trim() || '📦';
-  if (!name) { showToast('أدخل اسم الفئة'); return; }
-  categories.push({ id: Date.now(), name, emoji });
+  if (!name) { showToast('أدخل اسم الكاتجوري'); return; }
+  categories.push({ id: Date.now(), name, emoji: '📦' });
   saveData();
   document.getElementById('cat-name').value = '';
-  document.getElementById('cat-emoji').value = '';
   renderAdminCats();
+  renderDelCatsList();
   renderCatsBar();
   populateCatSelect();
-  showToast('تم إضافة الفئة ✓');
+  showToast('تم إنشاء الكاتجوري ✓');
 }
 
 function deleteCategory(id) {
   categories = categories.filter(c => c.id !== id);
   saveData();
   renderAdminCats();
+  renderDelCatsList();
+  renderDelProdsList();
   renderCatsBar();
   populateCatSelect();
-  showToast('تم حذف الفئة');
+  showToast('تم حذف الكاتجوري ✓');
 }
 
 function renderAdminCats() {
@@ -1336,9 +1379,9 @@ function addProduct() {
 function deleteProduct(id) {
   products = products.filter(p => p.id !== id);
   saveData();
-  renderProductsTable();
+  renderDelProdsList();
   renderProducts(currentFilter || 'all');
-  showToast('تم حذف المنتج');
+  showToast('تم حذف المنتج ✓');
 }
 
 let currentFilter = 'all';
@@ -1519,6 +1562,48 @@ function grantWebAdmin(userId) {
     webAdmins.push(userId);
     localStorage.setItem('dirtmc_admins', JSON.stringify(webAdmins));
   }
+}
+
+
+// ─── ADMIN TAB SWITCH ───────────────────────────────────
+function switchAdminTab(tabId, btn) {
+  document.querySelectorAll('.atab-content').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.atab').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.remove('hidden');
+  btn.classList.add('active');
+  if (tabId === 'tab-del-cat') renderDelCatsList();
+  if (tabId === 'tab-del-prod') renderDelProdsList();
+  if (tabId === 'tab-add-prod') populateCatSelect();
+}
+
+function renderDelCatsList() {
+  const el = document.getElementById('del-cats-list');
+  if (!el) return;
+  if (!categories.length) { el.innerHTML = '<p style="color:rgba(240,255,240,0.3);padding:16px 0">لا توجد كاتجوريات بعد</p>'; return; }
+  el.innerHTML = categories.map(c => `
+    <div class="del-row">
+      <div class="del-row-info">
+        <div class="del-row-name">${c.emoji} ${c.name}</div>
+        <div class="del-row-sub">${products.filter(p=>p.catId===c.id).length} منتج</div>
+      </div>
+      <button class="btn-del-row" onclick="deleteCategory(${c.id})">🗑 حذف</button>
+    </div>`).join('');
+}
+
+function renderDelProdsList() {
+  const el = document.getElementById('del-prods-list');
+  if (!el) return;
+  if (!products.length) { el.innerHTML = '<p style="color:rgba(240,255,240,0.3);padding:16px 0">لا توجد منتجات بعد</p>'; return; }
+  el.innerHTML = products.map(p => {
+    const cat = categories.find(c => c.id === p.catId);
+    return `<div class="del-row">
+      <div class="del-row-info">
+        <div class="del-row-name">${p.name}</div>
+        <div class="del-row-sub">${p.price} ريال ${cat ? '· ' + cat.name : ''} ${p.qty !== null ? '· كمية: ' + p.qty : '· غير محدودة'}</div>
+      </div>
+      <button class="btn-del-row" onclick="deleteProduct(${p.id})">🗑 حذف</button>
+    </div>`;
+  }).join('');
 }
 
 // ─── SAVE ─────────────────────────────────────────────
