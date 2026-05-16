@@ -597,27 +597,25 @@ let productImgData = '';
   draw();
 })();
 
-/* ═══ SHARED STORAGE (products visible to ALL users) ═══ */
+/* ═══ SHARED STORAGE (localStorage - persistent on reload) ═══ */
 async function loadSharedData(){
   try{
-    const pr = await window.storage.get('dmc_products', true);
-    if(pr) products = JSON.parse(pr.value);
+    const pr = localStorage.getItem('dmc_products');
+    if(pr) products = JSON.parse(pr);
+    else products = [];
   } catch(e){ products = []; }
   try{
-    const ct = await window.storage.get('dmc_cats', true);
-    if(ct) categories = JSON.parse(ct.value);
+    const ct = localStorage.getItem('dmc_cats');
+    if(ct) categories = JSON.parse(ct);
+    else categories = [];
   } catch(e){ categories = []; }
 }
 
 async function saveData(){
   try{
-    await window.storage.set('dmc_products', JSON.stringify(products), true);
-    await window.storage.set('dmc_cats', JSON.stringify(categories), true);
-  } catch(e){
-    // fallback to localStorage if storage API unavailable
     localStorage.setItem('dmc_products', JSON.stringify(products));
     localStorage.setItem('dmc_cats', JSON.stringify(categories));
-  }
+  } catch(e){ console.error('saveData failed', e); }
 }
 
 /* ═══ AUTH ═══ */
@@ -633,6 +631,8 @@ function handleOAuth(){
   const token = p.get('access_token');
   if(!token) return false;
   history.replaceState(null,'',location.pathname);
+  // Show store while fetching user info
+  showStorePublic();
   fetch('https://discord.com/api/users/@me',{headers:{'Authorization':'Bearer '+token}})
     .then(r=>r.json()).then(u=>{
       const saved = localStorage.getItem('dmc_user');
@@ -974,7 +974,8 @@ window.addEventListener('DOMContentLoaded', async ()=>{
 function showStorePublic(){
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('navbar').classList.remove('hidden');
-  document.getElementById('nav-public-login').classList.remove('hidden');
+  const pubBtn = document.getElementById('nav-public-login');
+  if(pubBtn) pubBtn.classList.remove('hidden');
   document.getElementById('nav-user-wrap').style.display = 'none';
   showStore();
 }
