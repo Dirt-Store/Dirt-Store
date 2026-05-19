@@ -608,59 +608,37 @@ let productImgData = '';
   draw();
 })();
 
-/* ═══ SHARED STORAGE ═══ */
+/* ═══ JSONBIN - REAL SHARED DATABASE ═══ */
+const BIN_ID   = '6849f0d18a456b796686a992';
+const BIN_KEY  = '$2a$10$eLzUKGJNMQ5m1h2LWVomCuPbdBZNkS6HFT1/bH.GKuP8bIPSsEHsS';
+const BIN_URL  = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const HEADERS  = { 'Content-Type':'application/json', 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' };
+
 async function loadSharedData(){
-  // Load categories
   try{
-    const ct = await window.storage.get('dmc_cats', true);
-    categories = ct ? JSON.parse(ct.value) : [];
-  } catch(e){ categories = []; }
-
-  // Load product index (list of IDs)
-  let ids = [];
-  try{
-    const idx = await window.storage.get('dmc_product_ids', true);
-    ids = idx ? JSON.parse(idx.value) : [];
-  } catch(e){ ids = []; }
-
-  // Load each product individually
-  products = [];
-  for(const id of ids){
-    try{
-      const pr = await window.storage.get('dmc_prod_'+id, true);
-      if(pr) products.push(JSON.parse(pr.value));
-    } catch(e){}
+    const r = await fetch(BIN_URL + '/latest', { headers: HEADERS });
+    const data = await r.json();
+    products   = data.products   || [];
+    categories = data.categories || [];
+  } catch(e){
+    products = []; categories = [];
   }
 }
 
 async function saveData(){
-  // Save categories
   try{
-    await window.storage.set('dmc_cats', JSON.stringify(categories), true);
-  } catch(e){}
-
-  // Save product index
-  const ids = products.map(p=>p.id);
-  try{
-    await window.storage.set('dmc_product_ids', JSON.stringify(ids), true);
-  } catch(e){}
-
-  // Save each product individually (so large base64 images don't break the limit)
-  for(const p of products){
-    try{
-      await window.storage.set('dmc_prod_'+p.id, JSON.stringify(p), true);
-    } catch(e){
-      showToast('⚠️ الصورة كبيرة جداً، جرب صورة أصغر');
-    }
-  }
+    await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: HEADERS,
+      body: JSON.stringify({ products, categories })
+    });
+  } catch(e){ showToast('⚠️ خطأ في الحفظ، تحقق من الاتصال'); }
 }
 
-async function deleteProductFromStorage(id){
-  try{ await window.storage.delete('dmc_prod_'+id, true); } catch(e){}
-}
+async function deleteProductFromStorage(){ /* handled in saveData */ }
 
-// Compress image to max ~300KB before storing
-function compressImage(dataUrl, maxWidth=600, quality=0.7){
+// Compress image before storing
+function compressImage(dataUrl, maxWidth=500, quality=0.7){
   return new Promise((resolve)=>{
     const img = new Image();
     img.onload = ()=>{
