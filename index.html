@@ -610,26 +610,70 @@ let productImgData = '';
 
 /* ═══ SHARED STORAGE ═══ */
 async function loadSharedData(){
-  try{
-    const pr = await window.storage.get('dmc_products', true);
-    if(pr) products = JSON.parse(pr.value);
-    else products = [];
-  } catch(e){ products = []; }
+  // Load categories
   try{
     const ct = await window.storage.get('dmc_cats', true);
-    if(ct) categories = JSON.parse(ct.value);
-    else categories = [];
+    categories = ct ? JSON.parse(ct.value) : [];
   } catch(e){ categories = []; }
+
+  // Load product index (list of IDs)
+  let ids = [];
+  try{
+    const idx = await window.storage.get('dmc_product_ids', true);
+    ids = idx ? JSON.parse(idx.value) : [];
+  } catch(e){ ids = []; }
+
+  // Load each product individually
+  products = [];
+  for(const id of ids){
+    try{
+      const pr = await window.storage.get('dmc_prod_'+id, true);
+      if(pr) products.push(JSON.parse(pr.value));
+    } catch(e){}
+  }
 }
 
 async function saveData(){
+  // Save categories
   try{
-    await window.storage.set('dmc_products', JSON.stringify(products), true);
     await window.storage.set('dmc_cats', JSON.stringify(categories), true);
-  } catch(e){
-    localStorage.setItem('dmc_products', JSON.stringify(products));
-    localStorage.setItem('dmc_cats', JSON.stringify(categories));
+  } catch(e){}
+
+  // Save product index
+  const ids = products.map(p=>p.id);
+  try{
+    await window.storage.set('dmc_product_ids', JSON.stringify(ids), true);
+  } catch(e){}
+
+  // Save each product individually (so large base64 images don't break the limit)
+  for(const p of products){
+    try{
+      await window.storage.set('dmc_prod_'+p.id, JSON.stringify(p), true);
+    } catch(e){
+      showToast('⚠️ الصورة كبيرة جداً، جرب صورة أصغر');
+    }
   }
+}
+
+async function deleteProductFromStorage(id){
+  try{ await window.storage.delete('dmc_prod_'+id, true); } catch(e){}
+}
+
+// Compress image to max ~300KB before storing
+function compressImage(dataUrl, maxWidth=600, quality=0.7){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if(w > maxWidth){ h = Math.round(h * maxWidth / w); w = maxWidth; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = ()=> resolve(dataUrl);
+    img.src = dataUrl;
+  });
 }
 
 /* ═══ AUTH ═══ */
@@ -766,20 +810,20 @@ function previewImg(input){
 }
 
 /* ═══ CATEGORIES ═══ */
-function addCategory(){
+async function addCategory(){
   const n = document.getElementById('cat-name').value.trim();
   if(!n){ showToast('ادخل اسم الفئة'); return; }
   categories.push({id:Date.now(), name:n});
-  saveData();
+  await saveData();
   document.getElementById('cat-name').value = '';
   populateCatSelect(); renderCatsBar(); renderDelCatsList(); updateStats();
   showToast('✅ تم إنشاء الفئة');
 }
 
-function deleteCategory(id){
+async function deleteCategory(id){
   if(!confirm('حذف هذه الفئة؟')) return;
   categories = categories.filter(c=>c.id!==id);
-  saveData();
+  await saveData();
   populateCatSelect(); renderCatsBar(); renderDelCatsList(); renderDelProdsList(); renderProducts(currentFilter); updateStats();
   showToast('🗑 تم حذف الفئة');
 }
@@ -818,21 +862,34 @@ function renderDelCatsList(){
 }
 
 /* ═══ PRODUCTS ═══ */
-function addProduct(){
+async function addProduct(){
   const name = document.getElementById('p-name').value.trim();
   const price = parseFloat(document.getElementById('p-price').value);
   const bio = document.getElementById('p-bio').value.trim();
   const qty = document.getElementById('p-qty').value.trim();
   const catId = document.getElementById('p-cat').value;
   if(!name || isNaN(price) || price<=0){ showToast('ادخل اسم المنتج والسعر'); return; }
-  products.push({
-    id:Date.now(), name, price,
-    img: productImgData || '',
+
+  const btn = document.querySelector('#tab-add-prod .btn-submit');
+  btn.textContent = 'جاري الحفظ...'; btn.disabled = true;
+
+  // Compress image if present
+  let imgData = '';
+  if(productImgData){
+    imgData = await compressImage(productImgData, 500, 0.75);
+  }
+
+  const newProduct = {
+    id: Date.now(), name, price,
+    img: imgData,
     bio,
     qty: qty ? parseInt(qty) : null,
     catId: catId ? parseInt(catId) : null
-  });
-  saveData();
+  };
+
+  products.push(newProduct);
+  await saveData();
+
   // Reset form
   document.getElementById('p-name').value = '';
   document.getElementById('p-price').value = '';
@@ -843,14 +900,16 @@ function addProduct(){
   document.getElementById('upload-status').style.display = 'none';
   document.getElementById('upload-btn-text').textContent = 'اختر صورة من جهازك';
   productImgData = '';
+  btn.textContent = 'انشاء المنتج'; btn.disabled = false;
   renderDelProdsList(); updateStats();
-  showToast('✅ تم إنشاء المنتج');
+  showToast('✅ تم إنشاء المنتج وحُفظ للجميع');
 }
 
-function deleteProduct(id){
+async function deleteProduct(id){
   if(!confirm('حذف هذا المنتج؟')) return;
+  await deleteProductFromStorage(id);
   products = products.filter(p=>p.id!==id);
-  saveData();
+  await saveData();
   renderDelProdsList(); renderProducts(currentFilter); updateStats();
   showToast('🗑 تم حذف المنتج');
 }
